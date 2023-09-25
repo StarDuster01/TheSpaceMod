@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "spacemod",
+  "version": "${version}",
+  "name": "fabricspacemod",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/Aedhan Scott/fabricspacemodabricspacemod"
+  },
+  "license": "MIT",
+  "icon": "assets/spacemod/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "org.example.stardust.spacemod.client.FabricspacemodClient"
+    ],
+    "main": [
+      "org.example.stardust.spacemod.Fabricspacemod"
+    ]
+  },
+  "mixins": [
+    "spacemod.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
