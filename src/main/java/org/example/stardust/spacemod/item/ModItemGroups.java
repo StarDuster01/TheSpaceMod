@@ -23,9 +23,11 @@ public class ModItemGroups {
                         entries.add(ModItems.GALLIUM_INGOT);
                         entries.add(ModItems.GRAVITY_SWORD);
                         entries.add(ModItems.GLASS_SWORD);
+                        entries.add(ModItems.FROST_WAND);
                         entries.add(ModItems.CLOAKING_DEVICE_ITEM);
                         entries.add(ModItems.SACRIFICIAL_KNIFE);
                         entries.add(ModItems.UNICORN_SPAWN_EGG);
+                        entries.add(ModItems.FORMIC_SPAWN_EGG);
                         entries.add(ModBlocks.BLOODY_STONE);
                         entries.add(ModBlocks.ALTAR_BLOCK);
                         entries.add(ModBlocks.CANNON_BLOCK);

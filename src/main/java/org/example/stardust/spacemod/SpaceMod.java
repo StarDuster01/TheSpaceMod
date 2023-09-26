@@ -3,6 +3,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import org.example.stardust.spacemod.block.ModBlocks;
 import org.example.stardust.spacemod.entity.ModEntities;
+import org.example.stardust.spacemod.entity.custom.FormicEntity;
 import org.example.stardust.spacemod.entity.custom.UnicornEntity;
 import org.example.stardust.spacemod.item.ModItemGroups;
 import org.example.stardust.spacemod.item.ModItems;
@@ -24,6 +25,7 @@ public class SpaceMod implements ModInitializer{
         ModWorldGeneration.generateModWorldGen();
 
         FabricDefaultAttributeRegistry.register(ModEntities.UNICORN, UnicornEntity.setAttributes());
+        FabricDefaultAttributeRegistry.register(ModEntities.FORMIC, FormicEntity.setAttributes());
 
 
 

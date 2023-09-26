@@ -4,6 +4,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import org.example.stardust.spacemod.entity.ModEntities;
 import org.example.stardust.spacemod.entity.client.UnicornRenderer;
+import org.example.stardust.spacemod.entity.client.FormicRenderer;
 
 public class SpaceModClient implements ClientModInitializer {
     @Override
@@ -11,6 +12,7 @@ public class SpaceModClient implements ClientModInitializer {
         // Client Specific Logic Here
 
         EntityRendererRegistry.register(ModEntities.UNICORN, UnicornRenderer::new);
+        EntityRendererRegistry.register(ModEntities.FORMIC, FormicRenderer::new);
 
     }
 }
