@@ -1,0 +1,32 @@
+{
+  "item.spacemod.blood": "Blood",
+  "item.spacemod.pure_blood": "Pure Blood",
+  "item.spacemod.gallium": "Gallium",
+  "item.spacemod.metal_detector": "Metal Detector",
+  "item.spacemod.heart": "Heart",
+
+  "block.spacemod.bloody_stone": "Bloody Stone",
+  "block.spacemod.cannon_block": "Cannon Block",
+  "block.spacemod.speed_block": "Speed Block",
+  "block.spacemod.gallium_ore": "Gallium Ore",
+  "item.spacemod.cloaking_device_item": "Cloaking Device",
+  "item.spacemod.sulfer": "Sulfer",
+  "item.spacemod.sacrificial_knife": "Sacrificial Knife",
+  "item.spacemod.unicorn_spawn_egg": "Unicorn Spawn Egg",
+  "item.spacemod.formic_spawn_egg": "Formic Spawn Egg",
+  "item.spacemod.glass_sword": "Glass Sword",
+  "item.spacemod.gravity_sword": "Gravity Sword",
+  "item.spacemod.frost_wand": "Frost Wand",
+  "itemgroup.space": "Space Mod",
+  "block.spacemod.altar_block": "Altar Block",
+  "block.spacemod.goo_source_block": "Altar Block",
+
+  "tooltip.spacemod.metal_detector.tooltip": "Finds valuables underground",
+  "Speed_Block_tooltip": "Makes player run very fast while on block",
+  "Cannon_Block_tooltip": "Fires Shitloads of TNT very far",
+  "Altar_Block_tooltip": "Sacrifice things here",
+
+
+  "creativetab.space_tab": "Space Mod Tab"
+
+}
