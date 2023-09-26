@@ -51,6 +51,10 @@ public static DefaultAttributeContainer.Builder setAttributes() {
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.4f);
 }
 
+    private static final int LOVE_MODE_DURATION = 600;
+    private int inLove;
+    private UUID playerInLoveUuid;
+
     @Override
     protected void initGoals() {
 
@@ -93,14 +97,7 @@ public static DefaultAttributeContainer.Builder setAttributes() {
     }
 
 
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return cache;
-    }
 
-    private boolean isMoving() {
-        return this.getVelocity().x != 0 || this.getVelocity().z != 0;
-    }
 
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
@@ -165,26 +162,6 @@ public static DefaultAttributeContainer.Builder setAttributes() {
     }
 
 
-    @Nullable
-    public Entity getPrimaryPassenger() {
-        return this.hasPassengers() ? this.getPassengerList().get(0) : null;
-    }
-    // Return true if the unicorn is being controlled by a player
-    public boolean isControlledByPlayer() {
-        Entity passenger = this.getPrimaryPassenger();
-        return passenger instanceof PlayerEntity;
-    }
-    // Return true if the unicorn is in the air
-    public boolean isInAir() {
-        return this.inAir;
-    }
-    public double getJumpStrength() {
-        return this.jumpStrength;
-    }
-    // Return true if the unicorn is in water
-    public boolean isInWater() {
-        return this.isTouchingWater();
-    }
     @Override
     public void tickMovement() {
         super.tickMovement();
@@ -227,8 +204,8 @@ public static DefaultAttributeContainer.Builder setAttributes() {
             // Play clip-clop sound when the unicorn is being ridden and moving
             if(this.hasPassengers() && this.isMoving()) {
                 clipClopTickCounter++;
-                if(clipClopTickCounter >= 10) { // Play sound every 10 ticks, adjust as necessary
-                    this.playSound(SoundEvents.ENTITY_HORSE_GALLOP, 0.5F, 1.0F); // Adjust volume and pitch as necessary
+                if(clipClopTickCounter >= 10) { // Play sound every 10 ticks
+                    this.playSound(SoundEvents.ENTITY_HORSE_GALLOP, 0.5F, 1.0F); // Adjust volume and pitch
                     clipClopTickCounter = 0;
                 }
             }
@@ -265,10 +242,10 @@ public static DefaultAttributeContainer.Builder setAttributes() {
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
-        if (this.hasPassengers()) { // or this.isBeingRidden() depending on your Minecraft version
-            return SoundEvents.ENTITY_HORSE_AMBIENT; // Returns the horse ambient sound when being ridden
+        if (this.hasPassengers()) { //
+            return SoundEvents.ENTITY_HORSE_AMBIENT;
         }
-        return super.getAmbientSound(); // Returns the default ambient sound when not being ridden
+        return super.getAmbientSound();
     }
 
     protected Vec2f getControlledRotation(LivingEntity controllingPassenger) {
@@ -290,9 +267,7 @@ public static DefaultAttributeContainer.Builder setAttributes() {
 
 
 
-    private static final int LOVE_MODE_DURATION = 600; // for example, 30 seconds in game time
-    private int inLove;
-    private UUID playerInLoveUuid;
+
 
     private void setInLove(PlayerEntity player) {
         this.inLove = LOVE_MODE_DURATION;
@@ -325,18 +300,46 @@ public static DefaultAttributeContainer.Builder setAttributes() {
         return !this.isSaddled();
     }
 
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
+    }
+
+    private boolean isMoving() {
+        return this.getVelocity().x != 0 || this.getVelocity().z != 0;
+    }
+
 
 
     @Override
     public void saddle(@Nullable SoundCategory sound) {
         this.saddled = true;
-      //  if (sound != null && this.world instanceof ServerWorld) {
-       //     ((ServerWorld) this.world).playSound(null, this, SoundEvents.ENTITY_PIG_SADDLE, sound, 1.0F, 1.0F);
+      /
         }
 
 
     @Override
     public boolean isSaddled() {
         return this.saddled;
+    }
+    @Nullable
+    public Entity getPrimaryPassenger() {
+        return this.hasPassengers() ? this.getPassengerList().get(0) : null;
+    }
+    // Return true if the unicorn is being controlled by a player
+    public boolean isControlledByPlayer() {
+        Entity passenger = this.getPrimaryPassenger();
+        return passenger instanceof PlayerEntity;
+    }
+    // Return true if the unicorn is in the air
+    public boolean isInAir() {
+        return this.inAir;
+    }
+    public double getJumpStrength() {
+        return this.jumpStrength;
+    }
+    // Return true if the unicorn is in water
+    public boolean isInWater() {
+        return this.isTouchingWater();
     }
 }
