@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "id": "spacemod",
   "version": "${version}",
-  "name": "fabricspacemod",
-  "description": "",
+  "name": "spacemod",
+  "description": "the spacemod",
   "authors": [],
   "contact": {
     "repo": "https://github.com/Aedhan Scott/fabricspacemodabricspacemod"
@@ -13,10 +13,10 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "org.example.stardust.spacemod.client.FabricspacemodClient"
+      "org.example.stardust.spacemod.client.SpaceModClient"
     ],
     "main": [
-      "org.example.stardust.spacemod.Fabricspacemod"
+      "org.example.stardust.spacemod.SpaceMod"
     ]
   },
   "mixins": [

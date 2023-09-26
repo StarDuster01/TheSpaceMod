@@ -1,0 +1,23 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "block/block",
+	"textures": {
+		"particle": "spacemod:block/speed_block_side",
+		"device": "spacemod:block/speed_block_side",
+		"tire": "spacemod:block/speed_block_top"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
+			"faces": {
+				"north": {"uv": [16, 16, 0, 0], "texture": "#tire"},
+				"east": {"uv": [0, 0, 16, 16], "texture": "#device"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#tire"},
+				"west": {"uv": [0, 0, 16, 16], "texture": "#device"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#tire"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#tire"}
+			}
+		}
+	]
+}

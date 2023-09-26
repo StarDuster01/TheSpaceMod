@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "spacemod:block/altar_bottom",
+    "up": "spacemod:block/altar_top",
+    "north": "spacemod:block/altar_side",
+    "south": "spacemod:block/altar_side",
+    "west": "spacemod:block/altar_side",
+    "east": "spacemod:block/altar_side"
+  }
+}
