@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "spacemod:block/tntx_bottom",
+    "up": "spacemod:block/tntx_top",
+    "north": "spacemod:block/cube_digger_tnt_side",
+    "south": "spacemod:block/cube_digger_tnt_side",
+    "west": "spacemod:block/cube_digger_tnt_side",
+    "east": "spacemod:block/cube_digger_tnt_side"
+  }
+}

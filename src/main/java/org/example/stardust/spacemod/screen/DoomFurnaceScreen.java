@@ -5,24 +5,25 @@ import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.example.stardust.spacemod.SpaceMod;
 import org.example.stardust.spacemod.screen.renderer.EnergyInfoArea;
+import org.example.stardust.spacemod.screen.renderer.FluidStackRenderer;
 import org.example.stardust.spacemod.util.MouseUtil;
 
 import java.util.Optional;
 
 public class DoomFurnaceScreen extends HandledScreen<DoomFurnaceScreenHandler> {
 
-
-
     private static final Identifier TEXTURE =
             new Identifier(SpaceMod.MOD_ID,"textures/gui/doom_furnace_gui.png");
 
     private EnergyInfoArea energyInfoArea;
+    private FluidStackRenderer fluidStackRenderer;
     public DoomFurnaceScreen(DoomFurnaceScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
     }
@@ -35,6 +36,11 @@ public class DoomFurnaceScreen extends HandledScreen<DoomFurnaceScreenHandler> {
         titleY = 1000;
         playerInventoryTitleY = 1000;
         assignEnergyInfoArea();
+        assignFluidStackRenderer();
+    }
+
+    private void assignFluidStackRenderer() {
+        fluidStackRenderer = new FluidStackRenderer((FluidConstants.BUCKET/81)*64, true, 16, 39 );
     }
 
     private void assignEnergyInfoArea() {
@@ -55,6 +61,7 @@ public class DoomFurnaceScreen extends HandledScreen<DoomFurnaceScreenHandler> {
         int y = (height - backgroundHeight) / 2;
 
         renderEnergyAreaTooltips(context,mouseX, mouseY, x,y);
+        renderFluidTooltip(context, mouseX, mouseY, x, y, 26, 11, fluidStackRenderer);
 
     }
 
@@ -62,6 +69,12 @@ public class DoomFurnaceScreen extends HandledScreen<DoomFurnaceScreenHandler> {
         if(isMouseAboveArea(pMouseX, pMouseY, x, y, 156, 11, 8, 64)) {
             context.drawTooltip(Screens.getTextRenderer(this), energyInfoArea.getTooltips(),
                     Optional.empty(), pMouseX - x, pMouseY - y);
+        }
+    }
+    private void renderFluidTooltip(DrawContext context, int mouseX, int mouseY, int x, int y, int offsetX, int offsetY, FluidStackRenderer renderer) {
+        if(isMouseAboveArea(mouseX, mouseY, x, y, offsetX, offsetY, renderer)) {
+            context.drawTooltip(Screens.getTextRenderer(this), renderer.getTooltip(handler.blockEntity.fluidStorage, TooltipContext.Default.BASIC),
+                    Optional.empty(), mouseX - x, mouseY - y);
         }
     }
 
@@ -78,6 +91,7 @@ public class DoomFurnaceScreen extends HandledScreen<DoomFurnaceScreenHandler> {
         renderProgressArrow(context, x, y);
 
         energyInfoArea.draw(context);
+        fluidStackRenderer.drawFluid(context, handler.blockEntity.fluidStorage, x+26,y+11,16,39,(FluidConstants.BUCKET/81)*64);
 
     }
     private void renderProgressArrow(DrawContext context, int x, int y) {
@@ -86,6 +100,9 @@ public class DoomFurnaceScreen extends HandledScreen<DoomFurnaceScreenHandler> {
         }
     }
 // Checks if the mouse is above a defined area
+private boolean isMouseAboveArea(int pMouseX, int pMouseY, int x, int y, int offsetX, int offsetY, FluidStackRenderer renderer) {
+    return MouseUtil.isMouseOver(pMouseX, pMouseY, x + offsetX, y + offsetY, renderer.getWidth(), renderer.getHeight());
+}
     private boolean isMouseAboveArea(int pMouseX, int pMouseY, int x, int y, int offsetX, int offsetY, int width, int height) {
         return MouseUtil.isMouseOver(pMouseX, pMouseY, x + offsetX, y + offsetY, width, height);
     }

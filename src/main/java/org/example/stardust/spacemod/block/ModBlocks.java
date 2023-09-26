@@ -12,10 +12,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import org.example.stardust.spacemod.SpaceMod;
-import org.example.stardust.spacemod.block.custom.AltarBlock;
-import org.example.stardust.spacemod.block.custom.CannonBlock;
-import org.example.stardust.spacemod.block.custom.DoomFurnaceBlock;
-import org.example.stardust.spacemod.block.custom.SpeedBlock;
+import org.example.stardust.spacemod.block.custom.*;
 
 public class ModBlocks {
     public static final Block BLOODY_STONE = registerBlock("bloody_stone",
@@ -32,6 +29,12 @@ public class ModBlocks {
 
     public static final Block DOOM_FURNACE_BLOCK = registerBlock("doom_furnace_block",
             new DoomFurnaceBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+
+    public static final Block TNTX_BLOCK = registerBlock("tntx_block",
+            new TntXBlock(FabricBlockSettings.copyOf(Blocks.TNT).sounds(BlockSoundGroup.WART_BLOCK)));
+
+    public static final Block CUBE_DIGGER_TNT_BLOCK = registerBlock("cube_digger_tnt_block",
+            new CubeDiggerTntBlock(FabricBlockSettings.copyOf(Blocks.TNT).sounds(BlockSoundGroup.WART_BLOCK)));
 
 
 

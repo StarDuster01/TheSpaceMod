@@ -1,14 +1,20 @@
 package org.example.stardust.spacemod.block.entity;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
@@ -97,6 +103,8 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
         Inventories.writeNbt(nbt, inventory);
         nbt.putInt("doom_furnace.progress", progress);
         nbt.putLong("doom_furnace.energy", energyStorage.amount); // writes how much energy is in the machine to save
+        nbt.put("doom_furnace.variant", fluidStorage.variant.toNbt()); //getNbt destroys the save file
+        nbt.putLong("doom_furnace.fluid_amount", fluidStorage.amount);
 
     }
 
@@ -105,11 +113,14 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
         Inventories.readNbt(nbt, inventory);
         progress = nbt.getInt("doom_furnace.progress");
         energyStorage.amount = nbt.getLong("doom_furnace.energy");
+        fluidStorage.variant = FluidVariant.fromNbt((NbtCompound) nbt.get("doom_furnace.variant"));
+        fluidStorage.amount = nbt.getLong("doom_furnace.fluid_amount");
         super.readNbt(nbt);
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
         fillUpOnEnergy(); // Placeholder for future energy generators
+        fillUpOnFluid();
 
         if(canInsertIntoOutputSlot() && hasRecipe()) {
             increaseCraftingProgress();
@@ -118,11 +129,39 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
 
             if(hasCraftingFinished()) {
                 craftItem();
+                extractFluid();
                 resetProgress();
             }
         } else {
             resetProgress();
         }
+    }
+
+    private void extractFluid() {
+        try(Transaction transaction = Transaction.openOuter()) {
+            this.fluidStorage.extract(FluidVariant.of(Fluids.LAVA), 500, transaction);
+            transaction.commit();
+        }
+    }
+
+    private void fillUpOnFluid() {
+        if(hasFluidSourceItemInFluidSlot(FLUID_ITEM_SLOT)) {
+            transferItemFluidToTank(FLUID_ITEM_SLOT);
+            
+        }
+    }
+
+    private void transferItemFluidToTank(int fluidItemSlot) {
+        try(Transaction transaction = Transaction.openOuter()) {
+            this.fluidStorage.insert(FluidVariant.of(Fluids.LAVA),
+                    (FluidConstants.BUCKET/81), transaction);
+            transaction.commit();
+            this.setStack(fluidItemSlot, new ItemStack(Items.BUCKET));
+        }
+    }
+
+    private boolean hasFluidSourceItemInFluidSlot(int fluidItemSlot) {
+        return this.getStack(fluidItemSlot).getItem() == Items.LAVA_BUCKET; // hard coded to the input fluid type
     }
 
     private void extractEnergy() {
@@ -177,7 +216,12 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
         ItemStack output = recipe.get().getOutput(null);
 
         return canInsertAmountIntoOutputSlot(output.getCount())
-                && canInsertItemIntoOutputSlot(output) && hasEnoughEnergyToCraft();
+                && canInsertItemIntoOutputSlot(output) && hasEnoughEnergyToCraft() && hasEnoughFluidToCraft();
+    }
+
+    private boolean hasEnoughFluidToCraft() {
+        return this.fluidStorage.amount >= 500; // in mB
+        
     }
 
     private boolean hasEnoughEnergyToCraft() {
@@ -272,6 +316,26 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
 
         }
 
+    };
+
+    // HANDLE FLUID
+    // one bucket is 81000 droplets which is 1000 mB
+    public final SingleVariantStorage<FluidVariant> fluidStorage = new SingleVariantStorage<FluidVariant>() {
+        @Override
+        protected FluidVariant getBlankVariant() {
+            return FluidVariant.blank();
+        }
+
+        @Override
+        protected long getCapacity(FluidVariant variant) {
+            return (FluidConstants.BUCKET/81)*64; // == 64 buckets because math
+        }
+
+        @Override
+        protected void onFinalCommit() {
+            markDirty();
+            getWorld().updateListeners(pos, getCachedState(), getCachedState(),3);
+        }
     };
 
     private boolean canInsertIntoOutputSlot() {

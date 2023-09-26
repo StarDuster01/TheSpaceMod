@@ -19,6 +19,8 @@
   "item.spacemod.frost_wand": "Frost Wand",
   "itemgroup.space": "Space Mod",
   "block.spacemod.altar_block": "Altar Block",
+  "block.spacemod.tntx_block": "Tnt X Block",
+  "block.spacemod.cube_digger_tnt_block": "Cube Digger Tnt Block",
   "block.spacemod.goo_source_block": "Goo Source Block",
   "block.spacemod.doom_furnace_block": "Doom Furnace",
 
@@ -26,6 +28,8 @@
   "Speed_Block_tooltip": "Makes player run very fast while on block",
   "Cannon_Block_tooltip": "Fires Shitloads of TNT very far",
   "Altar_Block_tooltip": "Sacrifice things here",
+  "spacemod.tooltip.liquid.amount.with.capacity": "%s / %s mB",
+  "spacemod.tooltip.liquid.amount": "%s mB",
 
 
   "creativetab.space_tab": "Space Mod Tab"
