@@ -19,7 +19,8 @@
   "item.spacemod.frost_wand": "Frost Wand",
   "itemgroup.space": "Space Mod",
   "block.spacemod.altar_block": "Altar Block",
-  "block.spacemod.goo_source_block": "Altar Block",
+  "block.spacemod.goo_source_block": "Goo Source Block",
+  "block.spacemod.doom_furnace_block": "Doom Furnace",
 
   "tooltip.spacemod.metal_detector.tooltip": "Finds valuables underground",
   "Speed_Block_tooltip": "Makes player run very fast while on block",

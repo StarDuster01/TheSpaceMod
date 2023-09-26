@@ -32,6 +32,7 @@ public class ModItemGroups {
                         entries.add(ModBlocks.ALTAR_BLOCK);
                         entries.add(ModBlocks.CANNON_BLOCK);
                         entries.add(ModBlocks.SPEED_BLOCK);
+                        entries.add(ModBlocks.DOOM_FURNACE_BLOCK);
 
 
 

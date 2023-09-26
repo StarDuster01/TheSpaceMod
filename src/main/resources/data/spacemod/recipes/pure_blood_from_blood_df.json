@@ -1,0 +1,11 @@
+{
+  "type": "spacemod:doom_furnace",
+  "ingredients": [
+    {
+      "item": "spacemod:blood"
+    }
+  ],
+  "output": {
+    "item": "spacemod:pure_blood"
+  }
+}

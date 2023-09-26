@@ -17,8 +17,12 @@
     ],
     "main": [
       "org.example.stardust.spacemod.SpaceMod"
+    ],
+    "rei_client": [
+      "org.example.stardust.spacemod.compat.SpaceModREIClientPlugin"
     ]
   },
+
   "mixins": [
     "spacemod.mixins.json"
   ],

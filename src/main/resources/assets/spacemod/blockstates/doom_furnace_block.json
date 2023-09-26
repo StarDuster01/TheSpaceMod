@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "facing=north": {"model": "spacemod:block/doom_furnace_block"},
+    "facing=south": {"model": "spacemod:block/doom_furnace_block", "y": 180},
+    "facing=east": {"model": "spacemod:block/doom_furnace_block", "y": 90},
+    "facing=west": {"model": "spacemod:block/doom_furnace_block", "y": 270}
+  }
+}
+

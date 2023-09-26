@@ -14,6 +14,7 @@ import net.minecraft.util.Identifier;
 import org.example.stardust.spacemod.SpaceMod;
 import org.example.stardust.spacemod.block.custom.AltarBlock;
 import org.example.stardust.spacemod.block.custom.CannonBlock;
+import org.example.stardust.spacemod.block.custom.DoomFurnaceBlock;
 import org.example.stardust.spacemod.block.custom.SpeedBlock;
 
 public class ModBlocks {
@@ -28,6 +29,9 @@ public class ModBlocks {
 
     public static final Block SPEED_BLOCK = registerBlock("speed_block",
             new SpeedBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+
+    public static final Block DOOM_FURNACE_BLOCK = registerBlock("doom_furnace_block",
+            new DoomFurnaceBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
 
 
 

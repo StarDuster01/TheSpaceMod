@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "spacemod:block/doom_furnace_bottom",
+    "up": "spacemod:block/doom_furnace_top",
+    "north": "spacemod:block/doom_furnace_side_2",
+    "south": "spacemod:block/doom_furnace_side_1",
+    "west": "spacemod:block/doom_furnace_side_1",
+    "east": "spacemod:block/doom_furnace_side_1"
+  }
+}

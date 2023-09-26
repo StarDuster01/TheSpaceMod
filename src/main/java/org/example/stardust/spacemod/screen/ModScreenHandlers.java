@@ -1,0 +1,19 @@
+package org.example.stardust.spacemod.screen;
+
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.util.Identifier;
+import org.example.stardust.spacemod.SpaceMod;
+
+public class ModScreenHandlers {
+
+    public static final ScreenHandlerType<DoomFurnaceScreenHandler> DOOM_FURNACE_SCREEN_HANDLER =
+            Registry.register(Registries.SCREEN_HANDLER, new Identifier(SpaceMod.MOD_ID,"doom_furnace_screen_handler"),
+            new ExtendedScreenHandlerType<>(DoomFurnaceScreenHandler::new));
+
+    public static void registerScreenHandler() {
+        SpaceMod.LOGGER.info("Registering Sreen Handler for" + SpaceMod.MOD_ID);
+    }
+}
