@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public class DoomFurnaceScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private final PropertyDelegate propertyDelegate;
-    private final DoomFurnaceBlockEntity blockEntity;
+    final DoomFurnaceBlockEntity blockEntity;
 
 
     protected DoomFurnaceScreenHandler(int syncId, PlayerInventory inventory, PacketByteBuf buf) {

@@ -1,6 +1,7 @@
 package org.example.stardust.spacemod.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -9,20 +10,36 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.example.stardust.spacemod.SpaceMod;
+import org.example.stardust.spacemod.screen.renderer.EnergyInfoArea;
+import org.example.stardust.spacemod.util.MouseUtil;
+
+import java.util.Optional;
 
 public class DoomFurnaceScreen extends HandledScreen<DoomFurnaceScreenHandler> {
 
+
+
     private static final Identifier TEXTURE =
             new Identifier(SpaceMod.MOD_ID,"textures/gui/doom_furnace_gui.png");
+
+    private EnergyInfoArea energyInfoArea;
     public DoomFurnaceScreen(DoomFurnaceScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
     }
+
+
 
     @Override
     protected void init() {
         super.init();
         titleY = 1000;
         playerInventoryTitleY = 1000;
+        assignEnergyInfoArea();
+    }
+
+    private void assignEnergyInfoArea() {
+        energyInfoArea = new EnergyInfoArea(((width - backgroundWidth) / 2) + 156,
+                ((height - backgroundHeight) / 2 ) + 11, handler.blockEntity.energyStorage);
     }
 
     @Override
@@ -30,6 +47,22 @@ public class DoomFurnaceScreen extends HandledScreen<DoomFurnaceScreenHandler> {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context,mouseX,mouseY);
+    }
+
+    @Override
+    protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
+        int x = (width - backgroundWidth) / 2;
+        int y = (height - backgroundHeight) / 2;
+
+        renderEnergyAreaTooltips(context,mouseX, mouseY, x,y);
+
+    }
+
+    private void renderEnergyAreaTooltips(DrawContext context, int pMouseX, int pMouseY, int x, int y) {
+        if(isMouseAboveArea(pMouseX, pMouseY, x, y, 156, 11, 8, 64)) {
+            context.drawTooltip(Screens.getTextRenderer(this), energyInfoArea.getTooltips(),
+                    Optional.empty(), pMouseX - x, pMouseY - y);
+        }
     }
 
     @Override
@@ -44,11 +77,17 @@ public class DoomFurnaceScreen extends HandledScreen<DoomFurnaceScreenHandler> {
 
         renderProgressArrow(context, x, y);
 
+        energyInfoArea.draw(context);
+
     }
     private void renderProgressArrow(DrawContext context, int x, int y) {
         if(handler.isCrafting()) {
             context.drawTexture(TEXTURE, x + 85, y + 30, 176, 0, 8, handler.getScaledProgress());
         }
+    }
+// Checks if the mouse is above a defined area
+    private boolean isMouseAboveArea(int pMouseX, int pMouseY, int x, int y, int offsetX, int offsetY, int width, int height) {
+        return MouseUtil.isMouseOver(pMouseX, pMouseY, x + offsetX, y + offsetY, width, height);
     }
 
 

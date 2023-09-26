@@ -7,6 +7,7 @@ import net.minecraft.registry.Registry;
 import org.example.stardust.spacemod.SpaceMod;
 import net.minecraft.util.Identifier;
 import org.example.stardust.spacemod.block.ModBlocks;
+import team.reborn.energy.api.EnergyStorage;
 
 public class ModBlockEntities {
 
@@ -17,5 +18,7 @@ public class ModBlockEntities {
 
     public static void registerBlockEntities() {
         SpaceMod.LOGGER.info("Registering Block Entities for" + SpaceMod.MOD_ID);
+
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, DOOM_FURNACE_BE); // Allows the machine to accept energy from the side
     }
 }

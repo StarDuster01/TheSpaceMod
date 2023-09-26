@@ -1,6 +1,7 @@
 package org.example.stardust.spacemod.block.entity;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,16 +11,23 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import org.example.stardust.spacemod.block.custom.DoomFurnaceBlock;
+import org.example.stardust.spacemod.item.ModItems;
 import org.example.stardust.spacemod.recipe.DoomFurnaceRecipe;
 import org.example.stardust.spacemod.screen.DoomFurnaceScreenHandler;
 import org.jetbrains.annotations.Nullable;
+import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import java.util.Optional;
 
@@ -33,7 +41,7 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
 
     protected final PropertyDelegate propertyDelegate;
     private int progress = 0;
-    private int maxProgress = 72;
+    private int maxProgress = 100;
 
     public DoomFurnaceBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.DOOM_FURNACE_BE, pos, state);
@@ -69,7 +77,7 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
 
     @Override
     public Text getDisplayName() {
-        return Text.literal("Gem Empowering Station");
+        return Text.literal("Doom Furnace");
     }
 
     @Nullable
@@ -87,19 +95,25 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, inventory);
-        nbt.putInt("gem_empowering_station.progress", progress);
+        nbt.putInt("doom_furnace.progress", progress);
+        nbt.putLong("doom_furnace.energy", energyStorage.amount); // writes how much energy is in the machine to save
+
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         Inventories.readNbt(nbt, inventory);
-        progress = nbt.getInt("gem_empowering_station.progress");
+        progress = nbt.getInt("doom_furnace.progress");
+        energyStorage.amount = nbt.getLong("doom_furnace.energy");
         super.readNbt(nbt);
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
+        fillUpOnEnergy(); // Placeholder for future energy generators
+
         if(canInsertIntoOutputSlot() && hasRecipe()) {
             increaseCraftingProgress();
+            extractEnergy();
             markDirty(world, pos, state);
 
             if(hasCraftingFinished()) {
@@ -109,6 +123,28 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
         } else {
             resetProgress();
         }
+    }
+
+    private void extractEnergy() {
+        try(Transaction transaction = Transaction.openOuter()) {
+            this.energyStorage.extract(32L,transaction);
+            transaction.commit();
+        }
+    }
+
+    private void fillUpOnEnergy() {
+        if(hasEnergyItemInEnergySlot(ENERGY_ITEM_SLOT)) {
+            try(Transaction transaction = Transaction.openOuter()) {
+                this.energyStorage.insert(64, transaction);
+                transaction.commit();
+            }
+            
+        }
+    }
+
+    private boolean hasEnergyItemInEnergySlot(int energyItemSlot) {
+        // List of items that can be used as energy
+        return this.getStack(energyItemSlot).getItem() == ModItems.GALLIUM_INGOT;
     }
 
     private void craftItem() {
@@ -141,7 +177,11 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
         ItemStack output = recipe.get().getOutput(null);
 
         return canInsertAmountIntoOutputSlot(output.getCount())
-                && canInsertItemIntoOutputSlot(output);
+                && canInsertItemIntoOutputSlot(output) && hasEnoughEnergyToCraft();
+    }
+
+    private boolean hasEnoughEnergyToCraft() {
+        return this.energyStorage.amount >= 32 * this.maxProgress; //32 energy per tick times amount of ticks
     }
 
     private boolean canInsertItemIntoOutputSlot(ItemStack output) {
@@ -161,8 +201,92 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
         return this.getWorld().getRecipeManager().getFirstMatch(DoomFurnaceRecipe.Type.INSTANCE, inventory, this.getWorld());
     }
 
+    @Override
+    public boolean canExtract(int slot, ItemStack stack, Direction side) {
+        Direction localDir = this.getWorld().getBlockState(this.pos).get(DoomFurnaceBlock.FACING);
+
+        if(side == Direction.UP) {
+            return false;
+        }
+
+        // Down extract 2
+        if(side == Direction.DOWN) {
+            return slot == OUTPUT_SLOT;
+        }
+
+        // bottom extract 2
+        // right extract 2
+        return switch (localDir) {
+            default ->  side.getOpposite() == Direction.SOUTH && slot == OUTPUT_SLOT ||
+                    side.getOpposite() == Direction.EAST && slot == OUTPUT_SLOT;
+
+            case EAST -> side.rotateYClockwise() == Direction.SOUTH && slot == OUTPUT_SLOT ||
+                    side.rotateYClockwise() == Direction.EAST && slot == OUTPUT_SLOT;
+
+            case SOUTH ->   side == Direction.SOUTH && slot == OUTPUT_SLOT ||
+                    side == Direction.EAST && slot == OUTPUT_SLOT;
+
+            case WEST -> side.rotateYCounterclockwise() == Direction.SOUTH && slot == OUTPUT_SLOT ||
+                    side.rotateYCounterclockwise() == Direction.EAST && slot == OUTPUT_SLOT;
+        };
+    }
+
+    @Override
+    public boolean canInsert(int slot, ItemStack stack, @Nullable Direction side) {
+        Direction localDir = this.getWorld().getBlockState(pos).get(DoomFurnaceBlock.FACING);
+
+        if(side == Direction.DOWN) {
+            return false;
+        }
+        //defines that you may insert top, note this is the thing Hoppers check
+
+        if(side == Direction.UP) {
+            return slot == INPUT_SLOT;
+        }
+
+        // Defines two sides that can be inserted into
+
+        return switch (localDir) {
+            default -> //NORTH
+                    side.getOpposite() == Direction.NORTH && slot == INPUT_SLOT ||
+                            side.getOpposite() == Direction.WEST && slot == INPUT_SLOT;
+            case EAST ->
+                    side.rotateYClockwise() == Direction.NORTH && slot == INPUT_SLOT ||
+                            side.rotateYClockwise() == Direction.WEST && slot == INPUT_SLOT;
+            case SOUTH ->
+                    side == Direction.NORTH && slot == INPUT_SLOT ||
+                            side == Direction.WEST && slot == INPUT_SLOT;
+            case WEST ->
+                    side.rotateYCounterclockwise() == Direction.NORTH && slot == INPUT_SLOT ||
+                            side.rotateYCounterclockwise() == Direction.WEST && slot == INPUT_SLOT;
+        };
+    }
+
+
+//Creates an energy storage called energyStorage with a given capacity and charge/decharge rate
+    public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(64000,200,200) {
+        @Override
+        protected void onFinalCommit() {
+            markDirty();
+            getWorld().updateListeners(pos, getCachedState(),getCachedState(),3);
+
+        }
+
+    };
+
     private boolean canInsertIntoOutputSlot() {
         return this.getStack(OUTPUT_SLOT).isEmpty() ||
                 this.getStack(OUTPUT_SLOT).getCount() < this.getStack(OUTPUT_SLOT).getMaxCount();
+    }
+// The following two functions are used to synchronize server and client for energy stuff
+    @Nullable
+    @Override
+    public Packet<ClientPlayPacketListener> toUpdatePacket() {
+        return BlockEntityUpdateS2CPacket.create(this);
+    }
+
+    @Override
+    public NbtCompound toInitialChunkDataNbt() {
+        return createNbt();
     }
 }
