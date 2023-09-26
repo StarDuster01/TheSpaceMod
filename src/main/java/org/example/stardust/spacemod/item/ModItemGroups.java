@@ -20,6 +20,9 @@ public class ModItemGroups {
                     .icon(() -> new ItemStack(ModItems.BLOOD)).entries((displayContext, entries) -> {
                         entries.add(ModItems.BLOOD);
                         entries.add(ModItems.PURE_BLOOD);
+                        entries.add(ModItems.GALLIUM_INGOT);
+                        entries.add(ModItems.GRAVITY_SWORD);
+                        entries.add(ModItems.GLASS_SWORD);
                         entries.add(ModItems.CLOAKING_DEVICE_ITEM);
                         entries.add(ModItems.SACRIFICIAL_KNIFE);
                         entries.add(ModItems.UNICORN_SPAWN_EGG);
