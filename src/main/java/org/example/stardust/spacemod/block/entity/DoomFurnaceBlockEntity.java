@@ -5,11 +5,11 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
@@ -33,11 +33,12 @@ import org.example.stardust.spacemod.item.ModItems;
 import org.example.stardust.spacemod.recipe.DoomFurnaceRecipe;
 import org.example.stardust.spacemod.screen.DoomFurnaceScreenHandler;
 import org.jetbrains.annotations.Nullable;
+import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import java.util.Optional;
 
-public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
+public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory, EnergyStorage {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(4, ItemStack.EMPTY);
 
     private static final int INPUT_SLOT = 0;
@@ -308,7 +309,7 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
 
 
 //Creates an energy storage called energyStorage with a given capacity and charge/decharge rate
-    public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(64000,200,200) {
+    public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(640000,2000,2000) {
         @Override
         protected void onFinalCommit() {
             markDirty();
@@ -353,4 +354,25 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
     public NbtCompound toInitialChunkDataNbt() {
         return createNbt();
     }
+
+    @Override
+    public long insert(long maxAmount, TransactionContext transaction) {
+        return this.energyStorage.insert(maxAmount, transaction);
+    }
+
+    @Override
+    public long extract(long maxAmount, TransactionContext transaction) {
+        return this.energyStorage.extract(maxAmount, transaction);
+    }
+
+    @Override
+    public long getAmount() {
+        return this.energyStorage.getAmount();
+    }
+
+    @Override
+    public long getCapacity() {
+        return this.energyStorage.getCapacity();
+    }
+
 }

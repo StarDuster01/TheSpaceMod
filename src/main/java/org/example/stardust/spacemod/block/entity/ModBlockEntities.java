@@ -17,6 +17,11 @@ public class ModBlockEntities {
                     FabricBlockEntityTypeBuilder.create(DoomFurnaceBlockEntity::new,
                             ModBlocks.DOOM_FURNACE_BLOCK).build(null));
 
+    public static final BlockEntityType<CoalGeneratorBlockEntity> COAL_GENERATOR_BE =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "coal_generator_block"),
+                    FabricBlockEntityTypeBuilder.create(CoalGeneratorBlockEntity::new,
+                            ModBlocks.COAL_GENERATOR_BLOCK).build(null));
+
 
 
     public static void registerBlockEntities() {

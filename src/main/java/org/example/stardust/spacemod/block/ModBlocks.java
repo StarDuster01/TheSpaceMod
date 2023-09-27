@@ -1,7 +1,6 @@
 package org.example.stardust.spacemod.block;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -13,6 +12,9 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import org.example.stardust.spacemod.SpaceMod;
 import org.example.stardust.spacemod.block.custom.*;
+import org.example.stardust.spacemod.block.custom.explosives.CubeDiggerTntBlock;
+import org.example.stardust.spacemod.block.custom.explosives.TntXBlock;
+import org.example.stardust.spacemod.block.custom.explosives.ZombieTntBlock;
 
 public class ModBlocks {
     public static final Block BLOODY_STONE = registerBlock("bloody_stone",
@@ -30,11 +32,17 @@ public class ModBlocks {
     public static final Block DOOM_FURNACE_BLOCK = registerBlock("doom_furnace_block",
             new DoomFurnaceBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
 
+    public static final Block COAL_GENERATOR_BLOCK = registerBlock("coal_generator_block",
+            new CoalGeneratorBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+
     public static final Block TNTX_BLOCK = registerBlock("tntx_block",
             new TntXBlock(FabricBlockSettings.copyOf(Blocks.TNT).sounds(BlockSoundGroup.WART_BLOCK)));
 
     public static final Block CUBE_DIGGER_TNT_BLOCK = registerBlock("cube_digger_tnt_block",
             new CubeDiggerTntBlock(FabricBlockSettings.copyOf(Blocks.TNT).sounds(BlockSoundGroup.WART_BLOCK)));
+    public static final Block ZOMBIE_TNT_BLOCK = registerBlock("zombie_tnt_block",
+            new ZombieTntBlock(FabricBlockSettings.copyOf(Blocks.TNT).sounds(BlockSoundGroup.WART_BLOCK)));
+
 
 
 

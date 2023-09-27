@@ -33,8 +33,10 @@ public class ModItemGroups {
                         entries.add(ModBlocks.CANNON_BLOCK);
                         entries.add(ModBlocks.SPEED_BLOCK);
                         entries.add(ModBlocks.DOOM_FURNACE_BLOCK);
+                        entries.add(ModBlocks.COAL_GENERATOR_BLOCK);
                         entries.add(ModBlocks.TNTX_BLOCK);
                         entries.add(ModBlocks.CUBE_DIGGER_TNT_BLOCK);
+                        entries.add(ModBlocks.ZOMBIE_TNT_BLOCK);
 
 
 

@@ -1,11 +1,8 @@
 package org.example.stardust.spacemod;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import org.example.stardust.spacemod.block.ModBlocks;
 import org.example.stardust.spacemod.block.entity.ModBlockEntities;
-import org.example.stardust.spacemod.block.entity.TntXEntity;
-import org.example.stardust.spacemod.block.entity.renderer.TntXEntityRenderer;
 import org.example.stardust.spacemod.entity.ModEntities;
 import org.example.stardust.spacemod.entity.custom.FormicEntity;
 import org.example.stardust.spacemod.entity.custom.UnicornEntity;

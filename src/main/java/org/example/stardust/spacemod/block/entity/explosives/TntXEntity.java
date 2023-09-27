@@ -1,4 +1,4 @@
-package org.example.stardust.spacemod.block.entity;
+package org.example.stardust.spacemod.block.entity.explosives;
 
 import blue.endless.jankson.annotation.Nullable;
 import net.minecraft.entity.EntityType;

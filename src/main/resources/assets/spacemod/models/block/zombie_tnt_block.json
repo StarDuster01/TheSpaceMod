@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "spacemod:block/zombie_tnt_bottom",
+    "up": "spacemod:block/zombie_tnt_top",
+    "north": "spacemod:block/zombie_tnt_side",
+    "south": "spacemod:block/zombie_tnt_side",
+    "west": "spacemod:block/zombie_tnt_side",
+    "east": "spacemod:block/zombie_tnt_side"
+  }
+}

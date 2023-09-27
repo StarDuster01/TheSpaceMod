@@ -6,7 +6,9 @@ import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import org.example.stardust.spacemod.entity.ModEntities;
 import org.example.stardust.spacemod.entity.client.UnicornRenderer;
 import org.example.stardust.spacemod.entity.client.FormicRenderer;
+import org.example.stardust.spacemod.screen.CoalGeneratorScreenHandler;
 import org.example.stardust.spacemod.screen.DoomFurnaceScreen;
+import org.example.stardust.spacemod.screen.CoalGeneratorScreen;
 import org.example.stardust.spacemod.screen.ModScreenHandlers;
 
 public class SpaceModClient implements ClientModInitializer {
@@ -19,6 +21,7 @@ public class SpaceModClient implements ClientModInitializer {
 
 
         HandledScreens.register(ModScreenHandlers.DOOM_FURNACE_SCREEN_HANDLER, DoomFurnaceScreen::new);
+        HandledScreens.register(ModScreenHandlers.COAL_GENERATOR_SCREEN_HANDLER, CoalGeneratorScreen::new);
 
 
 

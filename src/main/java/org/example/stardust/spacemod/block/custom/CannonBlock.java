@@ -39,11 +39,11 @@ public class CannonBlock extends HorizontalFacingBlock {
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos neighborPos, boolean moved) {
         if (world.isClient) return; // Skip if we're on the client
 
-        boolean receivingPower = world.isReceivingRedstonePower(pos);
+        boolean receivingPower = true;
 
         if (receivingPower) {
-            // Iterating over all horizontal directions (North, South, West, East)
-            for (Direction direction : Direction.Type.HORIZONTAL) {
+            // Iterate over all possible neighboring blocks in all 6 directions
+            for(Direction direction : Direction.values()) {
                 BlockPos neighbor = pos.offset(direction);
 
                 if (world.getBlockState(neighbor).isOf(Blocks.TNT)) {
@@ -68,6 +68,7 @@ public class CannonBlock extends HorizontalFacingBlock {
             }
         }
     }
+
 
 
     @Override

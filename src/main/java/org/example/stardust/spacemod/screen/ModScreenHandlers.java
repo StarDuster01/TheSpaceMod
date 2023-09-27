@@ -12,6 +12,10 @@ public class ModScreenHandlers {
     public static final ScreenHandlerType<DoomFurnaceScreenHandler> DOOM_FURNACE_SCREEN_HANDLER =
             Registry.register(Registries.SCREEN_HANDLER, new Identifier(SpaceMod.MOD_ID,"doom_furnace_screen_handler"),
             new ExtendedScreenHandlerType<>(DoomFurnaceScreenHandler::new));
+    public static final ScreenHandlerType<CoalGeneratorScreenHandler> COAL_GENERATOR_SCREEN_HANDLER =
+            Registry.register(Registries.SCREEN_HANDLER, new Identifier(SpaceMod.MOD_ID,"coal_generator_screen_handler"),
+                    new ExtendedScreenHandlerType<>(CoalGeneratorScreenHandler::new));
+
 
     public static void registerScreenHandler() {
         SpaceMod.LOGGER.info("Registering Sreen Handler for" + SpaceMod.MOD_ID);
