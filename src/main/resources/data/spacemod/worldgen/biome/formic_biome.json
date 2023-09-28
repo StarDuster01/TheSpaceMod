@@ -1,0 +1,86 @@
+{
+  "temperature": 0.8,
+  "downfall": 1.4,
+  "has_precipitation": true,
+  "effects": {
+    "sky_color": 271197,
+    "fog_color": 12638463,
+    "water_color": 4159204,
+    "water_fog_color": 329011,
+    "grass_color": 13703706,
+    "foliage_color": 328965,
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2
+    }
+  },
+  "spawners": {
+    "creature": [
+      {
+        "type": "spacemod:griffin",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "spacemod:formic",
+        "weight": 1,
+        "minCount": 16,
+        "maxCount": 16
+      },
+      {
+        "type": "spacemod:unicorn",
+        "weight": 1,
+        "minCount": 16,
+        "maxCount": 16
+      },
+      {
+        "type": "minecraft:allay",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "minecraft:bat",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ]
+  },
+  "spawn_costs": {},
+  "carvers": {
+    "air": [
+      "minecraft:cave_extra_underground",
+      "minecraft:cave",
+      "minecraft:canyon"
+    ],
+    "liquid": [
+      "minecraft:cave"
+    ]
+  },
+  "features": [
+    [
+      "minecraft:ore_coal_lower",
+      "minecraft:ore_coal_upper",
+      "minecraft:ore_diamond",
+      "minecraft:ore_diamond_buried",
+      "minecraft:ore_diamond_large",
+      "minecraft:mega_jungle_tree_checked",
+      "minecraft:ore_gold",
+      "minecraft:ore_gold_lower",
+      "minecraft:ore_lapis_buried",
+      "minecraft:ore_lapis",
+      "minecraft:ore_redstone",
+      "minecraft:ore_redstone_lower",
+      "minecraft:ore_emerald",
+      "minecraft:glowstone",
+      "minecraft:monster_room",
+      "minecraft:monster_room_deep",
+      "minecraft:spring_lava",
+      "minecraft:warped_fungi"
+    ]
+  ]
+}
