@@ -9,6 +9,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import org.example.stardust.spacemod.SpaceMod;
 import org.example.stardust.spacemod.entity.custom.FormicEntity;
+import org.example.stardust.spacemod.entity.custom.GriffinEntity;
 import org.example.stardust.spacemod.entity.custom.UnicornEntity;
 
 public class ModEntities {
@@ -19,4 +20,8 @@ public class ModEntities {
     public static final EntityType<FormicEntity> FORMIC = Registry.register(Registries.ENTITY_TYPE,
             new Identifier(SpaceMod.MOD_ID, "formic"), FabricEntityTypeBuilder.create(SpawnGroup.CREATURE,
                     FormicEntity::new).dimensions(EntityDimensions.fixed(1.5f,1.5f)).build());
+
+    public static final EntityType<GriffinEntity> GRIFFIN = Registry.register(Registries.ENTITY_TYPE,
+            new Identifier(SpaceMod.MOD_ID, "griffin"), FabricEntityTypeBuilder.create(SpawnGroup.CREATURE,
+                    GriffinEntity::new).dimensions(EntityDimensions.fixed(1.5f,1.5f)).build());
 }

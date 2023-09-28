@@ -17,6 +17,7 @@ public class ModItems {
     public static final Item GALLIUM_INGOT = registerItem("gallium_ingot", new Item(new FabricItemSettings()));
     public static final Item UNICORN_SPAWN_EGG = registerItem("unicorn_spawn_egg", new SpawnEggItem(ModEntities.UNICORN, 0xD57E36,0x1D0D00, new FabricItemSettings()));
     public static final Item FORMIC_SPAWN_EGG = registerItem("formic_spawn_egg", new SpawnEggItem(ModEntities.FORMIC, 0x1D0D00,0xD57E36, new FabricItemSettings()));
+    public static final Item GRIFFIN_SPAWN_EGG = registerItem("griffin_spawn_egg", new SpawnEggItem(ModEntities.GRIFFIN, 0xE7E7E7, 0xFFB5B5, new FabricItemSettings()));
     public static final Item PURE_BLOOD = registerItem("pure_blood", new Item(new FabricItemSettings()));
     public static final Item CLOAKING_DEVICE_ITEM = registerItem("cloaking_device_item", new CloakingDeviceItem(new FabricItemSettings().maxDamage(100)));
     public static final Item FROST_WAND = registerItem("frost_wand", new FrostWand(new FabricItemSettings().maxDamage(300)));

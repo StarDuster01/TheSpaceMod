@@ -49,13 +49,18 @@ public class UnicornEntity extends AbstractHorseEntity implements GeoEntity {
 
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 
+    private final AnimationController<UnicornEntity> controller = new AnimationController<>(this, "controller_name", 10, this::predicate);
+
     public UnicornEntity(EntityType<? extends AbstractHorseEntity> entityType, World world) {
         super(entityType, world);
     }
 
+    // This provides an identifer for the Abstract Horse Entity this is based off of to use
     private static final UUID UNICORN_ARMOR_BONUS_ID = UUID.fromString("8a72f69b-ef9d-4008-9c4a-9fb564ea9d8b");
 
 
+
+// This defines the health attack damage speed movement and jump strength of the unicorn
     public static DefaultAttributeContainer setAttributes() {
         return AnimalEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 16.0f)
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0f)
@@ -66,18 +71,18 @@ public class UnicornEntity extends AbstractHorseEntity implements GeoEntity {
 
     }
 
+    // This makes it so the unicorn does not take fall damage
     @Override
     public boolean handleFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
         if (fallDistance > 1.0f) {
             this.playSound(SoundEvents.ENTITY_HORSE_LAND, 0.4f, 1.0f);
         }
-        // Return false, do not play any sound or inflict any damage.
         return false;
     }
 
 
 
-
+// This allows the unicorn
     @Override
     protected void updateSaddle() {
         if (this.getWorld().isClient) {
@@ -98,14 +103,19 @@ public class UnicornEntity extends AbstractHorseEntity implements GeoEntity {
             }
         }
     }
+    @Nullable
+    @Override
+    public PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
+        return ModEntities.UNICORN.create(world);
+    }
 
-
-
+    // This gives the unicorn an armor slot
     @Override
     public boolean hasArmorSlot() {
         return true;
     }
 
+    // this checks if the item is horse armor
     @Override
     public boolean isHorseArmor(ItemStack item) {
         return item.getItem() instanceof HorseArmorItem;
@@ -133,7 +143,7 @@ public class UnicornEntity extends AbstractHorseEntity implements GeoEntity {
     protected void initGoals() {
         this.goalSelector.add(1, new EscapeDangerGoal(this, 1.2));
         this.goalSelector.add(1, new HorseBondWithPlayerGoal(this, 1.2));
-        this.goalSelector.add(2, new AnimalMateGoal(this, 1.0, AbstractHorseEntity.class));
+        this.goalSelector.add(2, new AnimalMateGoal(this, 1.0, UnicornEntity.class));
         this.goalSelector.add(4, new FollowParentGoal(this, 1.0));
         this.goalSelector.add(6, new WanderAroundFarGoal(this, 0.7));
         this.goalSelector.add(7, new LookAtEntityGoal(this, PlayerEntity.class, 6.0f));
@@ -149,28 +159,33 @@ public class UnicornEntity extends AbstractHorseEntity implements GeoEntity {
     }
 
 
-    private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
-        if(tAnimationState.isMoving()) {
-            tAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.unicorn.walk", Animation.LoopType.LOOP));
-
-
-        }
-        if(isAttacking()) {
-            tAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.unicorn.attack_charge", Animation.LoopType.PLAY_ONCE));
-        }
-        tAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.unicorn.idle", Animation.LoopType.LOOP));
-        return PlayState.CONTINUE;
+    // This method is required to build the animations in the playstate, the animations will not work without this
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
+        controllerRegistrar.add(new AnimationController<>(this, "controller", 0, this::predicate));
 
     }
 
+    private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
+        if(tAnimationState.isMoving()) {
+            tAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.model.run", Animation.LoopType.LOOP));
+
+        }
+        else if(isAttacking()) {
+            tAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.model.attack_charge", Animation.LoopType.PLAY_ONCE).then("animation.model.attack", Animation.LoopType.LOOP));
+        }
+        else {
+            tAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.model.idle", Animation.LoopType.LOOP));
+        }
+        return PlayState.CONTINUE;
+    }
+
+
+
+    // No idea what this is
     @Override
     public EntityView method_48926() {
         return null;
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
-
     }
 
     @Override

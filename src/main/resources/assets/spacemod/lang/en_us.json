@@ -14,6 +14,7 @@
   "item.spacemod.sacrificial_knife": "Sacrificial Knife",
   "item.spacemod.unicorn_spawn_egg": "Unicorn Spawn Egg",
   "item.spacemod.formic_spawn_egg": "Formic Spawn Egg",
+  "item.spacemod.griffin_spawn_egg": "Griffin Spawn Egg",
   "item.spacemod.glass_sword": "Glass Sword",
   "item.spacemod.gravity_sword": "Gravity Sword",
   "item.spacemod.frost_wand": "Frost Wand",
@@ -23,6 +24,9 @@
   "block.spacemod.cube_digger_tnt_block": "Cube Digger Tnt Block",
   "block.spacemod.goo_source_block": "Goo Source Block",
   "block.spacemod.doom_furnace_block": "Doom Furnace",
+  "entity.spacemod.formic": "Formic",
+  "entity.spacemod.griffin": "Griffin",
+  "entity.spacemod.unicorn": "Unicorn",
 
   "tooltip.spacemod.metal_detector.tooltip": "Finds valuables underground",
   "Speed_Block_tooltip": "Makes player run very fast while on block",
