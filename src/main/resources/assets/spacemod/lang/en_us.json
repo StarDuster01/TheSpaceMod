@@ -28,6 +28,10 @@
   "entity.spacemod.griffin": "Griffin",
   "entity.spacemod.unicorn": "Unicorn",
 
+  "key.category.spacemod.spacemod": "Spacemod Mod Keys",
+  "key.spacemod.fly.up": "Fly Up On Spacemod Entity",
+  "key.spacemod.fly.down": "Fly Down On Spacemod Entity",
+
   "tooltip.spacemod.metal_detector.tooltip": "Finds valuables underground",
   "Speed_Block_tooltip": "Makes player run very fast while on block",
   "Cannon_Block_tooltip": "Fires Shitloads of TNT very far",

@@ -9,6 +9,7 @@ import org.example.stardust.spacemod.entity.custom.GriffinEntity;
 import org.example.stardust.spacemod.entity.custom.UnicornEntity;
 import org.example.stardust.spacemod.item.ModItemGroups;
 import org.example.stardust.spacemod.item.ModItems;
+import org.example.stardust.spacemod.networking.ModMessages;
 import org.example.stardust.spacemod.recipe.ModRecipes;
 import org.example.stardust.spacemod.screen.ModScreenHandlers;
 import org.example.stardust.spacemod.world.gen.ModWorldGeneration;
@@ -34,6 +35,8 @@ public class SpaceMod implements ModInitializer{
         FabricDefaultAttributeRegistry.register(ModEntities.UNICORN, UnicornEntity.setAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.FORMIC, FormicEntity.setAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.GRIFFIN, GriffinEntity.setAttributes());
+
+        ModMessages.registerC2SPackets();
 
 
 
