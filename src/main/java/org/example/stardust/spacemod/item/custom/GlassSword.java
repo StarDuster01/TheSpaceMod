@@ -6,6 +6,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolMaterial;
+import com.fusionflux.gravity_api.api.GravityChangerAPI;
 
 public class GlassSword extends SwordItem {
 
@@ -18,4 +19,8 @@ public class GlassSword extends SwordItem {
         target.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 200, 1)); // 200 ticks = 10 seconds, 1 = Wither II
         return super.postHit(stack, target, attacker);
     }
+
+
+
+
 }

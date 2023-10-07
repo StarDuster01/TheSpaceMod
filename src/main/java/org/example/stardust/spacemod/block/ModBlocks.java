@@ -4,6 +4,8 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.SaplingBlock;
+import net.minecraft.block.sapling.JungleSaplingGenerator;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -13,8 +15,10 @@ import net.minecraft.util.Identifier;
 import org.example.stardust.spacemod.SpaceMod;
 import org.example.stardust.spacemod.block.custom.*;
 import org.example.stardust.spacemod.block.custom.explosives.CubeDiggerTntBlock;
+import org.example.stardust.spacemod.block.custom.explosives.NukeBlock;
 import org.example.stardust.spacemod.block.custom.explosives.TntXBlock;
 import org.example.stardust.spacemod.block.custom.explosives.ZombieTntBlock;
+import org.example.stardust.spacemod.world.gen.tree.GiantJungleSaplingGenerator;
 
 public class ModBlocks {
     public static final Block BLOODY_STONE = registerBlock("bloody_stone",
@@ -38,10 +42,17 @@ public class ModBlocks {
     public static final Block TNTX_BLOCK = registerBlock("tntx_block",
             new TntXBlock(FabricBlockSettings.copyOf(Blocks.TNT).sounds(BlockSoundGroup.WART_BLOCK)));
 
+    public static final Block NUKE_BLOCK = registerBlock("nuke_block",
+            new NukeBlock(FabricBlockSettings.copyOf(Blocks.TNT).sounds(BlockSoundGroup.WART_BLOCK)));
     public static final Block CUBE_DIGGER_TNT_BLOCK = registerBlock("cube_digger_tnt_block",
             new CubeDiggerTntBlock(FabricBlockSettings.copyOf(Blocks.TNT).sounds(BlockSoundGroup.WART_BLOCK)));
     public static final Block ZOMBIE_TNT_BLOCK = registerBlock("zombie_tnt_block",
             new ZombieTntBlock(FabricBlockSettings.copyOf(Blocks.TNT).sounds(BlockSoundGroup.WART_BLOCK)));
+
+    public static final Block EXCAVATOR_BLOCK = registerBlock("excavator_block",
+            new ExcavatorBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+
+    public static final Block GIANT_JUNGLE_SAPLING = registerBlock("giant_jungle_sapling", new SaplingBlock(new GiantJungleSaplingGenerator(), FabricBlockSettings.copyOf(Blocks.JUNGLE_SAPLING).strength(1f)));
 
 
 

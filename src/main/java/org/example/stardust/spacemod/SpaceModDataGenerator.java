@@ -5,6 +5,8 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.registry.RegistryBuilder;
 import net.minecraft.registry.RegistryKeys;
 import org.example.stardust.spacemod.datagen.ModWorldGenerator;
+import org.example.stardust.spacemod.world.ModConfiguredFeatures;
+import org.example.stardust.spacemod.world.ModPlacedFeatures;
 import org.example.stardust.spacemod.world.biome.ModBiomes;
 import org.example.stardust.spacemod.world.dimension.ModDimensions;
 
@@ -33,5 +35,7 @@ public class SpaceModDataGenerator implements DataGeneratorEntrypoint {
        // registryBuilder.addRegistry(RegistryKeys.PLACED_FEATURE, ModPlacedFeatures::bootstrap);
         registryBuilder.addRegistry(RegistryKeys.BIOME, ModBiomes::bootstrap);
         registryBuilder.addRegistry(RegistryKeys.DIMENSION_TYPE, ModDimensions::bootstrapType);
+        registryBuilder.addRegistry(RegistryKeys.CONFIGURED_FEATURE, ModConfiguredFeatures::bootstrap);
+        registryBuilder.addRegistry(RegistryKeys.PLACED_FEATURE, ModPlacedFeatures::bootstrap);
     }
 }

@@ -9,8 +9,8 @@ import org.example.stardust.spacemod.world.biome.ModBiomes;
 public class ModMaterialRules {
     private static final MaterialRules.MaterialRule DIRT = makeStateRule(Blocks.DIRT);
     private static final MaterialRules.MaterialRule GRASS_BLOCK = makeStateRule(Blocks.GRASS_BLOCK);
-    private static final MaterialRules.MaterialRule BLOODY_STONE = makeStateRule(ModBlocks.BLOODY_STONE);
-    private static final MaterialRules.MaterialRule GRANITE = makeStateRule(Blocks.GRANITE);
+    private static final MaterialRules.MaterialRule STONE_BLOCK = makeStateRule(Blocks.STONE);
+
 
     public static MaterialRules.MaterialRule makeRules() {
         MaterialRules.MaterialCondition isAtOrAboveWaterLevel = MaterialRules.water(-1, 0);
@@ -18,13 +18,11 @@ public class ModMaterialRules {
         MaterialRules.MaterialRule grassSurface = MaterialRules.sequence(MaterialRules.condition(isAtOrAboveWaterLevel, GRASS_BLOCK), DIRT);
 
         return MaterialRules.sequence(
-                MaterialRules.sequence(MaterialRules.condition(MaterialRules.biome(ModBiomes.TEST_BIOME),
-                                MaterialRules.condition(MaterialRules.STONE_DEPTH_FLOOR, BLOODY_STONE)),
-                        MaterialRules.condition(MaterialRules.STONE_DEPTH_CEILING, GRANITE)),
+                MaterialRules.sequence(MaterialRules.condition(MaterialRules.biome(ModBiomes.FORMIC_BIOME),
+                                MaterialRules.condition(MaterialRules.STONE_DEPTH_FLOOR, STONE_BLOCK)),
+                        MaterialRules.condition(MaterialRules.STONE_DEPTH_CEILING, STONE_BLOCK)),
 
-                MaterialRules.sequence(MaterialRules.condition(MaterialRules.biome(ModBiomes.TEST_BIOME_2),
-                                MaterialRules.condition(MaterialRules.STONE_DEPTH_FLOOR, BLOODY_STONE)),
-                        MaterialRules.condition(MaterialRules.STONE_DEPTH_CEILING, GRANITE)),
+
 
 
                 // Default to a grass and dirt surface

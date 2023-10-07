@@ -21,7 +21,6 @@
     "rei_client": [
       "org.example.stardust.spacemod.compat.SpaceModREIClientPlugin"
     ],
-
     "terrablender": [
       "org.example.stardust.spacemod.world.biome.ModTerraBlenderAPI"
     ]
@@ -34,5 +33,13 @@
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
     "minecraft": "${minecraft_version}"
+
+
+
+
+
+
   }
+
+
 }

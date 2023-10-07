@@ -24,10 +24,13 @@ public class CoalGeneratorScreen extends HandledScreen<CoalGeneratorScreenHandle
     private static final Identifier TEXTURE =
             new Identifier(SpaceMod.MOD_ID,"textures/gui/coal_generator_gui.png");
 
-    private EnergyInfoArea energyInfoArea;
+
     public CoalGeneratorScreen(CoalGeneratorScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
     }
+
+
+
 
 
 
@@ -36,6 +39,7 @@ public class CoalGeneratorScreen extends HandledScreen<CoalGeneratorScreenHandle
         super.init();
         titleY = 10;
         playerInventoryTitleY = 10;
+
     }
 
 
@@ -46,27 +50,27 @@ public class CoalGeneratorScreen extends HandledScreen<CoalGeneratorScreenHandle
         drawMouseoverTooltip(context,mouseX,mouseY);
     }
 
-
-
     @Override
     protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
+
+
         CoalGeneratorBlockEntity blockEntity = this.handler.getBlockEntity();
         Text text = Text.of("Insert Coal For Power");
 
-        long energyAmount = blockEntity.energyStorage.getAmount();
+        long energyAmount = (int) blockEntity.energyStorage.getAmount(); // Update energyAmount every frame
         Text powertext;
         int powercolor;
 
-        if(blockEntity.isNoFuel() && energyAmount == 0) {
+        if (blockEntity.isNoFuel() && energyAmount == 0) {
             powertext = Text.of("NO POWER");
             powercolor = 0xFF0000; // RED in RGB
         } else if (energyAmount > 0) {
             powertext = Text.of("Output: 2000Watts. Stored: " + energyAmount + "J");
             powercolor = 0x00FF00; // GREEN in RGB
         } else {
-            // Possibly handle the case when there is fuel but energyAmount is 0.
-            // For now, just returning.
-            return;
+            // Handle the case when there is fuel but energyAmount is 0.
+            powertext = Text.of("Fuel Present, No Power"); // Add your custom message here
+            powercolor = 0xFFFF00; // YELLOW in RGB (custom color for this case)
         }
 
         int powerTextWidth = textRenderer.getWidth(powertext);
@@ -78,6 +82,7 @@ public class CoalGeneratorScreen extends HandledScreen<CoalGeneratorScreenHandle
         int grey = 8421504;
         context.drawCenteredTextWithShadow(this.textRenderer, text, 80, 35, grey);
     }
+
 
     @Override
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "": {
+      "model": "spacemod:block/nuke_block"
+
+    }
+  }
+}

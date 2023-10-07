@@ -10,10 +10,7 @@ import org.example.stardust.spacemod.entity.client.FormicRenderer;
 import org.example.stardust.spacemod.entity.custom.GriffinEntity;
 import org.example.stardust.spacemod.event.KeyInputHandler;
 import org.example.stardust.spacemod.networking.ModMessages;
-import org.example.stardust.spacemod.screen.CoalGeneratorScreenHandler;
-import org.example.stardust.spacemod.screen.DoomFurnaceScreen;
-import org.example.stardust.spacemod.screen.CoalGeneratorScreen;
-import org.example.stardust.spacemod.screen.ModScreenHandlers;
+import org.example.stardust.spacemod.screen.*;
 
 public class SpaceModClient implements ClientModInitializer {
     @Override
@@ -27,6 +24,7 @@ public class SpaceModClient implements ClientModInitializer {
 
         HandledScreens.register(ModScreenHandlers.DOOM_FURNACE_SCREEN_HANDLER, DoomFurnaceScreen::new);
         HandledScreens.register(ModScreenHandlers.COAL_GENERATOR_SCREEN_HANDLER, CoalGeneratorScreen::new);
+        HandledScreens.register(ModScreenHandlers.EXCAVATOR_SCREEN_HANDLER, ExcavatorScreen::new);
 
         ModMessages.registerS2CPackets();
         KeyInputHandler.register();

@@ -14,6 +14,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.listener.ServerPlayPacketListener;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -23,6 +27,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.example.stardust.spacemod.item.ModItems;
+import org.example.stardust.spacemod.networking.ModMessages;
 import org.example.stardust.spacemod.screen.CoalGeneratorScreenHandler;
 import org.example.stardust.spacemod.screen.DoomFurnaceScreenHandler;
 import org.jetbrains.annotations.Nullable;
@@ -30,12 +35,15 @@ import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 import team.reborn.energy.api.base.SimpleSidedEnergyContainer;
 
+import java.util.List;
+
 public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory, EnergyStorage {
 
     protected final PropertyDelegate propertyDelegate;
     private int tickCount = 0;
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(1, ItemStack.EMPTY);
     private final SimpleSidedEnergyContainer energyContainer;
+
     private static final int INPUT_SLOT = 0;
     // Creating an Energy Storage with a given capacity and charge/decharge rate
     public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(3600000, 2000, 2000) {
@@ -48,22 +56,28 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
     };
 
 
+
+
+
+
     public CoalGeneratorBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.COAL_GENERATOR_BE, pos, state);
         this.energyContainer = new SimpleSidedEnergyContainer() {
             @Override
             public long getCapacity() {
-                return 0;
+
+                return 3600000;
             }
 
             @Override
             public long getMaxInsert(@Nullable Direction side) {
-                return 0;
+                return 2000;
             }
 
             @Override
             public long getMaxExtract(@Nullable Direction side) {
-                return 0;
+
+                return 8000;
             }
         };
 
@@ -71,7 +85,7 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
             @Override
             public int get(int index) {
                 if(index == 0)
-                    return (int) energyStorage.getAmount(); // Example, assuming you want to display energy amount in GUI at index 0
+                    return (int) energyStorage.amount;
                 return 0; // Or handle other indexes
             }
 
@@ -88,23 +102,8 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
 
     }
-
-    private void fillUpOnEnergy() {
-        if(hasFuelSource(INPUT_SLOT) && this.energyStorage.getAmount() < this.energyStorage.getCapacity()) {
-            try(Transaction transaction = Transaction.openOuter()) {
-                int amountInserted = (int) this.energyStorage.insert(2000, transaction);
-
-                if(amountInserted > 0) {
-                    transaction.commit();
-                }
-            }
-        }
-    }
-
-
-
     private int tickCounter = 0;
-    private static final int FUEL_CONSUMPTION_INTERVAL = 200; // The interval of ticks between fuel consumptions
+    private static final int FUEL_CONSUMPTION_INTERVAL = 1; // The interval of ticks between fuel consumptions
 
 
 
@@ -113,55 +112,74 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
-        // Increment the tick counter every tick
         tickCounter++;
 
-        // Increase power every tick, if there's room for more energy.
-        if (this.energyStorage.getAmount() < this.energyStorage.getCapacity()) {
-            fillUpOnEnergy();
+        if (!world.isClient) {
+            if (hasFuelSource(INPUT_SLOT) && this.energyStorage.amount < this.energyStorage.getCapacity()) {
+                consumeFuel(); // Assuming that this will burn the coal and add the appropriate amount of energy.
+                markDirty();
+            }
+
             distributeEnergy();
             markDirty(world, pos, state);
 
-            // Every 200 ticks, consume fuel
             if (tickCounter >= FUEL_CONSUMPTION_INTERVAL) {
-                if (hasFuelSource(INPUT_SLOT)) {
-                    consumeFuel(); // Assuming you have a method to consume fuel
-                }
-                tickCounter = 0; // Reset the tick counter
+                tickCounter = 0;
             }
         }
     }
 
     private void consumeFuel() {
-        if(!inventory.get(INPUT_SLOT).isEmpty()) {
+        if (hasFuelSource(INPUT_SLOT)) {
             ItemStack fuelStack = inventory.get(INPUT_SLOT);
             fuelStack.decrement(1);
-            if(fuelStack.isEmpty()) {
-                inventory.set(INPUT_SLOT,ItemStack.EMPTY);
+            try (Transaction transaction = Transaction.openOuter()) { // try-with-resources will auto-close the transaction.
+                energyStorage.insert(4000, transaction);
+                transaction.commit(); // ensure that the transaction is committed.
+                System.out.println("Total energy after insertion: " + energyStorage.amount);
+            } catch (IllegalStateException e) {
+                // Log the error and handle it appropriately.
+                e.printStackTrace();
             }
+            if (fuelStack.isEmpty()) {
+                inventory.set(INPUT_SLOT, ItemStack.EMPTY);
+            }
+            markDirty();
         }
-
     }
+
+
 
 
     // New Method to Distribute Energy
     private void distributeEnergy() {
-        for (Direction direction : Direction.values()) {
-            BlockEntity blockEntity = world.getBlockEntity(pos.offset(direction));
-            if (blockEntity instanceof EnergyStorage) {
-                EnergyStorage neighborStorage = (EnergyStorage) blockEntity;
-                long amountToSend = Math.min(energyStorage.getAmount(), neighborStorage.getCapacity() - neighborStorage.getAmount());
-                if(amountToSend > 0) {
-                    try(Transaction transaction = Transaction.openOuter()) {
-                        long extracted = energyStorage.extract(amountToSend, transaction);
-                        long inserted = neighborStorage.insert(extracted, transaction);
-                        if(inserted > 0)
-                            transaction.commit();
+        // Check if we are on the server side
+        if (!world.isClient) {
+            for (Direction direction : Direction.values()) {
+                // Attempt to find an adjacent EnergyStorage in the given direction.
+                @Nullable
+                EnergyStorage maybeStorage = EnergyStorage.SIDED.find(world, pos.offset(direction), direction.getOpposite());
+
+                if (maybeStorage != null) {
+                    try (Transaction transaction = Transaction.openOuter()) {
+                        long amountToSend = Math.min(energyStorage.amount, maybeStorage.getCapacity() - maybeStorage.getAmount());
+
+                        if (amountToSend > 0) {
+                            long extracted = energyStorage.extract(amountToSend, transaction);
+                            System.out.println("Energy extracted: " + extracted); // Log the amount extracted
+                            long inserted = maybeStorage.insert(extracted, transaction);
+
+                            if (inserted > 0) {
+                                transaction.commit(); // Commit transaction if energy is transferred.
+                                markDirty();
+                            }
+                        }
                     }
                 }
             }
         }
     }
+
 
 
 
@@ -197,17 +215,28 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
     @Override
     public long insert(long maxAmount, TransactionContext transaction) {
-        return energyStorage.insert(maxAmount, transaction);
+        long inserted = energyStorage.insert(maxAmount, transaction);
+        if (inserted > 0) {
+
+            markDirty();
+        }
+        return inserted;
     }
+
 
     @Override
     public long extract(long maxAmount, TransactionContext transaction) {
-        return energyStorage.extract(maxAmount, transaction);
+        long extracted = energyStorage.extract(maxAmount, transaction);
+        if (extracted > 0) {
+
+            markDirty();
+        }
+        return extracted;
     }
 
     @Override
     public long getAmount() {
-        return energyStorage.getAmount();
+        return energyStorage.amount;
     }
 
     @Override
@@ -219,7 +248,7 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, inventory); // If you have inventory
-        nbt.putLong("coal_generator.energy", energyStorage.getAmount()); // Save the energy amount
+        nbt.putLong("coal_generator.energy", energyStorage.amount); // Save the energy amount
     }
 
     @Override
@@ -231,4 +260,15 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
         }
     }
 
+    // The following two functions are used to synchronize server and client for energy stuff
+    @Nullable
+    @Override
+    public Packet<ClientPlayPacketListener> toUpdatePacket() {
+        return BlockEntityUpdateS2CPacket.create(this);
+    }
+
+    @Override
+    public NbtCompound toInitialChunkDataNbt() {
+        return createNbt();
+    }
 }

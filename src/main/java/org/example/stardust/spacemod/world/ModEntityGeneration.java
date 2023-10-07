@@ -1,4 +1,4 @@
-package org.example.stardust.spacemod.world.gen;
+package org.example.stardust.spacemod.world;
 
 import net.fabricmc.fabric.api.biome.v1.BiomeModification;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;

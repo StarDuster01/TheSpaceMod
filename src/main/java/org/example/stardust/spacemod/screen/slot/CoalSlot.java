@@ -14,4 +14,6 @@ public class CoalSlot extends Slot {
     public boolean canInsert(ItemStack stack) {
         return stack.isOf(Items.COAL); // This line ensures that only coal can be inserted into this slot.
     }
+
+
 }

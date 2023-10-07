@@ -30,6 +30,7 @@ public class ModItemGroups {
                         entries.add(ModItems.FORMIC_SPAWN_EGG);
                         entries.add(ModItems.GRIFFIN_SPAWN_EGG);
                         entries.add(ModBlocks.BLOODY_STONE);
+                        entries.add(ModBlocks.NUKE_BLOCK);
                         entries.add(ModBlocks.ALTAR_BLOCK);
                         entries.add(ModBlocks.CANNON_BLOCK);
                         entries.add(ModBlocks.SPEED_BLOCK);
@@ -38,6 +39,7 @@ public class ModItemGroups {
                         entries.add(ModBlocks.TNTX_BLOCK);
                         entries.add(ModBlocks.CUBE_DIGGER_TNT_BLOCK);
                         entries.add(ModBlocks.ZOMBIE_TNT_BLOCK);
+                        entries.add(ModBlocks.EXCAVATOR_BLOCK);
 
 
 

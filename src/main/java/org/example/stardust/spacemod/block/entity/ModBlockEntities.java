@@ -8,6 +8,7 @@ import net.minecraft.registry.Registry;
 import org.example.stardust.spacemod.SpaceMod;
 import net.minecraft.util.Identifier;
 import org.example.stardust.spacemod.block.ModBlocks;
+import org.example.stardust.spacemod.block.custom.ExcavatorBlock;
 import team.reborn.energy.api.EnergyStorage;
 
 public class ModBlockEntities {
@@ -22,12 +23,18 @@ public class ModBlockEntities {
                     FabricBlockEntityTypeBuilder.create(CoalGeneratorBlockEntity::new,
                             ModBlocks.COAL_GENERATOR_BLOCK).build(null));
 
+    public static final BlockEntityType<ExcavatorBlockEntity> EXCAVATOR_BLOCK_BE =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "excavator_block"),
+                    FabricBlockEntityTypeBuilder.create(ExcavatorBlockEntity::new,
+                            ModBlocks.EXCAVATOR_BLOCK).build(null));
+
 
 
     public static void registerBlockEntities() {
         SpaceMod.LOGGER.info("Registering Block Entities for" + SpaceMod.MOD_ID);
 
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, DOOM_FURNACE_BE); // Allows the machine to accept energy from the sides
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, EXCAVATOR_BLOCK_BE); // Allows the machine to accept energy from the sides
         FluidStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.fluidStorage, DOOM_FURNACE_BE); // Allows the machine to accept fluid from the sides
     }
 }
