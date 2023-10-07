@@ -52,7 +52,7 @@ public class CannonBlock extends HorizontalFacingBlock {
 
                     // Spawn the TNT entity above the cannon
                     TntEntity tntEntity = new TntEntity(world, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, null);
-                    tntEntity.setFuse((short) 120);
+                    tntEntity.setFuse((short) 60);
 
                     // Set the velocity of the TNT entity
                     Direction facing = state.get(FACING);

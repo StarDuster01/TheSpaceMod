@@ -20,6 +20,10 @@ public class ModScreenHandlers {
             Registry.register(Registries.SCREEN_HANDLER, new Identifier(SpaceMod.MOD_ID,"excavator_screen_handler"),
                     new ExtendedScreenHandlerType<>(ExcavatorScreenHandler::new));
 
+    public static final ScreenHandlerType<WallPlacerScreenHandler> WALLPLACER_SCREEN_HANDLER =
+            Registry.register(Registries.SCREEN_HANDLER, new Identifier(SpaceMod.MOD_ID,"wallplacer_screen_handler"),
+                    new ExtendedScreenHandlerType<>(WallPlacerScreenHandler::new));
+
 
     public static void registerScreenHandler() {
         SpaceMod.LOGGER.info("Registering Sreen Handler for" + SpaceMod.MOD_ID);

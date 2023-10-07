@@ -8,10 +8,14 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.ChestBlockEntity;
+import net.minecraft.block.enums.ChestType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -39,6 +43,7 @@ import org.example.stardust.spacemod.networking.ModMessages;
 import org.example.stardust.spacemod.screen.CoalGeneratorScreenHandler;
 import org.example.stardust.spacemod.screen.ExcavatorScreenHandler;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2i;
 import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 import team.reborn.energy.api.base.SimpleSidedEnergyContainer;
@@ -51,6 +56,15 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
     protected final PropertyDelegate propertyDelegate;
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(36, ItemStack.EMPTY);
     private final SimpleSidedEnergyContainer energyContainer;
+    private Vector2i miningAreaDimensions = new Vector2i(4, 4);  // Default dimensions of 4x4
+
+
+    private boolean isMiningActive = false;
+
+    public void setMiningAreaDimensions(Vector2i vec2i) {
+        this.miningAreaDimensions = vec2i;
+        markDirty();
+    }
 
     public class ExcavatorEnergyStorage extends SimpleEnergyStorage {
         public ExcavatorEnergyStorage(long capacity, long maxInsert, long maxExtract) {
@@ -124,12 +138,6 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
         this.currentMiningY = pos.getY() - 1;
     }
 
-
-
-
-private boolean isMiningActive = false;
-
-
     private int tickCounter = 0;
 
     private int currentMiningY;
@@ -144,6 +152,64 @@ private boolean isMiningActive = false;
         markDirty();
     }
 
+    public boolean tryInsertIntoNeighboringChests(ItemStack itemStack) {
+        Direction[] directions = Direction.values();
+        for (Direction direction : directions) {
+            BlockPos neighborPos = pos.offset(direction);
+            BlockState neighborState = world.getBlockState(neighborPos);
+            if (neighborState.getBlock() instanceof ChestBlock) {
+                ChestBlockEntity chestBlockEntity = (ChestBlockEntity) world.getBlockEntity(neighborPos);
+                if (chestBlockEntity != null) {
+                    ChestType chestType = neighborState.get(ChestBlock.CHEST_TYPE);
+                    if (chestType != ChestType.SINGLE) {
+                        // This is a double chest
+                        BlockPos otherHalfPos = neighborPos.offset(ChestBlock.getFacing(neighborState));
+                        ChestBlockEntity otherHalf = (ChestBlockEntity) world.getBlockEntity(otherHalfPos);
+                        if (otherHalf != null) {
+                            DoubleInventory doubleInventory = new DoubleInventory(chestBlockEntity, otherHalf);
+                            if (tryInsertIntoInventory(doubleInventory, itemStack)) {
+                                return true;
+                            }
+                        }
+                    } else {
+                        // This is a single chest
+                        if (tryInsertIntoInventory(chestBlockEntity, itemStack)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;  // Return false if item could not be inserted into any neighboring chest
+    }
+
+    // Helper method to handle inserting item into an Inventory
+    private boolean tryInsertIntoInventory(net.minecraft.inventory.Inventory inventory, ItemStack itemStack) {
+        for (int i = 0; i < inventory.size(); i++) {
+            ItemStack stackInSlot = inventory.getStack(i);
+            if (stackInSlot.isEmpty()) {
+                inventory.setStack(i, itemStack.copy());
+                inventory.markDirty();
+                return true;
+            } else if (ItemStack.canCombine(stackInSlot, itemStack)) {
+                int spaceLeft = stackInSlot.getMaxCount() - stackInSlot.getCount();
+                if (spaceLeft >= itemStack.getCount()) {
+                    stackInSlot.increment(itemStack.getCount());
+                    inventory.markDirty();
+                    return true;
+                } else if (spaceLeft > 0) {
+                    stackInSlot.increment(spaceLeft);
+                    itemStack.decrement(spaceLeft);
+                    inventory.markDirty();
+                }
+            }
+        }
+        return false;
+    }
+
+
+
+
 
     public void mineBlocks() {
         World currentWorld = this.getWorld();
@@ -151,9 +217,10 @@ private boolean isMiningActive = false;
         if (currentWorld.isClient) return; // Execute only on the server side
 
         // Define mining area around the BlockEntity
-        int radius = 1; // for example
-        BlockPos start = pos.add(-radius, currentMiningY, -radius);
-        BlockPos end = pos.add(radius, currentMiningY, radius);
+        int width = miningAreaDimensions.x;
+        int height = miningAreaDimensions.y;
+        BlockPos start = pos.add(-width / 2, currentMiningY, -height / 2);
+        BlockPos end = pos.add(width / 2, currentMiningY, height / 2);
 
         boolean allBlocksMined = true; // Assume all blocks are mined initially
 
@@ -185,9 +252,27 @@ private boolean isMiningActive = false;
         return block != Blocks.BEDROCK
                 && block != ModBlocks.EXCAVATOR_BLOCK
                 && block != ModBlocks.COAL_GENERATOR_BLOCK
+                && block != Blocks.CHEST
+                && block != Blocks.ENDER_CHEST
+                && block != Blocks.BARREL
                 && !(block instanceof net.minecraft.block.FluidBlock) // Allows to break liquid blocks
                 && !state.isAir();
     }
+
+    public void validateChestConnections() {
+        // Reset any cached chest connections here (if you have any)
+
+        // Check connections anew
+        Direction[] directions = Direction.values();
+        for (Direction direction : directions) {
+            BlockPos neighborPos = pos.offset(direction);
+            BlockState neighborState = world.getBlockState(neighborPos);
+            if (neighborState.getBlock() instanceof net.minecraft.block.ChestBlock) {
+                // Re-establish connection or cache this chest for later use
+            }
+        }
+    }
+
 
 
 
@@ -200,9 +285,12 @@ private boolean isMiningActive = false;
         for (ItemStack drop : drops) {
             boolean inserted = insertItem(drop);
             if (!inserted) {
-                // The inventory is full, drop the item in the world
-                ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, drop);
-                world.spawnEntity(itemEntity);
+                inserted = tryInsertIntoNeighboringChests(drop);  // Try to insert into neighboring chests
+                if (!inserted) {
+                    // The inventory and neighboring chests are full, drop the item in the world
+                    ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, drop);
+                    world.spawnEntity(itemEntity);
+                }
             }
         }
 
@@ -268,11 +356,14 @@ private boolean isMiningActive = false;
 
     public void tick(World world, BlockPos pos, BlockState state) {
         // Increment the tick counter every tick
+        Vector2i dimensions = this.getMiningAreaDimensions();
         tickCounter++;
         if(!world.isClient) { // Check if on server side
+            validateChestConnections();
             for (PlayerEntity playerEntity : world.getPlayers()) {
                 if (playerEntity instanceof ServerPlayerEntity && playerEntity.squaredDistanceTo(Vec3d.of(pos)) < 20*20) {
                     ModMessages.sendExcavatorUpdate((ServerPlayerEntity) playerEntity, pos, energyStorage.amount, isMiningActive);
+                    ModMessages.sendExcavatorAreaUpdate((ServerPlayerEntity) playerEntity, pos, dimensions);
                 }
             }
 
@@ -288,6 +379,11 @@ private boolean isMiningActive = false;
             System.out.println("Excavator energy: " + this.energyStorage.getAmount());
 
         }
+    }
+
+    public Vector2i getMiningAreaDimensions() {
+        return miningAreaDimensions;
+
     }
 
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
@@ -310,6 +406,7 @@ private boolean isMiningActive = false;
     @Override
     public long insert(long maxAmount, TransactionContext transaction) {
         long inserted = energyStorage.insert(maxAmount, transaction);
+        System.out.println("Energy inserted: " + inserted);  // Log statement
         if (inserted > 0) {
 
             markDirty();
@@ -349,6 +446,5 @@ private boolean isMiningActive = false;
             energyStorage.amount = nbt.getLong("excavator.energy");
         }
     }
-
 
 }

@@ -51,6 +51,8 @@ public class ModBlocks {
 
     public static final Block EXCAVATOR_BLOCK = registerBlock("excavator_block",
             new ExcavatorBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+    public static final Block WALLPLACER = registerBlock("wallplacer",
+            new WallPlacerBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
 
     public static final Block GIANT_JUNGLE_SAPLING = registerBlock("giant_jungle_sapling", new SaplingBlock(new GiantJungleSaplingGenerator(), FabricBlockSettings.copyOf(Blocks.JUNGLE_SAPLING).strength(1f)));
 

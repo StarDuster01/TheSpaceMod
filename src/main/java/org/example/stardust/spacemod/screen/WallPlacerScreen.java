@@ -9,97 +9,75 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.example.stardust.spacemod.SpaceMod;
-import org.example.stardust.spacemod.block.entity.CoalGeneratorBlockEntity;
-import org.example.stardust.spacemod.block.entity.ExcavatorBlockEntity;
+import org.example.stardust.spacemod.block.entity.WallPlacerBlockEntity;
 import org.example.stardust.spacemod.networking.ModMessages;
-import org.example.stardust.spacemod.screen.renderer.EnergyInfoArea;
-import org.example.stardust.spacemod.screen.renderer.FluidStackRenderer;
-import org.example.stardust.spacemod.util.MouseUtil;
-import org.joml.Vector2i;
-import software.bernie.shadowed.eliotlash.mclib.math.functions.classic.Pow;
 
-public class ExcavatorScreen extends HandledScreen<ExcavatorScreenHandler> {
+public class WallPlacerScreen extends HandledScreen<WallPlacerScreenHandler> {
 
     private static final Identifier TEXTURE =
-            new Identifier(SpaceMod.MOD_ID,"textures/gui/excavator_gui.png");
+            new Identifier(SpaceMod.MOD_ID,"textures/gui/wallplacer_gui.png");
 
-    public ExcavatorScreen(ExcavatorScreenHandler handler, PlayerInventory inventory, Text title) {
+    public WallPlacerScreen(WallPlacerScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
     }
 
     public ButtonWidget button1;
+    public ButtonWidget button2;
+    public ButtonWidget button3;
 
     @Override
     protected void init() {
         super.init();
         titleY = 10;
         playerInventoryTitleY = 10;
-        button1 = ButtonWidget.builder(Text.literal("MINING TOGGLE"), button -> {
+        button1 = ButtonWidget.builder(Text.literal("PLACING TOGGLE"), button -> {
             PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
             buf.writeBlockPos(handler.getBlockEntity().getPos());
-            ClientPlayNetworking.send(ModMessages.TOGGLE_MINING_ID, buf);
-        }).dimensions(width / 2 -100, 20, 200, 20).tooltip(Tooltip.of(Text.literal("Click this Button to Toggle Mining"))).build();
+            ClientPlayNetworking.send(ModMessages.TOGGLE_WALL_PLACING_ID, buf);
+        }).dimensions(width / 2 -100, 20, 200, 20).tooltip(Tooltip.of(Text.literal("Click this Button to Toggle Construction"))).build();
         addDrawableChild(button1);
-        createDimensionButton("4x4", new Vector2i(4, 4), width / 2 - 200, 60);
-        createDimensionButton("16x16", new Vector2i(16, 16), width / 2 - 200, 80);
-        createDimensionButton("32x32", new Vector2i(32, 32), width / 2 - 200, 100);
-        createDimensionButton("64x64", new Vector2i(64, 64), width / 2 - 200, 120);
-        createDimensionButton("128x128", new Vector2i(128, 128), width / 2 - 200, 140);
-    }
-    private void createDimensionButton(String label, Vector2i dimensions, int x, int y) {
-        ButtonWidget button = ButtonWidget.builder(Text.literal(label), b -> {
+        button2 = ButtonWidget.builder(Text.literal("WALL TOGGLE"), button -> {
             PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
             buf.writeBlockPos(handler.getBlockEntity().getPos());
-            buf.writeInt(dimensions.x);
-            buf.writeInt(dimensions.y);
-            ClientPlayNetworking.send(ModMessages.CHANGE_MINING_AREA_ID, buf);
-        }).dimensions(x, y, 100, 20).build();
-        addDrawableChild(button);
+            ClientPlayNetworking.send(ModMessages.PLACE_WALL_ID, buf);
+        }).dimensions(width / 2 -200, 20 +80, 100, 20).tooltip(Tooltip.of(Text.literal("Click this Button to Toggle Wall Placing"))).build();
+        addDrawableChild(button2);
+        button3 = ButtonWidget.builder(Text.literal("TOWER TOGGLE"), button -> {
+            PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+            buf.writeBlockPos(handler.getBlockEntity().getPos());
+            ClientPlayNetworking.send(ModMessages.PLACE_TOWER_ID, buf);
+        }).dimensions(width / 2 -200, 20 +40, 100, 20).tooltip(Tooltip.of(Text.literal("Click this Button to Toggle Tower PLacing"))).build();
+        addDrawableChild(button3);
+
+
+
     }
-
-
-
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context,mouseX,mouseY);
-      //  System.out.println("Rendering ExcavatorScreen");
     }
  @Override
  protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
-     ExcavatorBlockEntity blockEntity = this.handler.getBlockEntity();
+     WallPlacerBlockEntity blockEntity = this.handler.getBlockEntity();
      long energyAmount = (int) blockEntity.energyStorage.getAmount();
      drawPowerInfo(context, blockEntity);
      drawIsOnOff(context, blockEntity);
-     drawQuarrySizeInfo(context, handler.getBlockEntity());
  }
-
-    private void drawQuarrySizeInfo(DrawContext context, ExcavatorBlockEntity blockEntity) {
-        Vector2i miningAreaDimensions = blockEntity.getMiningAreaDimensions();
-        Text quarrySizeText = Text.of("Current Quarry Size: " + miningAreaDimensions.x + "x" + miningAreaDimensions.y);
-
-        int quarryTextWidth = textRenderer.getWidth(quarrySizeText);
-        int quarryX = (width - quarryTextWidth) / 2 -200;
-        int quarryY = 110;  // Adjust the Y-position to place the text underneath the buttons
-
-        context.drawCenteredTextWithShadow(textRenderer, quarrySizeText, quarryX, quarryY, 0xFFFFFF);  // White color
-    }
-
-    private void drawPowerInfo(DrawContext context, ExcavatorBlockEntity blockEntity) {
+    private void drawPowerInfo(DrawContext context, WallPlacerBlockEntity blockEntity) {
         long energyAmount = (int) blockEntity.energyStorage.getAmount();
-        long energyPerBlock = (int) ExcavatorBlockEntity.getEnergyPerBlock();
-       // System.out.println("Energy Amount: " + energyAmount);
+        long energyPerBlock = (int) WallPlacerBlockEntity.getEnergyPerBlock();
+
         Text powertext;
         int powercolor;
 
         if (energyAmount > 0) {
-            powertext = Text.of("Stored: " + energyAmount + "J" + " Can mine " + energyAmount / energyPerBlock + " More Blocks");
+            powertext = Text.of("Stored: " + energyAmount + "J" + " Can Place " + energyAmount / energyPerBlock + " More Blocks");
             powercolor = 0x00FF00; // GREEN in RGB
 
         } else {
@@ -113,22 +91,22 @@ public class ExcavatorScreen extends HandledScreen<ExcavatorScreenHandler> {
         context.drawCenteredTextWithShadow(textRenderer, powertext, powerX, powerY, powercolor);
     }
 
-    private void drawIsOnOff(DrawContext context, ExcavatorBlockEntity blockEntity) {
+    private void drawIsOnOff(DrawContext context, WallPlacerBlockEntity blockEntity) {
         Text poweredtext;
         int poweredcolor;
-        boolean Powered = blockEntity.isMiningActive();
+        boolean Powered = blockEntity.isPlacingActive();
         if (Powered) {
-            poweredtext = Text.of("MINING TOGGLED ON");
+            poweredtext = Text.of("PLACING ACTIVE");
             poweredcolor = 0x00FF00;
 
         } else {
-            poweredtext = Text.of("MINING TOGGLED OFF");
+            poweredtext = Text.of("PLACING OFF");
             poweredcolor = 0xFF0000; // RED in RGB
         }
 
         int poweredTextWidth = textRenderer.getWidth(poweredtext);
         int powerX = - poweredTextWidth / 2; // adjust as needed
-        int powerY = 0; // adjust as needed
+        int powerY = -10 + 40; // adjust as needed
         context.drawCenteredTextWithShadow(textRenderer, poweredtext, powerX, powerY, poweredcolor);
 
 

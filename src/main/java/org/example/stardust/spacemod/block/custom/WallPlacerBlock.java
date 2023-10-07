@@ -4,7 +4,6 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.screen.NamedScreenHandlerFactory;
@@ -16,21 +15,16 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.example.stardust.spacemod.block.entity.CoalGeneratorBlockEntity;
-import org.example.stardust.spacemod.block.entity.DoomFurnaceBlockEntity;
 import org.example.stardust.spacemod.block.entity.ExcavatorBlockEntity;
 import org.example.stardust.spacemod.block.entity.ModBlockEntities;
+import org.example.stardust.spacemod.block.entity.WallPlacerBlockEntity;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector2i;
 
-public class ExcavatorBlock extends BlockWithEntity implements BlockEntityProvider {
+public class WallPlacerBlock extends BlockWithEntity implements BlockEntityProvider {
 
-
-
-    public ExcavatorBlock(Settings settings) {
+    public WallPlacerBlock(Settings settings) {
         super(settings);
     }
 
@@ -40,7 +34,7 @@ public class ExcavatorBlock extends BlockWithEntity implements BlockEntityProvid
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new ExcavatorBlockEntity(pos, state);
+        return new WallPlacerBlockEntity(pos, state);
     }
 
     @Nullable
@@ -73,10 +67,11 @@ public class ExcavatorBlock extends BlockWithEntity implements BlockEntityProvid
         }
     }
 
+    // When you right click it, it takes you to the gui screen thing
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
-            NamedScreenHandlerFactory screenHandlerFactory = ((ExcavatorBlockEntity) world.getBlockEntity(pos));
+            NamedScreenHandlerFactory screenHandlerFactory = ((WallPlacerBlockEntity) world.getBlockEntity(pos));
             if (screenHandlerFactory != null) {
                 player.openHandledScreen(screenHandlerFactory);
             }
@@ -87,6 +82,6 @@ public class ExcavatorBlock extends BlockWithEntity implements BlockEntityProvid
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlockEntities.EXCAVATOR_BLOCK_BE, (world1, pos, state1, blockEntity) -> blockEntity.tick(world1, pos, state1));
+        return checkType(type, ModBlockEntities.WALLPLACER_BLOCK_BE, (world1, pos, state1, blockEntity) -> blockEntity.tick(world1, pos, state1));
     }
 }

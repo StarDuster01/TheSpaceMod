@@ -27,6 +27,10 @@ public class ModBlockEntities {
             Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "excavator_block"),
                     FabricBlockEntityTypeBuilder.create(ExcavatorBlockEntity::new,
                             ModBlocks.EXCAVATOR_BLOCK).build(null));
+    public static final BlockEntityType<WallPlacerBlockEntity> WALLPLACER_BLOCK_BE =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "wallplacer_block"),
+                    FabricBlockEntityTypeBuilder.create(WallPlacerBlockEntity::new,
+                            ModBlocks.WALLPLACER).build(null));
 
 
 
@@ -35,6 +39,7 @@ public class ModBlockEntities {
 
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, DOOM_FURNACE_BE); // Allows the machine to accept energy from the sides
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, EXCAVATOR_BLOCK_BE); // Allows the machine to accept energy from the sides
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, WALLPLACER_BLOCK_BE); // Allows the machine to accept energy from the sides IF A MACHINE DOES NOT WORK THIS IS PROBABLY THE ISSUE
         FluidStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.fluidStorage, DOOM_FURNACE_BE); // Allows the machine to accept fluid from the sides
     }
 }

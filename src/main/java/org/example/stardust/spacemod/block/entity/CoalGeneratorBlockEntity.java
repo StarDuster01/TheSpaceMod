@@ -46,7 +46,7 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
     private static final int INPUT_SLOT = 0;
     // Creating an Energy Storage with a given capacity and charge/decharge rate
-    public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(3600000, 2000, 2000) {
+    public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(3600000, 18000, 2000) {
         @Override
         protected void onFinalCommit() {
             markDirty();
@@ -108,7 +108,8 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
 
     private boolean hasFuelSource(int inputSlot) {
-        return this.getStack(INPUT_SLOT).getItem() == Items.COAL;
+        Item item = this.getStack(inputSlot).getItem();
+        return item == Items.COAL || item == Items.COAL_BLOCK;
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
@@ -132,13 +133,17 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
     private void consumeFuel() {
         if (hasFuelSource(INPUT_SLOT)) {
             ItemStack fuelStack = inventory.get(INPUT_SLOT);
+            long energyToAdd = 0;
+            if (fuelStack.isOf(Items.COAL)) {
+                energyToAdd = 4000;  // The energy value for coal.
+            } else if (fuelStack.isOf(Items.COAL_BLOCK)) {
+                energyToAdd = 4000 * 9;  // The energy value for coal block, assuming it's 9 times the energy value of coal.
+            }
             fuelStack.decrement(1);
-            try (Transaction transaction = Transaction.openOuter()) { // try-with-resources will auto-close the transaction.
-                energyStorage.insert(4000, transaction);
-                transaction.commit(); // ensure that the transaction is committed.
-                System.out.println("Total energy after insertion: " + energyStorage.amount);
+            try (Transaction transaction = Transaction.openOuter()) {
+                energyStorage.insert(energyToAdd, transaction);
+                transaction.commit();
             } catch (IllegalStateException e) {
-                // Log the error and handle it appropriately.
                 e.printStackTrace();
             }
             if (fuelStack.isEmpty()) {
@@ -151,6 +156,7 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
 
 
+
     // New Method to Distribute Energy
     private void distributeEnergy() {
         // Check if we are on the server side
@@ -159,6 +165,7 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
                 // Attempt to find an adjacent EnergyStorage in the given direction.
                 @Nullable
                 EnergyStorage maybeStorage = EnergyStorage.SIDED.find(world, pos.offset(direction), direction.getOpposite());
+                System.out.println("Found storage at direction " + direction + ": " + (maybeStorage != null));  // Log statement
 
                 if (maybeStorage != null) {
                     try (Transaction transaction = Transaction.openOuter()) {
@@ -189,8 +196,9 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
     public boolean isFuel() {
         ItemStack stack = inventory.get(INPUT_SLOT);
-        return !stack.isEmpty() && stack.isOf(Items.COAL);
+        return !stack.isEmpty() && (stack.isOf(Items.COAL) || stack.isOf(Items.COAL_BLOCK));
     }
+
 
     public boolean isNoFuel() {
         return !isFuel();

@@ -40,6 +40,7 @@ public class ModItemGroups {
                         entries.add(ModBlocks.CUBE_DIGGER_TNT_BLOCK);
                         entries.add(ModBlocks.ZOMBIE_TNT_BLOCK);
                         entries.add(ModBlocks.EXCAVATOR_BLOCK);
+                        entries.add(ModBlocks.WALLPLACER);
 
 
 
