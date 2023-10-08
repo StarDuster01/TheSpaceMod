@@ -1,6 +1,11 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "block/cube",
   "textures": {
-    "all": "spacemod:block/excavator_block"
+    "north": "spacemod:block/quarry_control_panel",
+    "south": "spacemod:block/quarry_back",
+    "east": "spacemod:block/quarry_main",
+    "west": "spacemod:block/quarry_main",
+    "up": "spacemod:block/quarry_main",
+    "down": "spacemod:block/quarry_main"
   }
 }

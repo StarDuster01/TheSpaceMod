@@ -17,6 +17,7 @@ import org.example.stardust.spacemod.block.ModBlocks;
 import org.example.stardust.spacemod.block.entity.ModBlockEntities;
 import org.example.stardust.spacemod.entity.ModEntities;
 import org.example.stardust.spacemod.entity.custom.FormicEntity;
+import org.example.stardust.spacemod.entity.custom.GiantSalamanderEntity;
 import org.example.stardust.spacemod.entity.custom.GriffinEntity;
 import org.example.stardust.spacemod.entity.custom.UnicornEntity;
 import org.example.stardust.spacemod.item.ModItemGroups;
@@ -52,6 +53,7 @@ public class SpaceMod implements ModInitializer{
         FabricDefaultAttributeRegistry.register(ModEntities.UNICORN, UnicornEntity.setAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.FORMIC, FormicEntity.setAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.GRIFFIN, GriffinEntity.setAttributes());
+        FabricDefaultAttributeRegistry.register(ModEntities.GIANT_SALAMANDER, GiantSalamanderEntity.setAttributes());
 
 
 

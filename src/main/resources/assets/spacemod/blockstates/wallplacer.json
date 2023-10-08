@@ -1,7 +1,8 @@
 {
   "variants": {
-    "": {
-      "model": "spacemod:block/wallplacer"
-    }
+    "facing=north": {"model": "spacemod:block/wallplacer"},
+    "facing=south": {"model": "spacemod:block/wallplacer", "y": 180},
+    "facing=east": {"model": "spacemod:block/wallplacer", "y": 90},
+    "facing=west": {"model": "spacemod:block/wallplacer", "y": 270}
   }
 }

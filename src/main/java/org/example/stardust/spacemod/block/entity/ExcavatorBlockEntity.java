@@ -58,6 +58,9 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
     private final SimpleSidedEnergyContainer energyContainer;
     private Vector2i miningAreaDimensions = new Vector2i(4, 4);  // Default dimensions of 4x4
 
+    private int chestSearchRadius = 5;  // Default radius of 5
+
+
 
     private boolean isMiningActive = false;
 
@@ -65,6 +68,11 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
         this.miningAreaDimensions = vec2i;
         markDirty();
     }
+    public void setChestSearchRadius(int radius) {
+        this.chestSearchRadius = radius;
+        markDirty();
+    }
+
 
     public class ExcavatorEnergyStorage extends SimpleEnergyStorage {
         public ExcavatorEnergyStorage(long capacity, long maxInsert, long maxExtract) {
@@ -153,35 +161,40 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
     }
 
     public boolean tryInsertIntoNeighboringChests(ItemStack itemStack) {
-        Direction[] directions = Direction.values();
-        for (Direction direction : directions) {
-            BlockPos neighborPos = pos.offset(direction);
-            BlockState neighborState = world.getBlockState(neighborPos);
-            if (neighborState.getBlock() instanceof ChestBlock) {
-                ChestBlockEntity chestBlockEntity = (ChestBlockEntity) world.getBlockEntity(neighborPos);
-                if (chestBlockEntity != null) {
-                    ChestType chestType = neighborState.get(ChestBlock.CHEST_TYPE);
-                    if (chestType != ChestType.SINGLE) {
-                        // This is a double chest
-                        BlockPos otherHalfPos = neighborPos.offset(ChestBlock.getFacing(neighborState));
-                        ChestBlockEntity otherHalf = (ChestBlockEntity) world.getBlockEntity(otherHalfPos);
-                        if (otherHalf != null) {
-                            DoubleInventory doubleInventory = new DoubleInventory(chestBlockEntity, otherHalf);
-                            if (tryInsertIntoInventory(doubleInventory, itemStack)) {
-                                return true;
+        // Assuming chestSearchRadius is a field in your class that specifies the search radius
+        for (int dx = -chestSearchRadius; dx <= chestSearchRadius; dx++) {
+            for (int dy = -chestSearchRadius; dy <= chestSearchRadius; dy++) {
+                for (int dz = -chestSearchRadius; dz <= chestSearchRadius; dz++) {
+                    BlockPos currentPos = pos.add(dx, dy, dz);
+                    BlockState currentState = world.getBlockState(currentPos);
+                    if (currentState.getBlock() instanceof ChestBlock) {
+                        ChestBlockEntity chestBlockEntity = (ChestBlockEntity) world.getBlockEntity(currentPos);
+                        if (chestBlockEntity != null) {
+                            ChestType chestType = currentState.get(ChestBlock.CHEST_TYPE);
+                            if (chestType != ChestType.SINGLE) {
+                                // This is a double chest
+                                BlockPos otherHalfPos = currentPos.offset(ChestBlock.getFacing(currentState));
+                                ChestBlockEntity otherHalf = (ChestBlockEntity) world.getBlockEntity(otherHalfPos);
+                                if (otherHalf != null) {
+                                    DoubleInventory doubleInventory = new DoubleInventory(chestBlockEntity, otherHalf);
+                                    if (tryInsertIntoInventory(doubleInventory, itemStack)) {
+                                        return true;
+                                    }
+                                }
+                            } else {
+                                // This is a single chest
+                                if (tryInsertIntoInventory(chestBlockEntity, itemStack)) {
+                                    return true;
+                                }
                             }
-                        }
-                    } else {
-                        // This is a single chest
-                        if (tryInsertIntoInventory(chestBlockEntity, itemStack)) {
-                            return true;
                         }
                     }
                 }
             }
         }
-        return false;  // Return false if item could not be inserted into any neighboring chest
+        return false;  // Return false if item could not be inserted into any chest within radius
     }
+
 
     // Helper method to handle inserting item into an Inventory
     private boolean tryInsertIntoInventory(net.minecraft.inventory.Inventory inventory, ItemStack itemStack) {
@@ -216,11 +229,34 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
         if (currentWorld == null) return;
         if (currentWorld.isClient) return; // Execute only on the server side
 
-        // Define mining area around the BlockEntity
+        Direction facing = getCachedState().get(ExcavatorBlock.FACING); // Assuming ExcavatorBlock has a FACING property
+
+        // Define mining area in front of the BlockEntity based on the facing direction
         int width = miningAreaDimensions.x;
-        int height = miningAreaDimensions.y;
-        BlockPos start = pos.add(-width / 2, currentMiningY, -height / 2);
-        BlockPos end = pos.add(width / 2, currentMiningY, height / 2);
+        int depth = miningAreaDimensions.y;
+        BlockPos start;
+        BlockPos end;
+
+        switch (facing) {
+            case NORTH:
+                start = pos.add(-width / 2, currentMiningY, 1);  // Changed from -depth to 1
+                end = pos.add(width / 2, currentMiningY, depth);  // Changed from -1 to depth
+                break;
+            case SOUTH:
+                start = pos.add(-width / 2, currentMiningY, -depth);  // Changed from 1 to -depth
+                end = pos.add(width / 2, currentMiningY, -1);  // Changed from depth to -1
+                break;
+            case WEST:
+                start = pos.add(1, currentMiningY, -width / 2);  // Changed from -depth to 1
+                end = pos.add(depth, currentMiningY, width / 2);  // Changed from -1 to depth
+                break;
+            case EAST:
+                start = pos.add(-depth, currentMiningY, -width / 2);  // Changed from 1 to -depth
+                end = pos.add(-1, currentMiningY, width / 2);  // Changed from depth to -1
+                break;
+            default:
+                return;  // Return early for invalid facing directions
+        }
 
         boolean allBlocksMined = true; // Assume all blocks are mined initially
 
@@ -241,6 +277,7 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
         // Move to the next layer only if all mineable blocks in the current layer are mined
         if (allBlocksMined) this.currentMiningY--;
     }
+
 
 
 

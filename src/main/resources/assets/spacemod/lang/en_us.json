@@ -6,7 +6,12 @@
   "item.spacemod.heart": "Heart",
 
   "block.spacemod.bloody_stone": "Bloody Stone",
+  "block.spacemod.zombie_tnt_block": "Zombie TNT Block",
   "block.spacemod.cannon_block": "Cannon Block",
+  "block.spacemod.nuke_block": "Nuke",
+  "block.spacemod.wallplacer": "Construction Block",
+  "block.spacemod.excavator_block": "Quarry Block",
+  "block.spacemod.coal_generator_block": "Coal Generator Block",
   "block.spacemod.speed_block": "Speed Block",
   "block.spacemod.gallium_ore": "Gallium Ore",
   "item.spacemod.cloaking_device_item": "Cloaking Device",
@@ -15,6 +20,7 @@
   "item.spacemod.unicorn_spawn_egg": "Unicorn Spawn Egg",
   "item.spacemod.formic_spawn_egg": "Formic Spawn Egg",
   "item.spacemod.griffin_spawn_egg": "Griffin Spawn Egg",
+  "item.spacemod.giant_salamander_spawn_egg": "Giant Salamander Spawn Egg",
   "item.spacemod.glass_sword": "Glass Sword",
   "item.spacemod.gravity_sword": "Gravity Sword",
   "item.spacemod.frost_wand": "Frost Wand",
@@ -27,6 +33,7 @@
   "entity.spacemod.formic": "Formic",
   "entity.spacemod.griffin": "Griffin",
   "entity.spacemod.unicorn": "Unicorn",
+  "entity.spacemod.giant_salamander": "Giant Salamander",
 
   "key.category.spacemod.spacemod": "Spacemod Mod Keys",
   "key.spacemod.fly.up": "Fly Up On Spacemod Entity",

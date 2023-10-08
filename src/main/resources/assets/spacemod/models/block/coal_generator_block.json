@@ -1,6 +1,11 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "block/cube",
   "textures": {
-    "all": "spacemod:block/coal_generator_block"
+    "north": "spacemod:block/coal_generator_front",
+    "south": "spacemod:block/coal_generator_sides",
+    "east": "spacemod:block/coal_generator_sides",
+    "west": "spacemod:block/coal_generator_sides",
+    "up": "spacemod:block/coal_generator_cap",
+    "down": "spacemod:block/coal_generator_cap"
   }
 }

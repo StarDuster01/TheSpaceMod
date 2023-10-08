@@ -29,6 +29,7 @@ public class ModItemGroups {
                         entries.add(ModItems.UNICORN_SPAWN_EGG);
                         entries.add(ModItems.FORMIC_SPAWN_EGG);
                         entries.add(ModItems.GRIFFIN_SPAWN_EGG);
+                        entries.add(ModItems.GIANT_SALAMANDER_SPAWN_EGG);
                         entries.add(ModBlocks.BLOODY_STONE);
                         entries.add(ModBlocks.NUKE_BLOCK);
                         entries.add(ModBlocks.ALTAR_BLOCK);

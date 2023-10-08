@@ -1,6 +1,11 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "block/cube",
   "textures": {
-    "all": "spacemod:block/wallplacer"
+    "north": "spacemod:block/constructor_front",
+    "south": "spacemod:block/constructor_side",
+    "east": "spacemod:block/constructor_side",
+    "west": "spacemod:block/constructor_side",
+    "up": "spacemod:block/constructor_topbottom",
+    "down": "spacemod:block/constructor_topbottom"
   }
 }

@@ -27,7 +27,6 @@ public class NukeBlock extends Block {
         }
     }
 
-    // other necessary overrides for interaction, like onUse, onBreak, etc.
 
 
     private static void primeNuke(World world, BlockPos pos, @Nullable LivingEntity igniter) {

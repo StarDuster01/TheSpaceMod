@@ -1,0 +1,304 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.Giant_Salamander.idle": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"head": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, -2, 0]
+						},
+						"0.5": {
+							"vector": [0, -2.5, 0]
+						},
+						"1.0": {
+							"vector": [0, -2, 0]
+						}
+					}
+				},
+				"bone": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"leg5": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 47.5]
+						},
+						"0.5": {
+							"vector": [0, 0, 50]
+						},
+						"1.0": {
+							"vector": [0, 0, 47.5]
+						}
+					}
+				},
+				"leg4": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, -47.5]
+						},
+						"0.5": {
+							"vector": [0, 0, -50]
+						},
+						"1.0": {
+							"vector": [0, 0, -47.5]
+						}
+					}
+				},
+				"bone2": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"leg2": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, -47.5]
+						},
+						"0.5": {
+							"vector": [0, 0, -50]
+						},
+						"1.0": {
+							"vector": [0, 0, -47.5]
+						}
+					}
+				},
+				"leg1": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 47.5]
+						},
+						"0.5": {
+							"vector": [0, 0, 50]
+						},
+						"1.0": {
+							"vector": [0, 0, 47.5]
+						}
+					}
+				},
+				"tail": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, -10, 0]
+						},
+						"0.5": {
+							"vector": [0, 7.5, 0]
+						},
+						"1.0": {
+							"vector": [0, -10, 0]
+						}
+					}
+				},
+				"bone4": {
+					"rotation": {
+						"vector": [-7.5, 0, 50]
+					},
+					"position": {
+						"vector": [-0.25, -0.25, 0]
+					}
+				},
+				"bone7": {
+					"rotation": {
+						"vector": [0, 0, 45]
+					}
+				},
+				"bone5": {
+					"rotation": {
+						"vector": [-10, 0, -45]
+					}
+				},
+				"bone6": {
+					"rotation": {
+						"vector": [0, 0, -45]
+					}
+				}
+			}
+		},
+		"animation.Giant_Salamander.walk": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 5, 0]
+						},
+						"0.5": {
+							"vector": [0, -5, 0]
+						},
+						"1.0": {
+							"vector": [0, 5, 0]
+						}
+					},
+					"position": {
+						"vector": [0, -2, 0]
+					}
+				},
+				"bone": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 2.5, 0]
+						},
+						"0.5": {
+							"vector": [0, -2.5, 0]
+						},
+						"1.0": {
+							"vector": [0, 2.5, 0]
+						}
+					}
+				},
+				"leg5": {
+					"rotation": {
+						"0.0": {
+							"vector": [22.5, 25, 50]
+						},
+						"0.5": {
+							"vector": [1.91843, -21.70143, 31.60808]
+						},
+						"1.0": {
+							"vector": [22.5, 25, 50]
+						}
+					}
+				},
+				"bone5": {
+					"rotation": {
+						"vector": [0, 0, -45]
+					}
+				},
+				"leg4": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 15, -45]
+						},
+						"0.5": {
+							"vector": [0, -32.5, -45]
+						},
+						"1.0": {
+							"vector": [0, 15, -45]
+						}
+					}
+				},
+				"bone4": {
+					"rotation": {
+						"vector": [0, 0, 45]
+					}
+				},
+				"bone2": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"leg2": {
+					"rotation": {
+						"0.0": {
+							"vector": [7.5, -22.5, -50]
+						},
+						"0.25": {
+							"vector": [1.02301, -20.82684, -52.88124]
+						},
+						"0.5": {
+							"vector": [-14.9281, -18.5638, -29.04064]
+						},
+						"0.75": {
+							"vector": [-16.21405, -20.5319, -39.52032]
+						},
+						"1.0": {
+							"vector": [7.5, -22.5, -50]
+						}
+					}
+				},
+				"bone7": {
+					"rotation": {
+						"vector": [0, 0, 45]
+					}
+				},
+				"leg1": {
+					"rotation": {
+						"0.0": {
+							"vector": [-15, 0, 50]
+						},
+						"0.3333": {
+							"vector": [5.95659, 0, 50]
+						},
+						"0.5": {
+							"vector": [5, 0, 50]
+						},
+						"0.75": {
+							"vector": [-27.5, 0, 50]
+						},
+						"1.0": {
+							"vector": [-15, 0, 50]
+						}
+					}
+				},
+				"bone6": {
+					"rotation": {
+						"vector": [0, 0, -45]
+					}
+				},
+				"tail": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 10, 0]
+						},
+						"0.5": {
+							"vector": [0, -12.5, 0]
+						},
+						"1.0": {
+							"vector": [0, 10, 0]
+						}
+					}
+				}
+			}
+		},
+		"animation.Giant_Salamander.role": {
+			"animation_length": 1,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, -360]
+						},
+						"0.5": {
+							"vector": [0, 0, -180]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"vector": [0, -2, 0]
+					}
+				},
+				"leg5": {
+					"rotation": {
+						"vector": [0, 0, -47.5]
+					}
+				},
+				"leg4": {
+					"rotation": {
+						"vector": [0, 0, 57.5]
+					}
+				},
+				"leg2": {
+					"rotation": {
+						"vector": [0, 0, 52.5]
+					}
+				},
+				"leg1": {
+					"rotation": {
+						"vector": [0, 0, -47.5]
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}

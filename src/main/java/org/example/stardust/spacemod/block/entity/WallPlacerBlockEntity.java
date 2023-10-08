@@ -149,10 +149,11 @@ public class WallPlacerBlockEntity extends BlockEntity implements ExtendedScreen
 
         for (int i = 0; i < wallLength; i++) {
             for (int j = 0; j < wallHeight; j++) {
-                BlockPos targetPos = pos.offset(facing, i).up(j);  // Adjust the vertical position using the .up() method
+                BlockPos targetPos = pos.offset(facing.getOpposite(), i+1).up(j);  // Adjusts to the opposite direction
+
 
                 // Check if the position is empty and there are blocks in the inventory
-                if (currentWorld.isAir(targetPos) && !inventory.isEmpty()) {
+                if ((currentWorld.isAir(targetPos) || currentWorld.getBlockState(targetPos).isOf(Blocks.GRASS) || currentWorld.getBlockState(targetPos).isOf(Blocks.SNOW)) && !inventory.isEmpty()) {
                     ItemStack blockStack = findBlockInInventory();
                     if (!blockStack.isEmpty()) {
                         Block block = Block.getBlockFromItem(blockStack.getItem());
@@ -170,11 +171,11 @@ public class WallPlacerBlockEntity extends BlockEntity implements ExtendedScreen
         World currentWorld = this.getWorld();
         if (currentWorld == null || currentWorld.isClient) return;  // Execute only on the server side
 
-        int towerRadius = 30;  // Define the radius of the tower
-        int towerHeight = 100;  // Define the height of the tower
+        int towerRadius = 8;  // Define the radius of the tower
+        int towerHeight = 64;  // Define the height of the tower
         BlockPos centerPos = this.pos;  // Center position of the tower
 
-        for (int y = 1; y <= towerHeight; y++) {  // Iterate through the height of the tower
+        for (int y = 0; y <= towerHeight; y++) {  // Iterate through the height of the tower
             for (int x = -towerRadius; x <= towerRadius; x++) {
                 for (int z = -towerRadius; z <= towerRadius; z++) {
                     double distanceSquared = x * x + z * z;  // Calculate the squared distance from the center
@@ -183,7 +184,7 @@ public class WallPlacerBlockEntity extends BlockEntity implements ExtendedScreen
                         BlockPos targetPos = centerPos.add(x, y, z);  // Calculate the target position
 
                         // Check if the position is empty and there are blocks in the inventory
-                        if (currentWorld.isAir(targetPos) && !inventory.isEmpty()) {
+                        if ((currentWorld.isAir(targetPos) || currentWorld.getBlockState(targetPos).isOf(Blocks.GRASS) || currentWorld.getBlockState(targetPos).isOf(Blocks.SNOW)) && !inventory.isEmpty()) {
                             ItemStack blockStack = findBlockInInventory();
                             if (!blockStack.isEmpty()) {
                                 Block block = Block.getBlockFromItem(blockStack.getItem());

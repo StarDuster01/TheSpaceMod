@@ -3,9 +3,9 @@
   "textures": {
     "down": "spacemod:block/tntx_bottom",
     "up": "spacemod:block/tntx_top",
-    "north": "spacemod:block/tntx_side",
-    "south": "spacemod:block/tntx_side",
-    "west": "spacemod:block/tntx_side",
-    "east": "spacemod:block/tntx_side"
+    "north": "spacemod:block/nuke",
+    "south": "spacemod:block/nuke",
+    "west": "spacemod:block/nuke",
+    "east": "spacemod:block/nuke"
   }
 }
