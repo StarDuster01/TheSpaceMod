@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "north": "spacemod:block/fusion_reactor_block",
+    "south": "spacemod:block/fusion_reactor_block",
+    "east": "spacemod:block/fusion_reactor_block",
+    "west": "spacemod:block/fusion_reactor_block",
+    "up": "spacemod:block/fusion_reactor_block",
+    "down": "spacemod:block/fusion_reactor_block"
+  }
+}

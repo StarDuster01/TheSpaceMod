@@ -42,6 +42,7 @@ public class ModItemGroups {
                         entries.add(ModBlocks.ZOMBIE_TNT_BLOCK);
                         entries.add(ModBlocks.EXCAVATOR_BLOCK);
                         entries.add(ModBlocks.WALLPLACER);
+                        entries.add(ModBlocks.FUSION_REACTOR_BLOCK);
 
 
 

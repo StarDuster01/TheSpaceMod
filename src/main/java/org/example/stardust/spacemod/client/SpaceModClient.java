@@ -28,6 +28,7 @@ public class SpaceModClient implements ClientModInitializer {
         HandledScreens.register(ModScreenHandlers.COAL_GENERATOR_SCREEN_HANDLER, CoalGeneratorScreen::new);
         HandledScreens.register(ModScreenHandlers.EXCAVATOR_SCREEN_HANDLER, ExcavatorScreen::new);
         HandledScreens.register(ModScreenHandlers.WALLPLACER_SCREEN_HANDLER, WallPlacerScreen::new);
+        HandledScreens.register(ModScreenHandlers.FUSION_REACTOR_SCREEN_HANDLER, FusionReactorScreen::new);
 
         ModMessages.registerS2CPackets();
         KeyInputHandler.register();

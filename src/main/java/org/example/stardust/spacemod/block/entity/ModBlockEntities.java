@@ -22,6 +22,10 @@ public class ModBlockEntities {
             Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "coal_generator_block"),
                     FabricBlockEntityTypeBuilder.create(CoalGeneratorBlockEntity::new,
                             ModBlocks.COAL_GENERATOR_BLOCK).build(null));
+    public static final BlockEntityType<FusionReactorBlockEntity> FUSION_REACTOR_BE =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "fusion_reactor_block"),
+                    FabricBlockEntityTypeBuilder.create(FusionReactorBlockEntity::new,
+                            ModBlocks.FUSION_REACTOR_BLOCK).build(null));
 
     public static final BlockEntityType<ExcavatorBlockEntity> EXCAVATOR_BLOCK_BE =
             Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "excavator_block"),

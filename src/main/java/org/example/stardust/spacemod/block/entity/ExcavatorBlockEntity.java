@@ -94,7 +94,7 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
 
 
     // Creating an Energy Storage with a given capacity and charge/decharge rate
-    public final ExcavatorEnergyStorage energyStorage = new ExcavatorEnergyStorage(3600000, 2000, 2000) {
+    public final ExcavatorEnergyStorage energyStorage = new ExcavatorEnergyStorage(3600000, 100000, 2000) {
         @Override
         protected void onFinalCommit() {
             markDirty();
@@ -325,8 +325,9 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
                 inserted = tryInsertIntoNeighboringChests(drop);  // Try to insert into neighboring chests
                 if (!inserted) {
                     // The inventory and neighboring chests are full, drop the item in the world
-                    ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, drop);
-                    world.spawnEntity(itemEntity);
+                  //  ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, drop);
+                  //  world.spawnEntity(itemEntity);
+                    // Commented out temporarly, because this will crash the game if you are not careful
                 }
             }
         }
