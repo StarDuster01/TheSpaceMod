@@ -10,22 +10,22 @@ import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
-import org.example.stardust.spacemod.block.entity.ExcavatorBlockEntity;
+import org.example.stardust.spacemod.block.entity.MiningBoreBlockEntity;
 import org.example.stardust.spacemod.screen.slot.BigSlot;
 
 import java.util.List;
 
-public class ExcavatorScreenHandler extends ScreenHandler {
+public class MiningBoreScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private final PropertyDelegate propertyDelegate;
-    final ExcavatorBlockEntity blockEntity;
+    final MiningBoreBlockEntity blockEntity;
 
-    public ExcavatorBlockEntity getBlockEntity() {
+    public MiningBoreBlockEntity getBlockEntity() {
         return blockEntity;
     }
 
 
-    public ExcavatorScreenHandler(int syncId, PlayerInventory inventory, PacketByteBuf buf) {
+    public MiningBoreScreenHandler(int syncId, PlayerInventory inventory, PacketByteBuf buf) {
         this(syncId, inventory, inventory.player.getWorld().getBlockEntity(buf.readBlockPos()), new ArrayPropertyDelegate(1));
     }
 
@@ -33,13 +33,13 @@ public class ExcavatorScreenHandler extends ScreenHandler {
 
 
 
-    public ExcavatorScreenHandler(int syncId, PlayerInventory playerInventory,
-                                  BlockEntity blockEntity, PropertyDelegate arrayPropertyDelegate) {
-        super(ModScreenHandlers.EXCAVATOR_SCREEN_HANDLER, syncId);
+    public MiningBoreScreenHandler(int syncId, PlayerInventory playerInventory,
+                                   BlockEntity blockEntity, PropertyDelegate arrayPropertyDelegate) {
+        super(ModScreenHandlers.MINING_BORE_SCREEN_HANDLER, syncId);
         checkSize(((Inventory) blockEntity), 1);
         this.inventory = (Inventory)blockEntity;
         this.propertyDelegate = arrayPropertyDelegate;
-        this.blockEntity = ((ExcavatorBlockEntity) blockEntity);
+        this.blockEntity = ((MiningBoreBlockEntity) blockEntity);
         int invSize = this.inventory.size();
         int slotsPerRow = 9; // Standard number of slots per row, change it as per your GUI design.
         int startX = 8; // starting x coordinate for your slots

@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "north": "spacemod:block/range_spawner",
+    "south": "spacemod:block/range_spawner",
+    "east": "spacemod:block/range_spawner",
+    "west": "spacemod:block/range_spawner",
+    "up": "spacemod:block/range_spawner",
+    "down": "spacemod:block/range_spawner"
+  }
+}

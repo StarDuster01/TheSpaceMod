@@ -51,6 +51,11 @@ public class ModBlocks {
 
     public static final Block EXCAVATOR_BLOCK = registerBlock("excavator_block",
             new ExcavatorBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+    public static final Block MINING_BORE_BLOCK = registerBlock("mining_bore_block",
+            new MiningBoreBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+
+    public static final Block RANGE_SPAWNER_BLOCK = registerBlock("range_spawner_block",
+            new RangeSpawnerBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
     public static final Block WALLPLACER = registerBlock("wallplacer",
             new WallPlacerBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
     public static final Block FUSION_REACTOR_BLOCK = registerBlock("fusion_reactor_block",

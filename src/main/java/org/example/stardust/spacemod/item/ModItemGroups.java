@@ -24,6 +24,7 @@ public class ModItemGroups {
                         entries.add(ModItems.GRAVITY_SWORD);
                         entries.add(ModItems.GLASS_SWORD);
                         entries.add(ModItems.FROST_WAND);
+                        entries.add(ModItems.VIEW_FINDER);
                         entries.add(ModItems.CLOAKING_DEVICE_ITEM);
                         entries.add(ModItems.SACRIFICIAL_KNIFE);
                         entries.add(ModItems.UNICORN_SPAWN_EGG);
@@ -43,6 +44,8 @@ public class ModItemGroups {
                         entries.add(ModBlocks.EXCAVATOR_BLOCK);
                         entries.add(ModBlocks.WALLPLACER);
                         entries.add(ModBlocks.FUSION_REACTOR_BLOCK);
+                        entries.add(ModBlocks.MINING_BORE_BLOCK);
+                        entries.add(ModBlocks.RANGE_SPAWNER_BLOCK);
 
 
 

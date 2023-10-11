@@ -31,6 +31,15 @@ public class ModBlockEntities {
             Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "excavator_block"),
                     FabricBlockEntityTypeBuilder.create(ExcavatorBlockEntity::new,
                             ModBlocks.EXCAVATOR_BLOCK).build(null));
+
+    public static final BlockEntityType<RangeSpawnerBlockEntity> RANGE_SPAWNER_BLOCK_BE =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "range_spawner_block"),
+                    FabricBlockEntityTypeBuilder.create(RangeSpawnerBlockEntity::new,
+                            ModBlocks.RANGE_SPAWNER_BLOCK).build(null));
+    public static final BlockEntityType<MiningBoreBlockEntity> MINING_BORE_BLOCK_BE =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "mining_bore_block"),
+                    FabricBlockEntityTypeBuilder.create(MiningBoreBlockEntity::new,
+                            ModBlocks.MINING_BORE_BLOCK).build(null));
     public static final BlockEntityType<WallPlacerBlockEntity> WALLPLACER_BLOCK_BE =
             Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "wallplacer_block"),
                     FabricBlockEntityTypeBuilder.create(WallPlacerBlockEntity::new,
@@ -43,7 +52,9 @@ public class ModBlockEntities {
 
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, DOOM_FURNACE_BE); // Allows the machine to accept energy from the sides
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, EXCAVATOR_BLOCK_BE); // Allows the machine to accept energy from the sides
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, MINING_BORE_BLOCK_BE); // Allows the machine to accept energy from the sides
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, WALLPLACER_BLOCK_BE); // Allows the machine to accept energy from the sides IF A MACHINE DOES NOT WORK THIS IS PROBABLY THE ISSUE
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, RANGE_SPAWNER_BLOCK_BE); // Allows the machine to accept energy from the sides IF A MACHINE DOES NOT WORK THIS IS PROBABLY THE ISSUE
         FluidStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.fluidStorage, DOOM_FURNACE_BE); // Allows the machine to accept fluid from the sides
     }
 }
