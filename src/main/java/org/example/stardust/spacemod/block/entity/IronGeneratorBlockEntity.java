@@ -38,6 +38,7 @@ import team.reborn.energy.api.base.SimpleEnergyStorage;
 import team.reborn.energy.api.base.SimpleSidedEnergyContainer;
 
 import java.util.List;
+import java.util.Map;
 
 public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory, EnergyStorage {
 
@@ -81,14 +82,20 @@ public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
     public void setCurrentBlockType(String currentBlockType) {
         this.currentBlockType = currentBlockType;
-        markDirty();
+        markDirty(); // Mark the block entity as dirty to ensure it gets saved
     }
 
-    public static final int ENERGY_PER_BLOCK = 2000000;
-    public static int getEnergyPerBlock() {
+    public static final Map<Integer, Integer> BLOCK_ENERGY_MAP = Map.of(
+            0, 2000000, //Iron
+            1, 3000000, // Gold
+            2, 5000000, //Diamond
+            3, 2500000, // Lapis
+            4, 2300000, // Redstone
+            5, 4000000 // Emerald
+    );
 
-        return ENERGY_PER_BLOCK;
-    }
+
+
     private Direction getBlockFacing() {
         return getCachedState().get(IronGeneratorBlock.FACING); // Assuming IronGeneratorBlock has a FACING property
     }
@@ -98,25 +105,40 @@ public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScr
             BlockPos frontBlockPos = pos.offset(getBlockFacing());
             BlockState frontBlockState = world.getBlockState(frontBlockPos);
             if (frontBlockState.isAir() || frontBlockState.isOf(Blocks.WATER)) {
-                Block blockToPlace = switch(currentBlockType) {
-                    case "Iron" -> Blocks.IRON_BLOCK;
-                    case "Gold" -> Blocks.GOLD_BLOCK;
-                    case "Diamond" -> Blocks.DIAMOND_BLOCK;
-                    case "Lapis" -> Blocks.LAPIS_BLOCK;
-                    case "Redstone" -> Blocks.REDSTONE_BLOCK;
-                    case "Emerald" -> Blocks.EMERALD_BLOCK;
-                    default -> Blocks.IRON_BLOCK;  // Default to iron block
+                Block blockToPlace = switch(currentResourceType) {
+                    case 0 -> Blocks.IRON_BLOCK;
+                    case 1 -> Blocks.GOLD_BLOCK;
+                    case 2 -> Blocks.DIAMOND_BLOCK;
+                    case 3 -> Blocks.LAPIS_BLOCK;
+                    case 4 -> Blocks.REDSTONE_BLOCK;
+                    case 5 -> Blocks.EMERALD_BLOCK;
+                    default -> Blocks.IRON_BLOCK;
                 };
                 world.setBlockState(frontBlockPos, blockToPlace.getDefaultState());
-                extractEnergy(ENERGY_PER_BLOCK);
+                extractEnergy(BLOCK_ENERGY_MAP.getOrDefault(currentResourceType, 2000000));
+
+                markDirty();
             }
         }
     }
 
 
 
+    private int currentResourceType = 0; // default value
+    public void setCurrentResourceType(int type) {
+        this.currentResourceType = type;
+        System.out.println("Setting resource type to: " + type);
+        markDirty();
+    }
 
-    public final IronGeneratorEnergyStorage energyStorage = new IronGeneratorEnergyStorage(100000000, 10000, 10000) {
+    public int getCurrentResourceType() {
+        return this.currentResourceType;
+    }
+
+
+
+
+    public final IronGeneratorEnergyStorage energyStorage = new IronGeneratorEnergyStorage(100000000, 10000, 20000000) {
         @Override
         protected void onFinalCommit() {
             markDirty();
@@ -132,17 +154,17 @@ public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScr
         this.energyContainer = new SimpleSidedEnergyContainer() {
             @Override
             public long getCapacity() {
-                return 100000;
+                return 0;
             }
 
             @Override
             public long getMaxInsert(@Nullable Direction side) {
-                return 10000;
+                return 0;
             }
 
             @Override
             public long getMaxExtract(@Nullable Direction side) {
-                return 10000;
+                return 0;
             }
         };
 
@@ -182,8 +204,10 @@ public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScr
     }
     // Method to insert an item into the inventory. Returns whether the item was successfully inserted.
     private boolean hasEnoughEnergy() {
-        return energyStorage.getAmount() >= ENERGY_PER_BLOCK; // Ensure you have defined ENERGY_PER_BLOCK.
+        int requiredEnergy = BLOCK_ENERGY_MAP.getOrDefault(currentResourceType, 2000000);
+        return energyStorage.getAmount() >= requiredEnergy;
     }
+
     private void extractEnergy(long amount) {
         try (Transaction transaction = Transaction.openOuter()) {
             energyStorage.extract(amount, transaction);
@@ -191,30 +215,52 @@ public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScr
             transaction.commit();
         }
     }
-
-    public void tick(World world, BlockPos pos, BlockState state) {
-        // Increment the tick counter every tick
-        tickCounter++;
-        System.out.println("Current Energy is" + this.energyStorage.getAmount());
-        if(!world.isClient) { // Check if on server side
-            System.out.println("Current Energy is" + this.energyStorage.getAmount());
-            validateChestConnections();
-            for (PlayerEntity playerEntity : world.getPlayers()) {
-                if (playerEntity instanceof ServerPlayerEntity && playerEntity.squaredDistanceTo(Vec3d.of(pos)) < 20*20) {
-                    ModMessages.sendIronGeneratorUpdate((ServerPlayerEntity) playerEntity, pos, energyStorage.amount, isGeneratorActive());
-                }
-            }
-
-        }
-        // Increase power every tick, if there's room for more energy.
-        if (this.energyStorage.getAmount() < this.energyStorage.getCapacity()) {
-            markDirty(world, pos, state);
-        }
-
-        if (!world.isClient) { // Only do this on the server side
-            generateIronBlock();
+    public void setResourceType(String type) {
+        List<String> blockTypes = List.of("Iron", "Gold", "Diamond", "Lapis", "Redstone", "Emerald");
+        if (blockTypes.contains(type)) {
+            this.currentBlockType = type;
+            markDirty();
         }
     }
+
+
+    public void tick(World world, BlockPos pos, BlockState state) {
+        tickCounter++;
+
+        if (!world.isClient) { // Server side operations
+            validateChestConnections();
+            notifyNearbyPlayers(world, pos);
+            markDirty();
+            generateIronBlock();
+        }
+
+        if (this.energyStorage.getAmount() < this.energyStorage.getCapacity()) {
+            markDirty();
+        }
+    }
+
+    private void notifyNearbyPlayers(World world, BlockPos pos) {
+        for (PlayerEntity playerEntity : world.getPlayers()) {
+            if (playerEntity instanceof ServerPlayerEntity && playerEntity.squaredDistanceTo(Vec3d.of(pos)) < 20 * 20) {
+                ModMessages.sendIronGeneratorUpdate((ServerPlayerEntity) playerEntity, pos, energyStorage.amount, isGeneratorActive(), getResourceType());
+            }
+        }
+    }
+
+    public int getResourceType() {
+        switch(currentBlockType) {
+            case "Iron": return 0;
+            case "Gold": return 1;
+            case "Diamond": return 2;
+            case "Lapis": return 3;
+            case "Redstone": return 4;
+            case "Emerald": return 5;
+            default: return -1;  // Default to a value indicating an error or unknown type
+        }
+    }
+
+
+
 
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
         buf.writeBlockPos(this.pos);
@@ -266,21 +312,19 @@ public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScr
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, inventory);
-        nbt.putLong("iron_generator.energy", energyStorage.amount);
-        nbt.putString("currentBlockType", currentBlockType); // Save the current block type
+        nbt.putLong("energy", energyStorage.amount); // Corrected key name
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         Inventories.readNbt(nbt, inventory);
-        if (nbt.contains("iron_generator.energy")) {
-            energyStorage.amount = nbt.getLong("iron_generator.energy");
+        if (nbt.contains("energy")) {
+            energyStorage.amount = nbt.getLong("energy"); // Corrected key name
         }
-        if (nbt.contains("currentBlockType")) {
-            currentBlockType = nbt.getString("currentBlockType"); // Load the current block type
-        }
+
     }
+
 
 
 

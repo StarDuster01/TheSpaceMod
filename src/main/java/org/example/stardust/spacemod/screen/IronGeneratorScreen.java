@@ -18,6 +18,7 @@ import org.example.stardust.spacemod.networking.ModMessages;
 import org.joml.Vector2i;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class IronGeneratorScreen extends HandledScreen<IronGeneratorScreenHandler> {
@@ -30,7 +31,7 @@ public class IronGeneratorScreen extends HandledScreen<IronGeneratorScreenHandle
     }
 
     public ButtonWidget button1;
-    private Text currentBlockType = Text.of("Default Block");
+  //  private Text currentBlockType = Text.of("Default Block");
     private ButtonWidget blockTypeButton;
 
     private static final List<Text> BLOCK_TYPES = Arrays.asList(
@@ -51,32 +52,41 @@ public class IronGeneratorScreen extends HandledScreen<IronGeneratorScreenHandle
         super.init();
         titleY = 10;
         playerInventoryTitleY = 10;
-        // Iron Generator block type button
-        blockTypeButton = ButtonWidget.builder(BLOCK_TYPES.get(currentBlockTypeIndex), button -> {
-                    changeBlockType();
-                }).dimensions(width / 2, 20, 150, 20)
-                .tooltip(Tooltip.of(Text.literal("Click to Change Generation Block Type")))
-                .build();
-        addDrawableChild(blockTypeButton);
+
+        button1 = ButtonWidget.builder(Text.literal("MINING TOGGLE"), button -> {
+            PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+            buf.writeBlockPos(handler.getBlockEntity().getPos());
+            ClientPlayNetworking.send(ModMessages.TOGGLE_MINING_ID, buf);
+        }).dimensions(width / 2 -100, 20, 200, 20).tooltip(Tooltip.of(Text.literal("Click this Button to Toggle Mining"))).build();
+
+        addDrawableChild(button1);
+        createResourceButton("Iron", width / 2 - 200, 60);
+        createResourceButton("Gold", width / 2 - 200, 80);
+        createResourceButton("Diamond", width / 2 - 200, 100);
+        createResourceButton("Emerald", width / 2 - 200, 120);
+        createResourceButton("Netherite", width / 2 - 200, 140);
     }
 
-    private void changeBlockType() {
-        currentBlockTypeIndex = (currentBlockTypeIndex + 1) % BLOCK_TYPES.size();
-        blockTypeButton.setMessage(BLOCK_TYPES.get(currentBlockTypeIndex));
+    private static final HashMap<String, Integer> RESOURCE_TO_INT_MAP = new HashMap<String, Integer>() {{
+        put("Iron", 0);
+        put("Gold", 1);
+        put("Diamond", 2);
+        put("Emerald", 3);
+        put("Netherite", 4);
+    }};
 
-        // Send the new block type to the server
-        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeBlockPos(handler.getBlockEntity().getPos());
-        buf.writeString(BLOCK_TYPES.get(currentBlockTypeIndex).getString());
-        ClientPlayNetworking.send(ModMessages.IRON_GENERATOR_UPDATE_ID, buf);
 
-        // Set the new block type in the block entity
-        handler.getBlockEntity().setCurrentBlockType(BLOCK_TYPES.get(currentBlockTypeIndex).getString());
+    private void createResourceButton(String resource, int x, int y) {
+        ButtonWidget button = ButtonWidget.builder(Text.literal(resource), b -> {
+            PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+            buf.writeBlockPos(handler.getBlockEntity().getPos());
+            buf.writeInt(RESOURCE_TO_INT_MAP.get(resource));
+            ClientPlayNetworking.send(ModMessages.CHANGE_GENERATED_RESOURCE_ID, buf);
+            // Update block entity
+            this.handler.getBlockEntity().setCurrentResourceType(RESOURCE_TO_INT_MAP.get(resource));
+        }).dimensions(x, y, 100, 20).build();
+        addDrawableChild(button);
     }
-
-
-
-
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         renderBackground(context);
@@ -91,10 +101,19 @@ public class IronGeneratorScreen extends HandledScreen<IronGeneratorScreenHandle
      long energyAmount = (int) blockEntity.energyStorage.getAmount();
      drawPowerInfo(context, blockEntity);
      drawIsActive(context, blockEntity); // Add this line
+     drawSelectedResourceType(context, blockEntity);
  }
+
+    private void drawSelectedResourceType(DrawContext context, IronGeneratorBlockEntity blockEntity) {
+        int resourceTypeIndex = blockEntity.getCurrentResourceType();
+        Text resourceText = BLOCK_TYPES.get(resourceTypeIndex);
+        int resourceTextWidth = textRenderer.getWidth(resourceText);
+        int resourceX = 139 - resourceTextWidth / 2; // adjust as needed
+        int resourceY = 25; // adjust as needed
+        context.drawCenteredTextWithShadow(textRenderer, resourceText, resourceX, resourceY, 0xFFFFFF);
+    }
     private void drawPowerInfo(DrawContext context, IronGeneratorBlockEntity blockEntity) {
         long energyAmount = (int) blockEntity.energyStorage.getAmount();
-        long energyPerBlock = (int) IronGeneratorBlockEntity.getEnergyPerBlock();
        // System.out.println("Energy Amount: " + energyAmount);
         Text powertext;
         int powercolor;

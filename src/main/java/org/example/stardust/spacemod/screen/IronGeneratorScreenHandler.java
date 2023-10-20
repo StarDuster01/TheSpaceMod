@@ -1,5 +1,7 @@
 package org.example.stardust.spacemod.screen;
 
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -10,8 +12,10 @@ import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.example.stardust.spacemod.block.entity.IronGeneratorBlockEntity;
 import org.example.stardust.spacemod.screen.slot.BigSlot;
+import org.example.stardust.spacemod.networking.ModMessages;
 
 import java.util.List;
 
@@ -23,7 +27,6 @@ public class IronGeneratorScreenHandler extends ScreenHandler {
     public IronGeneratorBlockEntity getBlockEntity() {
         return blockEntity;
     }
-
 
     public IronGeneratorScreenHandler(int syncId, PlayerInventory inventory, PacketByteBuf buf) {
         this(syncId, inventory, inventory.player.getWorld().getBlockEntity(buf.readBlockPos()), new ArrayPropertyDelegate(1));

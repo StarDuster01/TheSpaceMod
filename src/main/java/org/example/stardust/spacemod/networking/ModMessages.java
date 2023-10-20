@@ -28,11 +28,12 @@ public class ModMessages {
     public static final Identifier TOGGLE_RANGE_SPAWNER_ID = new Identifier(SpaceMod.MOD_ID, "toggle_range_spawner");
     public static final Identifier TOGGLE_BORING_ID = new Identifier(SpaceMod.MOD_ID, "toggle_boring");
     public static final Identifier CHANGE_BORING_AREA_ID = new Identifier(SpaceMod.MOD_ID, "change_boring_area");
+    public static final Identifier CHANGE_GENERATED_RESOURCE_ID = new Identifier(SpaceMod.MOD_ID, "change_resource");
+    public static final Identifier IRON_GENERATOR_SYNC_ID = new Identifier(SpaceMod.MOD_ID, "iron_generator_sync");
+
 
     public static final Identifier EXCAVATOR_UPDATE_ID = new Identifier(SpaceMod.MOD_ID, "excavator_update");
     public static final Identifier IRON_GENERATOR_UPDATE_ID = new Identifier(SpaceMod.MOD_ID, "iron_generator_update");
-    public static final Identifier IRON_GENERATOR_SYNC_ID = new Identifier(SpaceMod.MOD_ID, "iron_generator_sync");
-
     public static final Identifier WALL_PLACER_UPDATE_ID = new Identifier(SpaceMod.MOD_ID, "wall_placer_update");
     public static final Identifier TOGGLE_WALL_PLACING_ID = new Identifier(SpaceMod.MOD_ID, "toggle_wall_placing");
     public static final Identifier PLACE_WALL_ID = new Identifier(SpaceMod.MOD_ID, "place_wall");
@@ -80,11 +81,12 @@ public class ModMessages {
         buf.writeInt(dimensions.y);
         ServerPlayNetworking.send(player, EXCAVATOR_AREA_UPDATE_ID, buf);
     }
-    public static void sendIronGeneratorUpdate(ServerPlayerEntity player, BlockPos pos, long energy, boolean isGeneratorActive) {
+    public static void sendIronGeneratorUpdate(ServerPlayerEntity player, BlockPos pos, long energy, boolean isGeneratorActive, int resourceType) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeBlockPos(pos);
         buf.writeLong(energy);
         buf.writeBoolean(isGeneratorActive);
+        buf.writeInt(resourceType);
         ServerPlayNetworking.send(player, IRON_GENERATOR_UPDATE_ID, buf);
     }
 
@@ -139,16 +141,15 @@ public class ModMessages {
                 }
             });
         });
-        ClientPlayNetworking.registerGlobalReceiver(ModMessages.IRON_GENERATOR_SYNC_ID, (client, handler, buf, responseSender) -> {
-            BlockPos pos = buf.readBlockPos();
-            int receivedIndex = buf.readInt();
+        ClientPlayNetworking.registerGlobalReceiver(IRON_GENERATOR_SYNC_ID, (client, player, buf, sender) -> {
+            BlockPos blockPos = buf.readBlockPos();
+            int blockTypeIndex = buf.readInt();
 
             client.execute(() -> {
-                // Assuming you can get the current screen being displayed to the player:
-                Screen currentScreen = MinecraftClient.getInstance().currentScreen;
-                if (currentScreen instanceof IronGeneratorScreen) {
-                    IronGeneratorScreen screen = (IronGeneratorScreen) currentScreen;
-                    screen.setBlockTypeIndex(receivedIndex); // We will add this method next
+                World clientWorld = MinecraftClient.getInstance().world;
+                if (clientWorld != null) {
+                    BlockEntity blockEntity = clientWorld.getBlockEntity(blockPos);
+
                 }
             });
         });
@@ -353,6 +354,18 @@ public class ModMessages {
                 }
             });
         });
+        ServerPlayNetworking.registerGlobalReceiver(CHANGE_GENERATED_RESOURCE_ID, (server, player, handler, buf, responseSender) -> {
+            BlockPos blockPos = buf.readBlockPos();
+            int resourceType = buf.readInt();
+            server.execute(() -> {
+                BlockEntity blockEntity = player.getWorld().getBlockEntity(blockPos);
+                if (blockEntity instanceof IronGeneratorBlockEntity) {
+                    ((IronGeneratorBlockEntity) blockEntity).setCurrentResourceType(resourceType);
+
+                }
+            });
+        });
+
 
 
 
