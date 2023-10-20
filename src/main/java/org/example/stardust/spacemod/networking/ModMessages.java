@@ -31,7 +31,6 @@ public class ModMessages {
     public static final Identifier CHANGE_GENERATED_RESOURCE_ID = new Identifier(SpaceMod.MOD_ID, "change_resource");
     public static final Identifier IRON_GENERATOR_SYNC_ID = new Identifier(SpaceMod.MOD_ID, "iron_generator_sync");
 
-
     public static final Identifier EXCAVATOR_UPDATE_ID = new Identifier(SpaceMod.MOD_ID, "excavator_update");
     public static final Identifier IRON_GENERATOR_UPDATE_ID = new Identifier(SpaceMod.MOD_ID, "iron_generator_update");
     public static final Identifier WALL_PLACER_UPDATE_ID = new Identifier(SpaceMod.MOD_ID, "wall_placer_update");

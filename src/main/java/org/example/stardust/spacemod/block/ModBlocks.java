@@ -62,6 +62,8 @@ public class ModBlocks {
             new WallPlacerBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
     public static final Block FUSION_REACTOR_BLOCK = registerBlock("fusion_reactor_block",
             new FusionReactorBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+    public static final Block CABLE_BLOCK = registerBlock("cable_block",
+            new CableBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
 
     public static final Block GIANT_JUNGLE_SAPLING = registerBlock("giant_jungle_sapling", new SaplingBlock(new GiantJungleSaplingGenerator(), FabricBlockSettings.copyOf(Blocks.JUNGLE_SAPLING).strength(1f)));
 

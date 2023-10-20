@@ -18,6 +18,9 @@ public class ModScreenHandlers {
     public static final ScreenHandlerType<FusionReactorScreenHandler> FUSION_REACTOR_SCREEN_HANDLER =
             Registry.register(Registries.SCREEN_HANDLER, new Identifier(SpaceMod.MOD_ID,"fusion_reactor_screen_handler"),
                     new ExtendedScreenHandlerType<>(FusionReactorScreenHandler::new));
+    public static final ScreenHandlerType<CableScreenHandler> CABLE_SCREEN_HANDLER =
+            Registry.register(Registries.SCREEN_HANDLER, new Identifier(SpaceMod.MOD_ID,"cable_screen_handler"),
+                    new ExtendedScreenHandlerType<>(CableScreenHandler::new));
 
     public static final ScreenHandlerType<ExcavatorScreenHandler> EXCAVATOR_SCREEN_HANDLER =
             Registry.register(Registries.SCREEN_HANDLER, new Identifier(SpaceMod.MOD_ID,"excavator_screen_handler"),

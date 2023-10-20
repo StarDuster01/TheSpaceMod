@@ -27,6 +27,11 @@ public class ModBlockEntities {
                     FabricBlockEntityTypeBuilder.create(FusionReactorBlockEntity::new,
                             ModBlocks.FUSION_REACTOR_BLOCK).build(null));
 
+    public static final BlockEntityType<CableBlockEntity> CABLE_BE =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "cable_block"),
+                    FabricBlockEntityTypeBuilder.create(CableBlockEntity::new,
+                            ModBlocks.CABLE_BLOCK).build(null));
+
     public static final BlockEntityType<ExcavatorBlockEntity> EXCAVATOR_BLOCK_BE =
             Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "excavator_block"),
                     FabricBlockEntityTypeBuilder.create(ExcavatorBlockEntity::new,
@@ -56,6 +61,7 @@ public class ModBlockEntities {
 
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, DOOM_FURNACE_BE); // Allows the machine to accept energy from the sides
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, EXCAVATOR_BLOCK_BE); // Allows the machine to accept energy from the sides
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, CABLE_BE); // Allows the machine to accept energy from the sides
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, MINING_BORE_BLOCK_BE); // Allows the machine to accept energy from the sides
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, IRON_GENERATOR_BLOCK_BE); // Allows the machine to accept energy from the sides
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, WALLPLACER_BLOCK_BE); // Allows the machine to accept energy from the sides IF A MACHINE DOES NOT WORK THIS IS PROBABLY THE ISSUE
