@@ -46,6 +46,7 @@ public class ModItemGroups {
                         entries.add(ModBlocks.FUSION_REACTOR_BLOCK);
                         entries.add(ModBlocks.MINING_BORE_BLOCK);
                         entries.add(ModBlocks.RANGE_SPAWNER_BLOCK);
+                        entries.add(ModBlocks.IRON_GENERATOR_BLOCK);
 
 
 

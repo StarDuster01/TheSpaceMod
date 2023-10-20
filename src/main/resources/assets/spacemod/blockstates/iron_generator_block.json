@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": {"model": "spacemod:block/iron_generator_block"},
+    "facing=south": {"model": "spacemod:block/iron_generator_block", "y": 180},
+    "facing=east": {"model": "spacemod:block/iron_generator_block", "y": 90},
+    "facing=west": {"model": "spacemod:block/iron_generator_block", "y": 270}
+  }
+}

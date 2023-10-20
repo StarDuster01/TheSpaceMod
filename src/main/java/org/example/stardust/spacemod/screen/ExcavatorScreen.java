@@ -9,19 +9,13 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.example.stardust.spacemod.SpaceMod;
-import org.example.stardust.spacemod.block.entity.CoalGeneratorBlockEntity;
 import org.example.stardust.spacemod.block.entity.ExcavatorBlockEntity;
 import org.example.stardust.spacemod.networking.ModMessages;
-import org.example.stardust.spacemod.screen.renderer.EnergyInfoArea;
-import org.example.stardust.spacemod.screen.renderer.FluidStackRenderer;
-import org.example.stardust.spacemod.util.MouseUtil;
 import org.joml.Vector2i;
-import software.bernie.shadowed.eliotlash.mclib.math.functions.classic.Pow;
 
 public class ExcavatorScreen extends HandledScreen<ExcavatorScreenHandler> {
 

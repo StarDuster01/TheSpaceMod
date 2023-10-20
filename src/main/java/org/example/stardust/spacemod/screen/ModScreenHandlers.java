@@ -22,6 +22,10 @@ public class ModScreenHandlers {
     public static final ScreenHandlerType<ExcavatorScreenHandler> EXCAVATOR_SCREEN_HANDLER =
             Registry.register(Registries.SCREEN_HANDLER, new Identifier(SpaceMod.MOD_ID,"excavator_screen_handler"),
                     new ExtendedScreenHandlerType<>(ExcavatorScreenHandler::new));
+
+    public static final ScreenHandlerType<IronGeneratorScreenHandler> IRON_GENERATOR_SCREEN_HANDLER =
+            Registry.register(Registries.SCREEN_HANDLER, new Identifier(SpaceMod.MOD_ID,"iron_generator_screen_handler"),
+                    new ExtendedScreenHandlerType<>(IronGeneratorScreenHandler::new));
     public static final ScreenHandlerType<RangeSpawnerScreenHandler> RANGE_SPAWNER_SCREEN_HANDLER =
             Registry.register(Registries.SCREEN_HANDLER, new Identifier(SpaceMod.MOD_ID,"range_spawner_screen_handler"),
                     new ExtendedScreenHandlerType<>(RangeSpawnerScreenHandler::new));

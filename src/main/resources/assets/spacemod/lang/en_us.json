@@ -26,6 +26,7 @@
   "item.spacemod.frost_wand": "Frost Wand",
   "itemgroup.space": "Space Mod",
   "block.spacemod.altar_block": "Altar Block",
+  "block.spacemod.iron_generator_block": "Iron Generator",
   "block.spacemod.range_spawner_block": "Range Spawner",
   "block.spacemod.tntx_block": "Tnt X Block",
   "block.spacemod.cube_digger_tnt_block": "Cube Digger Tnt Block",

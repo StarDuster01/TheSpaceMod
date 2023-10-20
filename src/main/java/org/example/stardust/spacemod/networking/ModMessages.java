@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
@@ -17,6 +18,7 @@ import org.example.stardust.spacemod.SpaceMod;
 import org.example.stardust.spacemod.block.entity.*;
 import org.example.stardust.spacemod.entity.custom.GriffinEntity;
 import org.example.stardust.spacemod.networking.packet.ExampleC2SPacket;
+import org.example.stardust.spacemod.screen.IronGeneratorScreen;
 import org.joml.Vector2i;
 
 public class ModMessages {
@@ -28,6 +30,9 @@ public class ModMessages {
     public static final Identifier CHANGE_BORING_AREA_ID = new Identifier(SpaceMod.MOD_ID, "change_boring_area");
 
     public static final Identifier EXCAVATOR_UPDATE_ID = new Identifier(SpaceMod.MOD_ID, "excavator_update");
+    public static final Identifier IRON_GENERATOR_UPDATE_ID = new Identifier(SpaceMod.MOD_ID, "iron_generator_update");
+    public static final Identifier IRON_GENERATOR_SYNC_ID = new Identifier(SpaceMod.MOD_ID, "iron_generator_sync");
+
     public static final Identifier WALL_PLACER_UPDATE_ID = new Identifier(SpaceMod.MOD_ID, "wall_placer_update");
     public static final Identifier TOGGLE_WALL_PLACING_ID = new Identifier(SpaceMod.MOD_ID, "toggle_wall_placing");
     public static final Identifier PLACE_WALL_ID = new Identifier(SpaceMod.MOD_ID, "place_wall");
@@ -41,6 +46,7 @@ public class ModMessages {
     public static final Identifier DELETE_RANGE_SPAWNER_ID = new Identifier(SpaceMod.MOD_ID, "delete_range_spawner");
     public static final Identifier SELF_DESTRUCT_ID = new Identifier(SpaceMod.MOD_ID, "self_destruct_command");
     public static final Identifier AIRSTRIKE_ID = new Identifier(SpaceMod.MOD_ID, "air_strike_command");
+
 
 
 
@@ -73,6 +79,13 @@ public class ModMessages {
         buf.writeInt(dimensions.x);
         buf.writeInt(dimensions.y);
         ServerPlayNetworking.send(player, EXCAVATOR_AREA_UPDATE_ID, buf);
+    }
+    public static void sendIronGeneratorUpdate(ServerPlayerEntity player, BlockPos pos, long energy, boolean isGeneratorActive) {
+        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+        buf.writeBlockPos(pos);
+        buf.writeLong(energy);
+        buf.writeBoolean(isGeneratorActive);
+        ServerPlayNetworking.send(player, IRON_GENERATOR_UPDATE_ID, buf);
     }
 
     public static void sendWallPlacerUpdate(ServerPlayerEntity player, BlockPos pos, long energy, boolean isPlacingActive) {
@@ -122,6 +135,37 @@ public class ModMessages {
                     if (blockEntity instanceof ExcavatorBlockEntity) {
                         ((ExcavatorBlockEntity) blockEntity).energyStorage.setAmountDirectly(energy);
                         ((ExcavatorBlockEntity) blockEntity).setMiningActive(miningActive);
+                    }
+                }
+            });
+        });
+        ClientPlayNetworking.registerGlobalReceiver(ModMessages.IRON_GENERATOR_SYNC_ID, (client, handler, buf, responseSender) -> {
+            BlockPos pos = buf.readBlockPos();
+            int receivedIndex = buf.readInt();
+
+            client.execute(() -> {
+                // Assuming you can get the current screen being displayed to the player:
+                Screen currentScreen = MinecraftClient.getInstance().currentScreen;
+                if (currentScreen instanceof IronGeneratorScreen) {
+                    IronGeneratorScreen screen = (IronGeneratorScreen) currentScreen;
+                    screen.setBlockTypeIndex(receivedIndex); // We will add this method next
+                }
+            });
+        });
+
+
+        ClientPlayNetworking.registerGlobalReceiver(IRON_GENERATOR_UPDATE_ID, (client, player, buf, sender) -> {
+            BlockPos blockPos = buf.readBlockPos();
+            long energy = buf.readLong();
+            boolean generatorActive = buf.readBoolean();
+
+            client.execute(() -> {
+                World clientWorld = MinecraftClient.getInstance().world;
+                if (clientWorld != null) {
+                    BlockEntity blockEntity = clientWorld.getBlockEntity(blockPos);
+                    if (blockEntity instanceof IronGeneratorBlockEntity) {
+                        ((IronGeneratorBlockEntity) blockEntity).energyStorage.setAmountDirectly(energy);
+                        ((IronGeneratorBlockEntity) blockEntity).setGeneratorActive(generatorActive);
                     }
                 }
             });
