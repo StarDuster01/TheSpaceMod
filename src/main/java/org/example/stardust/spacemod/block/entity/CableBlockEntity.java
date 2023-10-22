@@ -1,224 +1,229 @@
 package org.example.stardust.spacemod.block.entity;
 
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
+import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventories;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.nbt.NbtHelper;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.screen.PropertyDelegate;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import org.example.stardust.spacemod.screen.CableScreenHandler;
+import org.example.stardust.spacemod.block.custom.CableBlock;
 import org.jetbrains.annotations.Nullable;
+import org.example.stardust.spacemod.misc.IListInfoProvider;
+import org.example.stardust.spacemod.misc.IToolDrop;
 import team.reborn.energy.api.EnergyStorage;
-import team.reborn.energy.api.base.SimpleEnergyStorage;
 import team.reborn.energy.api.base.SimpleSidedEnergyContainer;
 
-public class CableBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory, EnergyStorage {
+import java.util.ArrayList;
+import java.util.List;
 
-    protected final PropertyDelegate propertyDelegate;
-    private int tickCount = 0;
-    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(1, ItemStack.EMPTY);
-    private final SimpleSidedEnergyContainer energyContainer;
-
-    private static final int INPUT_SLOT = 0;
-    public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(512000, 512000, 512000) {
+public class CableBlockEntity extends BlockEntity
+        implements BlockEntityTicker<CableBlockEntity>, IListInfoProvider, IToolDrop, RenderAttachmentBlockEntity {
+    final SimpleSidedEnergyContainer energyContainer = new SimpleSidedEnergyContainer() {
+        @Override
+        public long getCapacity() {
+            return 1000000;
+        }
 
         @Override
-        protected void onFinalCommit() {
-            markDirty();
-            if(world != null)
-                world.updateListeners(pos, getCachedState(), getCachedState(), 3);
+        public long getMaxInsert(Direction side) {
+            if (allowTransfer(side)) return 1000000;
+            else return 0;
+        }
+
+        @Override
+        public long getMaxExtract(Direction side) {
+            if (allowTransfer(side)) return 1000000;
+            else return 0;
         }
     };
+    public long transferRate = 1000000;
 
+    @Nullable
+    private BlockState cover = null;
+    long lastTick = 0;
+    // null means that it needs to be re-queried
+    List<CableTarget> targets = null;
+    /**
+     * Adjacent caches, used to quickly query adjacent cable block entities.
+     */
+    @SuppressWarnings("unchecked")
+    private final BlockApiCache<EnergyStorage, Direction>[] adjacentCaches = new BlockApiCache[6];
+    /**
+     * Bitmask to prevent input or output into/from the cable when the cable already transferred in the target direction.
+     * This prevents double transfer rates, and back and forth between two cables.
+     */
+    int blockedSides = 0;
 
-
-
-
+    /**
+     * This is only used during the cable tick, whereas {@link #blockedSides} is used between ticks.
+     */
+    boolean ioBlocked = false;
 
     public CableBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.CABLE_BE, pos, state);
-        this.energyContainer = new SimpleSidedEnergyContainer() {
-            @Override
-            public long getCapacity() {
-
-                return 0;
-            }
-
-            @Override
-            public long getMaxInsert(@Nullable Direction side) {
-                return 0;
-            }
-
-            @Override
-            public long getMaxExtract(@Nullable Direction side) {
-
-                return 0;
-            }
-        };
-
-        this.propertyDelegate = new PropertyDelegate() {
-            @Override
-            public int get(int index) {
-                if(index == 0)
-                    return (int) energyStorage.amount;
-                return 0; // Or handle other indexes
-            }
-
-            @Override
-            public void set(int index, int value) {
-                // Usually, it's left empty for read-only properties in GUI
-            }
-
-            @Override
-            public int size() {
-                return 1; // Or more, if you have more properties to display
-            }
-        };
-
-
     }
-    private int tickCounter = 0;
-    private static final int FUEL_CONSUMPTION_INTERVAL = 1; // The interval of ticks between fuel consumptions
+    private boolean allowTransfer(Direction side) {
+        return !ioBlocked && (blockedSides & (1 << side.ordinal())) == 0;
+    }
 
-    public void tick(World world, BlockPos pos, BlockState state) {
-        tickCounter++;
+    public EnergyStorage getSideEnergyStorage(@Nullable Direction side) {
+        return energyContainer.getSideStorage(side);
+    }
 
-        if (!world.isClient) {
-               // getEnergy();
-                markDirty();
-                distributeEnergy();
-                markDirty(world, pos, state);
+    public @Nullable BlockState getCover() {
+        return cover;
+    }
 
-            if (tickCounter >= FUEL_CONSUMPTION_INTERVAL) {
-                tickCounter = 0;
-            }
+    public long getEnergy() {
+        return energyContainer.amount;
+    }
+
+    public void setEnergy(long energy) {
+        energyContainer.amount = energy;
+    }
+
+    private BlockApiCache<EnergyStorage, Direction> getAdjacentCache(Direction direction) {
+        if (adjacentCaches[direction.getId()] == null) {
+            adjacentCaches[direction.getId()] = BlockApiCache.create(EnergyStorage.SIDED, (ServerWorld) world, pos.offset(direction));
         }
+        return adjacentCaches[direction.getId()];
     }
-    private void distributeEnergy() {
-        // Check if we are on the server side
-        if (!world.isClient) {
+
+    @Nullable
+    BlockEntity getAdjacentBlockEntity(Direction direction) {
+        return getAdjacentCache(direction).getBlockEntity();
+    }
+
+    void appendTargets(List<OfferedEnergyStorage> targetStorages) {
+        ServerWorld serverWorld = (ServerWorld) world;
+        if (serverWorld == null) {
+            return;
+        }
+
+        // Update our targets if necessary.
+        if (targets == null) {
+            BlockState newBlockState = getCachedState();
+
+            targets = new ArrayList<>();
             for (Direction direction : Direction.values()) {
-                // Attempt to find an adjacent EnergyStorage in the given direction.
-                @Nullable
-                EnergyStorage maybeStorage = EnergyStorage.SIDED.find(world, pos.offset(direction), direction.getOpposite());
-                System.out.println("Found storage at direction " + direction + ": " + (maybeStorage != null));  // Log statement
+                boolean foundSomething = false;
 
-                if (maybeStorage != null) {
-                    try (Transaction transaction = Transaction.openOuter()) {
-                        long amountToSend = Math.min(energyStorage.amount, maybeStorage.getCapacity() - maybeStorage.getAmount());
+                BlockApiCache<EnergyStorage, Direction> adjCache = getAdjacentCache(direction);
 
-                        if (amountToSend > 0) {
-                            long extracted = energyStorage.extract(amountToSend, transaction);
-                            System.out.println("Energy extracted: " + extracted); // Log the amount extracted
-                            long inserted = maybeStorage.insert(extracted, transaction);
-
-                            if (inserted > 0) {
-                                transaction.commit();
-                                markDirty();
-                            }
-                        }
+                if (adjCache.getBlockEntity() instanceof CableBlockEntity adjCable) {
+                    if (adjCable == adjCable) {
+                        // Make sure cables are not used as regular targets.
+                        foundSomething = true;
                     }
+                } else if (adjCache.find(direction.getOpposite()) != null) {
+                    foundSomething = true;
+                    targets.add(new CableTarget(direction, adjCache));
                 }
+
+                newBlockState = newBlockState.with(CableBlock.PROPERTY_MAP.get(direction), foundSomething);
+            }
+
+            serverWorld.setBlockState(getPos(), newBlockState);
+        }
+
+        // Fill the list.
+        for (CableTarget target : targets) {
+            EnergyStorage storage = target.find();
+
+            if (storage == null) {
+                // Schedule a rebuild next tick.
+                // This is just a reference change, the iterator remains valid.
+                targets = null;
+            } else {
+                targetStorages.add(new OfferedEnergyStorage(this, target.directionTo, storage));
             }
         }
+
+        // Reset blocked sides.
+        blockedSides = 0;
     }
 
-
-    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.writeBlockPos(this.pos);
+    // BlockEntity
+    @Override
+    public NbtCompound toInitialChunkDataNbt() {
+        return createNbt();
     }
 
     @Override
-    public Text getDisplayName() {
-        return Text.literal("Cable");
-    }
-
-
-    @Nullable
-    @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        return new CableScreenHandler(syncId, playerInventory, this, propertyDelegate);
-    }
-
-    @Override
-    public DefaultedList<ItemStack> getItems() {
-        return this.inventory;
-    }
-
-    @Override
-    public long insert(long maxAmount, TransactionContext transaction) {
-        long inserted = energyStorage.insert(maxAmount, transaction);
-        if (inserted > 0) {
-
-            markDirty();
-        }
-        return inserted;
-    }
-
-
-    @Override
-    public long extract(long maxAmount, TransactionContext transaction) {
-        long extracted = energyStorage.extract(maxAmount, transaction);
-        if (extracted > 0) {
-
-            markDirty();
-        }
-        return extracted;
-    }
-
-    @Override
-    public long getAmount() {
-        return energyStorage.amount;
-    }
-
-    @Override
-    public long getCapacity() {
-        return energyStorage.getCapacity();
-    }
-
-    @Override
-    protected void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
-        Inventories.writeNbt(nbt, inventory);
-        nbt.putLong("cable_reactor.energy", energyStorage.amount); // Save the energy amount
-    }
-
-    @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
-        Inventories.readNbt(nbt, inventory);
-        if(nbt.contains("cable_reactor.energy")) {
-            energyStorage.amount = nbt.getLong("cable_reactor.energy");
-        }
-    }
-
-    // The following two functions are used to synchronize server and client for energy stuff
-    @Nullable
-    @Override
-    public Packet<ClientPlayPacketListener> toUpdatePacket() {
+    public BlockEntityUpdateS2CPacket toUpdatePacket() {
+        NbtCompound nbtTag = new NbtCompound();
+        writeNbt(nbtTag);
         return BlockEntityUpdateS2CPacket.create(this);
     }
 
     @Override
-    public NbtCompound toInitialChunkDataNbt() {
-        return createNbt();
+    public void readNbt(NbtCompound compound) {
+        super.readNbt(compound);
+        if (compound.contains("energy")) {
+            energyContainer.amount = compound.getLong("energy");
+        }
+        else {
+            cover = null;
+        }
+    }
+
+    @Override
+    public void writeNbt(NbtCompound compound) {
+        super.writeNbt(compound);
+        compound.putLong("energy", energyContainer.amount);
+        if (cover != null) {
+            compound.put("cover", NbtHelper.fromBlockState(cover));
+        }
+    }
+
+    public void neighborUpdate() {
+        targets = null;
+    }
+
+    // BlockEntityTicker
+    @Override
+    public void tick(World world, BlockPos pos, BlockState state, CableBlockEntity blockEntity) {
+        if (world == null || world.isClient) {
+            return;
+        }
+
+        CableTickManager.handleCableTick(blockEntity);
+    }
+
+
+
+    @Override
+    public @Nullable BlockState getRenderAttachmentData() {
+        return cover;
+    }
+
+    @Override
+    public void addInfo(List<Text> info, boolean isReal, boolean hasData) {
+
+    }
+
+    @Override
+    public ItemStack getToolDrop(PlayerEntity p0) {
+        return null;
+    }
+
+    private record CableTarget(Direction directionTo, BlockApiCache<EnergyStorage, Direction> cache) {
+
+        @Nullable
+        EnergyStorage find() {
+            return cache.find(directionTo.getOpposite());
+        }
     }
 }

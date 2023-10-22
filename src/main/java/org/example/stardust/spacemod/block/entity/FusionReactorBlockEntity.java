@@ -49,29 +49,22 @@ public class FusionReactorBlockEntity extends BlockEntity implements ExtendedScr
         }
     };
 
-
-
-
-
-
     public FusionReactorBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.FUSION_REACTOR_BE, pos, state);
         this.energyContainer = new SimpleSidedEnergyContainer() {
             @Override
             public long getCapacity() {
-
-                return 512000;
+                return 10000000;
             }
 
             @Override
-            public long getMaxInsert(@Nullable Direction side) {
-                return 100000;
+            public long getMaxInsert(Direction side) {
+                return side == Direction.UP ? 100000 : 0; // Allow insertion from the top only
             }
 
             @Override
-            public long getMaxExtract(@Nullable Direction side) {
-
-                return 100000;
+            public long getMaxExtract(Direction side) {
+                return 1000000;
             }
         };
 
@@ -93,17 +86,12 @@ public class FusionReactorBlockEntity extends BlockEntity implements ExtendedScr
                 return 1; // Or more, if you have more properties to display
             }
         };
-
-
     }
     private int tickCounter = 0;
-    private static final int FUEL_CONSUMPTION_INTERVAL = 1; // The interval of ticks between fuel consumptions
-
-
-
+    private static final int FUEL_CONSUMPTION_INTERVAL = 20;
     private boolean hasFuelSource(int inputSlot) {
-        Item item = this.getStack(inputSlot).getItem();
-        return item == Items.NETHER_STAR;
+        ItemStack stack = this.inventory.get(inputSlot);
+        return !stack.isEmpty() && stack.getItem() == Items.NETHER_STAR;
     }
 
 
@@ -111,14 +99,32 @@ public class FusionReactorBlockEntity extends BlockEntity implements ExtendedScr
         tickCounter++;
 
         if (!world.isClient) {
+            // Energy generation logic
             if (hasFuelSource(INPUT_SLOT) && this.energyStorage.amount < this.energyStorage.getCapacity()) {
-                generateEnergy(); // Updated method name
+                generateEnergy();
                 markDirty();
             }
 
-            distributeEnergy();
-            markDirty(world, pos, state);
+            // Group all energy transfers into a single outer transaction.
+            try (Transaction transaction = Transaction.openOuter()) {
+                // Send energy to adjacent blocks
+                for (Direction side : Direction.values()) {
+                    long amountToSend = Math.min(energyStorage.maxExtract, energyStorage.getAmount());
+                    if (amountToSend > 0) {
+                        BlockEntity adjacentBlockEntity = world.getBlockEntity(pos.offset(side));
+                        if (adjacentBlockEntity instanceof CableBlockEntity) {
+                            SimpleSidedEnergyContainer adjacentEnergyContainer = ((CableBlockEntity) adjacentBlockEntity).energyContainer;
+                            EnergyStorage sideEnergyStorage = adjacentEnergyContainer.getSideStorage(side.getOpposite());
 
+                            long accepted = sideEnergyStorage.insert(amountToSend, transaction);
+                            energyStorage.extract(accepted, transaction);
+                        }
+                    }
+                }
+                transaction.commit();
+            }
+
+            markDirty(world, pos, state);
             if (tickCounter >= FUEL_CONSUMPTION_INTERVAL) {
                 tickCounter = 0;
             }
@@ -128,10 +134,10 @@ public class FusionReactorBlockEntity extends BlockEntity implements ExtendedScr
 
     private void generateEnergy() {
         if (hasFuelSource(INPUT_SLOT)) {
-            long energyToAdd = 100000;  // Set the energy value for the Nether Star.
+            long energyToAdd = 10000000;  // Set the energy value for the Nether Star.
             try (Transaction transaction = Transaction.openOuter()) {
                 energyStorage.insert(energyToAdd, transaction);
-                transaction.commit();
+                // transaction.commit();
             } catch (IllegalStateException e) {
                 e.printStackTrace();
             }
@@ -139,91 +145,22 @@ public class FusionReactorBlockEntity extends BlockEntity implements ExtendedScr
         }
     }
 
+    // ... (rest of the code remains unchanged)
 
-
-
-
-
-    // New Method to Distribute Energy
-    private void distributeEnergy() {
-        // Check if we are on the server side
-        if (!world.isClient) {
-            for (Direction direction : Direction.values()) {
-                // Attempt to find an adjacent EnergyStorage in the given direction.
-                @Nullable
-                EnergyStorage maybeStorage = EnergyStorage.SIDED.find(world, pos.offset(direction), direction.getOpposite());
-                System.out.println("Found storage at direction " + direction + ": " + (maybeStorage != null));  // Log statement
-
-                if (maybeStorage != null) {
-                    try (Transaction transaction = Transaction.openOuter()) {
-                        long amountToSend = Math.min(energyStorage.amount, maybeStorage.getCapacity() - maybeStorage.getAmount());
-
-                        if (amountToSend > 0) {
-                            long extracted = energyStorage.extract(amountToSend, transaction);
-                            System.out.println("Energy extracted: " + extracted); // Log the amount extracted
-                            long inserted = maybeStorage.insert(extracted, transaction);
-
-                            if (inserted > 0) {
-                                transaction.commit(); // Commit transaction if energy is transferred.
-                                markDirty();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-
-
-    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.writeBlockPos(this.pos);
-    }
-
-    public boolean isFuel() {
-        ItemStack stack = inventory.get(INPUT_SLOT);
-        return !stack.isEmpty() && stack.isOf(Items.NETHER_STAR);
-    }
-
-
-    public boolean isNoFuel() {
-        return !isFuel();
-    }
-
-    @Override
-    public Text getDisplayName() {
-        return Text.literal("Fusion Reactor");
-    }
-
-
-    @Nullable
-    @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        return new FusionReactorScreenHandler(syncId, playerInventory, this, propertyDelegate);
-    }
-
-    @Override
-    public DefaultedList<ItemStack> getItems() {
-        return this.inventory;
-    }
 
     @Override
     public long insert(long maxAmount, TransactionContext transaction) {
         long inserted = energyStorage.insert(maxAmount, transaction);
         if (inserted > 0) {
-
             markDirty();
         }
         return inserted;
     }
 
-
     @Override
     public long extract(long maxAmount, TransactionContext transaction) {
         long extracted = energyStorage.extract(maxAmount, transaction);
         if (extracted > 0) {
-
             markDirty();
         }
         return extracted;
@@ -265,5 +202,34 @@ public class FusionReactorBlockEntity extends BlockEntity implements ExtendedScr
     @Override
     public NbtCompound toInitialChunkDataNbt() {
         return createNbt();
+    }
+
+    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+        buf.writeBlockPos(this.pos);
+    }
+
+    public boolean isFuel() {
+        ItemStack stack = inventory.get(INPUT_SLOT);
+        return !stack.isEmpty() && stack.isOf(Items.NETHER_STAR);
+    }
+
+    public boolean isNoFuel() {
+        return !isFuel();
+    }
+
+    @Override
+    public Text getDisplayName() {
+        return Text.literal("Fusion Reactor");
+    }
+
+    @Nullable
+    @Override
+    public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+        return new FusionReactorScreenHandler(syncId, playerInventory, this, propertyDelegate);
+    }
+
+    @Override
+    public DefaultedList<ItemStack> getItems() {
+        return this.inventory;
     }
 }

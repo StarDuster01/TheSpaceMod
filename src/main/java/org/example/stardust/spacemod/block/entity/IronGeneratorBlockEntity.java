@@ -40,7 +40,7 @@ import team.reborn.energy.api.base.SimpleSidedEnergyContainer;
 import java.util.List;
 import java.util.Map;
 
-public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory, EnergyStorage {
+public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory, EnergyStorage, CableTickManager.EnergyReceiver {
 
     protected final PropertyDelegate propertyDelegate;
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(36, ItemStack.EMPTY);
@@ -61,6 +61,20 @@ public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScr
     public int getCurrentBlockTypeIndex() {
         List<String> blockTypes = List.of("Iron", "Gold", "Diamond", "Lapis", "Redstone", "Emerald");
         return blockTypes.indexOf(currentBlockType);
+    }
+
+    @Override
+    public boolean canReceiveEnergy(Direction direction) {
+        return true;
+    }
+
+    @Override
+    public long receiveEnergy(long amount, Transaction transaction) {
+        // Assuming you want to receive energy from the 'null' side (meaning any side), but you can specify any Direction.
+        EnergyStorage sideStorage = this.energyContainer.getSideStorage(null);
+
+        long acceptedEnergy = Math.min(amount, this.energyContainer.getMaxInsert(null));
+        return sideStorage.insert(acceptedEnergy, transaction);
     }
 
 
@@ -102,27 +116,51 @@ public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
     private void generateIronBlock() {
         if (hasEnoughEnergy()) {
-            BlockPos frontBlockPos = pos.offset(getBlockFacing());
-            BlockState frontBlockState = world.getBlockState(frontBlockPos);
-            if (frontBlockState.isAir() || frontBlockState.isOf(Blocks.WATER)) {
-                Block blockToPlace = switch(currentResourceType) {
-                    case 0 -> Blocks.IRON_BLOCK;
-                    case 1 -> Blocks.GOLD_BLOCK;
-                    case 2 -> Blocks.DIAMOND_BLOCK;
-                    case 3 -> Blocks.LAPIS_BLOCK;
-                    case 4 -> Blocks.REDSTONE_BLOCK;
-                    case 5 -> Blocks.EMERALD_BLOCK;
-                    default -> Blocks.IRON_BLOCK;
-                };
-                world.setBlockState(frontBlockPos, blockToPlace.getDefaultState());
-                extractEnergy(BLOCK_ENERGY_MAP.getOrDefault(currentResourceType, 2000000));
+            long requiredEnergy = BLOCK_ENERGY_MAP.getOrDefault(currentResourceType, 2000000);
 
-                markDirty();
+            // Extract the required energy directly from the generator's energy storage
+            long extractedEnergy = energyStorage.extract(requiredEnergy, Transaction.openOuter());
+            if (extractedEnergy >= requiredEnergy) {
+                BlockPos frontBlockPos = pos.offset(getBlockFacing());
+                BlockState frontBlockState = world.getBlockState(frontBlockPos);
+                if (frontBlockState.isAir() || frontBlockState.isOf(Blocks.WATER)) {
+                    Block blockToPlace;
+                    switch (currentResourceType) {
+                        case 0:
+                            blockToPlace = Blocks.IRON_BLOCK;
+                            break;
+                        case 1:
+                            blockToPlace = Blocks.GOLD_BLOCK;
+                            break;
+                        case 2:
+                            blockToPlace = Blocks.DIAMOND_BLOCK;
+                            break;
+                        case 3:
+                            blockToPlace = Blocks.LAPIS_BLOCK;
+                            break;
+                        case 4:
+                            blockToPlace = Blocks.REDSTONE_BLOCK;
+                            break;
+                        case 5:
+                            blockToPlace = Blocks.EMERALD_BLOCK;
+                            break;
+                        default:
+                            blockToPlace = Blocks.IRON_BLOCK;
+                            break;
+                    }
+                    world.setBlockState(frontBlockPos, blockToPlace.getDefaultState());
+                    markDirty();
+                }
             }
         }
     }
 
 
+
+
+    private boolean hasEnergyFromCable() {
+        return energyStorage.getAmount() < energyStorage.getCapacity();
+    }
 
     private int currentResourceType = 0; // default value
     public void setCurrentResourceType(int type) {
@@ -232,12 +270,18 @@ public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScr
             notifyNearbyPlayers(world, pos);
             markDirty();
             generateIronBlock();
-        }
 
-        if (this.energyStorage.getAmount() < this.energyStorage.getCapacity()) {
-            markDirty();
+            // Check for nearby cables and request energy if needed
+
         }
     }
+
+
+
+
+
+
+
 
     private void notifyNearbyPlayers(World world, BlockPos pos) {
         for (PlayerEntity playerEntity : world.getPlayers()) {
