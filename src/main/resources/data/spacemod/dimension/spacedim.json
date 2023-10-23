@@ -2,7 +2,7 @@
   "type": "minecraft:overworld",
   "generator": {
     "type": "minecraft:noise",
-    "settings": "minecraft:overworld",
+    "settings": "spacemod:better_floating_islands",
     "biome_source": {
       "type": "minecraft:fixed",
       "biome": "spacemod:formic_biome"

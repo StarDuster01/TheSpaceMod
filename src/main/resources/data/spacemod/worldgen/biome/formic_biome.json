@@ -63,6 +63,7 @@
       "minecraft:ore_redstone_lower",
       "minecraft:ore_diamond",
       "minecraft:ore_diamond_large",
+      "spacemod:ore_diamond_giant",
       "minecraft:ore_diamond_buried",
       "minecraft:ore_lapis",
       "minecraft:ore_lapis_buried",
@@ -129,7 +130,7 @@
         "type": "spacemod:unicorn",
         "maxCount": 4,
         "minCount": 4,
-        "weight": 1000
+        "weight": 10
       },
       {
         "type": "minecraft:chicken",

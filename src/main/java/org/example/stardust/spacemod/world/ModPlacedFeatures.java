@@ -5,7 +5,9 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.gen.YOffset;
 import net.minecraft.world.gen.feature.*;
+import net.minecraft.world.gen.placementmodifier.HeightRangePlacementModifier;
 import net.minecraft.world.gen.placementmodifier.PlacementModifier;
 import org.example.stardust.spacemod.SpaceMod;
 import org.example.stardust.spacemod.block.ModBlocks;
@@ -15,6 +17,7 @@ import java.util.List;
 
 public class ModPlacedFeatures {
     public static final RegistryKey<PlacedFeature> GIANT_JUNGLE_PLACED_KEY = registerKey("giant_jungle_placed");
+    public static final RegistryKey<PlacedFeature> GIANT_DIAMOND_ORE_PLACED_KEY = registerKey("giant_diamond_ore_placed");
 
     public static void bootstrap(Registerable<PlacedFeature> context) {
         var configuredFeatureRegistryEntryLookup = context.getRegistryLookup(RegistryKeys.CONFIGURED_FEATURE);
@@ -23,6 +26,10 @@ public class ModPlacedFeatures {
                 VegetationPlacedFeatures.treeModifiersWithWouldSurvive(
                         PlacedFeatures.createCountExtraModifier(4, 0.1f, 2), ModBlocks.GIANT_JUNGLE_SAPLING)); // per chunk
 
+
+        register(context, GIANT_DIAMOND_ORE_PLACED_KEY, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.GIANT_DIAMOND_ORE_KEY),
+        ModOrePlacement.modifiersWithCount(10,
+                HeightRangePlacementModifier.uniform(YOffset.fixed(-20), YOffset.fixed(100))));
 
     }
 
