@@ -1,0 +1,16 @@
+{
+  "bruh": {
+    "subtitle": "sounds.spacemod.bruh",
+    "sounds": [
+      "spacemod:bruh"
+
+    ]
+  },
+  "new_aria_math": {
+    "subtitle": "sounds.spacemod.new_aria_math",
+    "sounds": [
+      "spacemod:new_aria_math"
+
+    ]
+  }
+}

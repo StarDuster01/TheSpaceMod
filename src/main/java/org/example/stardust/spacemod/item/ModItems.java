@@ -9,6 +9,7 @@ import net.minecraft.util.Identifier;
 import org.example.stardust.spacemod.SpaceMod;
 import org.example.stardust.spacemod.entity.ModEntities;
 import org.example.stardust.spacemod.item.custom.*;
+import org.example.stardust.spacemod.sounds.ModSounds;
 
 import javax.tools.Tool;
 
@@ -22,6 +23,7 @@ public class ModItems {
     public static final Item PURE_BLOOD = registerItem("pure_blood", new Item(new FabricItemSettings()));
     public static final Item CLOAKING_DEVICE_ITEM = registerItem("cloaking_device_item", new CloakingDeviceItem(new FabricItemSettings().maxDamage(100)));
     public static final Item FROST_WAND = registerItem("frost_wand", new FrostWand(new FabricItemSettings().maxDamage(300)));
+    public static final Item NEW_ARIA_MATH_MUSIC_DISC = registerItem("new_aria_math_music_disc", new MusicDiscItem(9, ModSounds.NEW_ARIA_MATH, new FabricItemSettings().maxCount(1),310));
     public static final Item VIEW_FINDER = registerItem("view_finder", new ViewFinder(new FabricItemSettings().maxDamage(10)));
     public static final Item SACRIFICIAL_KNIFE = registerItem("sacrificial_knife", new SacrificialKnife(ModToolMaterial.GALLIUM, 3, -2.4F,  new FabricItemSettings()));
     public static final Item GLASS_SWORD = registerItem("glass_sword", new GlassSword(ModToolMaterial.GLASS, 3, -2.4F,  new FabricItemSettings()));

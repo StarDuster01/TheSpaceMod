@@ -4,15 +4,18 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+import org.example.stardust.spacemod.sounds.ModSounds;
 
 public class CloakingDeviceItem extends Item {
 
     public CloakingDeviceItem(Settings settings) {
         super(settings);
+
     }
 
     @Override
@@ -27,6 +30,8 @@ public class CloakingDeviceItem extends Item {
             }
             itemStack.damage(1, user, (playerEntity) -> playerEntity.sendToolBreakStatus(hand));
         }
+        user.getWorld().playSound(null, user.getBlockPos(), ModSounds.BRUH, SoundCategory.BLOCKS, 1f, 1f);
+
 
         return TypedActionResult.success(user.getStackInHand(hand));
     }

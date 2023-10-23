@@ -25,6 +25,7 @@ import org.example.stardust.spacemod.item.ModItems;
 import org.example.stardust.spacemod.networking.ModMessages;
 import org.example.stardust.spacemod.recipe.ModRecipes;
 import org.example.stardust.spacemod.screen.ModScreenHandlers;
+import org.example.stardust.spacemod.sounds.ModSounds;
 import org.example.stardust.spacemod.util.ModRegistries;
 import org.example.stardust.spacemod.world.gen.ModWorldGeneration;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ public class SpaceMod implements ModInitializer{
         ModScreenHandlers.registerScreenHandler();
         ModRecipes.registerRecipes();
         ModRegistries.registerModStuffs();
+        ModSounds.registerSounds();
 
         FabricDefaultAttributeRegistry.register(ModEntities.UNICORN, UnicornEntity.setAttributes());
         FabricDefaultAttributeRegistry.register(ModEntities.FORMIC, FormicEntity.setAttributes());

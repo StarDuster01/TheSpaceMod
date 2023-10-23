@@ -48,6 +48,7 @@ public class ModItemGroups {
                         entries.add(ModBlocks.RANGE_SPAWNER_BLOCK);
                         entries.add(ModBlocks.IRON_GENERATOR_BLOCK);
                         entries.add(ModBlocks.CABLE_BLOCK);
+                        entries.add(ModItems.NEW_ARIA_MATH_MUSIC_DISC);
 
 
 

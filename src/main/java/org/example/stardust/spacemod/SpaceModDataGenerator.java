@@ -9,6 +9,7 @@ import org.example.stardust.spacemod.world.ModConfiguredFeatures;
 import org.example.stardust.spacemod.world.ModPlacedFeatures;
 import org.example.stardust.spacemod.world.biome.ModBiomes;
 import org.example.stardust.spacemod.world.dimension.ModDimensions;
+import org.example.stardust.spacemod.datagen.ModItemTagProvider;
 
 public class SpaceModDataGenerator implements DataGeneratorEntrypoint {
     @Override
@@ -17,7 +18,7 @@ public class SpaceModDataGenerator implements DataGeneratorEntrypoint {
 
 
     //    pack.addProvider(ModBlockTagProvider::new);
-    //    pack.addProvider(ModItemTagProvider::new);
+        pack.addProvider(ModItemTagProvider::new);
     //    pack.addProvider(ModBlockLootTableGenerator::new);
     //    pack.addProvider(ModModelProvider::new);
      //   pack.addProvider(ModRecipeGenerator::new);
