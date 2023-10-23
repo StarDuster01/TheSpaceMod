@@ -27,18 +27,13 @@ public class ModConfiguredFeatures {
     public static final RegistryKey<ConfiguredFeature<?, ?>> GIANT_DIAMOND_ORE_KEY = registerKey("giant_diamond_ore");
 
     public static void bootstrap(Registerable<ConfiguredFeature<?, ?>> context) {
+
         RuleTest stoneReplaceables = new TagMatchRuleTest(BlockTags.STONE_ORE_REPLACEABLES);
         RuleTest deepslateReplaceables = new TagMatchRuleTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
-        RuleTest netherReplaceables = new TagMatchRuleTest(BlockTags.BASE_STONE_NETHER);
-        RuleTest endReplaceables = new BlockMatchRuleTest(Blocks.END_STONE);
 
-        List<OreFeatureConfig.Target> formicGiantDiamondOres =
+        List<OreFeatureConfig.Target> overworldGiantDiamondOres =
                 List.of(OreFeatureConfig.createTarget(stoneReplaceables, Blocks.DIAMOND_ORE.getDefaultState()),
                         OreFeatureConfig.createTarget(deepslateReplaceables, Blocks.DEEPSLATE_DIAMOND_ORE.getDefaultState()));
-
-
-
-
 
         register(context, GIANT_JUNGLE_KEY, Feature.TREE, new TreeFeatureConfig.Builder(
                 BlockStateProvider.of(Blocks.JUNGLE_LOG),
@@ -47,8 +42,9 @@ public class ModConfiguredFeatures {
                 new JungleFoliagePlacer(ConstantIntProvider.create(2), ConstantIntProvider.create(1), 2),
                 new TwoLayersFeatureSize(1, 0, 2)).build());
 
+        register(context, GIANT_DIAMOND_ORE_KEY, Feature.ORE, new OreFeatureConfig(overworldGiantDiamondOres, 12));
 
-        register(context, GIANT_DIAMOND_ORE_KEY, Feature.ORE, new OreFeatureConfig(formicGiantDiamondOres,128));
+
     }
 
 

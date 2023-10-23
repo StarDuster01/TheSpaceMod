@@ -1,5 +1,4 @@
 package org.example.stardust.spacemod.world;
-
 import net.minecraft.world.gen.placementmodifier.*;
 
 import java.util.List;

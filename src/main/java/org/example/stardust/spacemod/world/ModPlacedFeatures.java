@@ -26,10 +26,10 @@ public class ModPlacedFeatures {
                 VegetationPlacedFeatures.treeModifiersWithWouldSurvive(
                         PlacedFeatures.createCountExtraModifier(4, 0.1f, 2), ModBlocks.GIANT_JUNGLE_SAPLING)); // per chunk
 
-
         register(context, GIANT_DIAMOND_ORE_PLACED_KEY, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.GIANT_DIAMOND_ORE_KEY),
-        ModOrePlacement.modifiersWithCount(10,
-                HeightRangePlacementModifier.uniform(YOffset.fixed(-20), YOffset.fixed(100))));
+                ModOrePlacement.modifiersWithCount(10,
+                        HeightRangePlacementModifier.uniform(YOffset.fixed(-80), YOffset.fixed(80))));
+
 
     }
 

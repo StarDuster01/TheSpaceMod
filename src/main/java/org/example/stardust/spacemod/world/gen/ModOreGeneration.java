@@ -10,6 +10,5 @@ public class ModOreGeneration {
     public static void generateOres() {
         BiomeModifications.addFeature(BiomeSelectors.includeByKey(ModBiomes.FORMIC_BIOME),
                 GenerationStep.Feature.UNDERGROUND_ORES, ModPlacedFeatures.GIANT_DIAMOND_ORE_PLACED_KEY);
-
     }
 }
