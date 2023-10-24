@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "active=true": { "model": "spacemod:block/alien_power_core_e" },
+    "active=false": { "model": "spacemod:block/alien_power_core_r" }
+  }
+}

@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
@@ -25,6 +26,7 @@ public class ModMessages {
 
     public static final Identifier GRIFFIN_MOVEMENT_ID = new Identifier(SpaceMod.MOD_ID, "griffin_movement");
     public static final Identifier TOGGLE_MINING_ID = new Identifier(SpaceMod.MOD_ID, "toggle_mining");
+    public static final Identifier POWER_CORE_UNLOCK_ID = new Identifier(SpaceMod.MOD_ID, "power_core_unlock_command");
     public static final Identifier TOGGLE_RANGE_SPAWNER_ID = new Identifier(SpaceMod.MOD_ID, "toggle_range_spawner");
     public static final Identifier TOGGLE_BORING_ID = new Identifier(SpaceMod.MOD_ID, "toggle_boring");
     public static final Identifier CHANGE_BORING_AREA_ID = new Identifier(SpaceMod.MOD_ID, "change_boring_area");
@@ -58,6 +60,11 @@ public class ModMessages {
         buf.writeLong(energy);
         buf.writeBoolean(isMiningActive);
         ServerPlayNetworking.send(player, MINING_BORE_UPDATE_ID, buf);
+    }
+    public static void sendPowerCoreUnlockCommand(ClientPlayerEntity player, BlockPos pos) {
+        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+        buf.writeBlockPos(pos);
+        ClientPlayNetworking.send(POWER_CORE_UNLOCK_ID, buf);
     }
     public static void sendMiningBoreAreaUpdate(ServerPlayerEntity player, BlockPos pos, Vector2i dimensions) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
@@ -186,6 +193,15 @@ public class ModMessages {
                 World world = player.getEntityWorld();
                 if (world.getBlockEntity(pos) instanceof RangeSpawnerBlockEntity) {
                     world.removeBlock(pos, false); // Deletes the block. Set the second parameter to true if you want to drop the block as an item.
+                }
+            });
+        });
+        ServerPlayNetworking.registerGlobalReceiver(POWER_CORE_UNLOCK_ID, (server, player, handler, buf, responseSender) -> {
+            BlockPos blockPos = buf.readBlockPos();
+            server.execute(() -> {
+                BlockEntity blockEntity = player.getWorld().getBlockEntity(blockPos);
+                if (blockEntity instanceof AlienPowerCoreBlockEntity) {
+                    ((AlienPowerCoreBlockEntity) blockEntity).unlock(player);
                 }
             });
         });

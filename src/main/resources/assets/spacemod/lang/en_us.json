@@ -13,6 +13,8 @@
   "block.spacemod.cable_block": "Cable Wire",
   "block.spacemod.excavator_block": "Quarry Block",
   "block.spacemod.coal_generator_block": "Coal Generator Block",
+  "block.spacemod.alien_power_core": "Alien Power Core",
+  "block.spacemod.alien_cockpit": "Alien Cockpit",
   "block.spacemod.speed_block": "Speed Block",
   "block.spacemod.gallium_ore": "Gallium Ore",
   "item.spacemod.cloaking_device_item": "Cloaking Device",

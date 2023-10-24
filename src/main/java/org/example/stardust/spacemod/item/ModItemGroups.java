@@ -49,6 +49,8 @@ public class ModItemGroups {
                         entries.add(ModBlocks.IRON_GENERATOR_BLOCK);
                         entries.add(ModBlocks.CABLE_BLOCK);
                         entries.add(ModItems.NEW_ARIA_MATH_MUSIC_DISC);
+                        entries.add(ModBlocks.ALIEN_COCKPIT);
+                        entries.add(ModBlocks.ALIEN_POWER_CORE);
 
 
 

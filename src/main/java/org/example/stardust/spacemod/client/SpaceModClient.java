@@ -31,6 +31,7 @@ public class SpaceModClient implements ClientModInitializer {
         HandledScreens.register(ModScreenHandlers.MINING_BORE_SCREEN_HANDLER, MiningBoreScreen::new);
         HandledScreens.register(ModScreenHandlers.WALLPLACER_SCREEN_HANDLER, WallPlacerScreen::new);
         HandledScreens.register(ModScreenHandlers.FUSION_REACTOR_SCREEN_HANDLER, FusionReactorScreen::new);
+        HandledScreens.register(ModScreenHandlers.ALIEN_POWER_CORE_SCREEN_HANDLER, AlienPowerCoreScreen::new);
 
         HandledScreens.register(ModScreenHandlers.RANGE_SPAWNER_SCREEN_HANDLER, RangeSpawnerScreen::new);
 

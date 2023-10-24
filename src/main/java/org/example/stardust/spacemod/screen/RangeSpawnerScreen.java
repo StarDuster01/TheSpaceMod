@@ -46,7 +46,7 @@ public class RangeSpawnerScreen extends HandledScreen<RangeSpawnerScreenHandler>
         }).dimensions(width / 2 -100, 20, 200, 20).tooltip(Tooltip.of(Text.literal("Click this Button to Toggle Machine On"))).build();
         commandTextField = new TextFieldWidget(textRenderer, width / 2 - 150 / 2, height / 2 - 50, 150, 20, Text.literal("Command"));
         this.addDrawableChild(commandTextField);
-      //  addDrawableChild(button1);
+
     }
 
     @Override

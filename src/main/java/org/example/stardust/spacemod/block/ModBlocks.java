@@ -65,6 +65,11 @@ public class ModBlocks {
     public static final Block CABLE_BLOCK = registerBlock("cable_block",
             new CableBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
 
+    public static final Block ALIEN_COCKPIT = registerBlock("alien_cockpit",
+            new AlienCockpit(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.MOSS_BLOCK)));
+    public static final Block ALIEN_POWER_CORE = registerBlock("alien_power_core",
+            new AlienPowerCore(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+
     public static final Block GIANT_JUNGLE_SAPLING = registerBlock("giant_jungle_sapling", new SaplingBlock(new GiantJungleSaplingGenerator(), FabricBlockSettings.copyOf(Blocks.JUNGLE_SAPLING).strength(1f)));
 
 
