@@ -1,10 +1,10 @@
 {
 	"credit": "Made by GreatCow with Blockbench",
 	"textures": {
-		"0": "block/quartz_block_bottom",
-		"1": "block/cyan_terracotta",
-		"3": "small_smooth_stone",
-		"particle": "block/quartz_block_bottom"
+		"0": "minecraft:block/quartz_block_bottom",
+		"1": "minecraft:block/cyan_terracotta",
+		"3": "spacemod:block/small_smooth_stone",
+		"particle": "minecraft:block/quartz_block_bottom"
 	},
 	"elements": [
 		{
