@@ -28,8 +28,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class IronGeneratorBlock extends BlockWithEntity implements BlockEntityProvider {
 
-
-
     public IronGeneratorBlock(Settings settings) {
         super(settings);
     }
@@ -60,32 +58,26 @@ public class IronGeneratorBlock extends BlockWithEntity implements BlockEntityPr
     }
 
 
-    // When block breaks, the inventory drops
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof IronGeneratorBlockEntity) {
-                ItemScatterer.spawn(world, pos, (IronGeneratorBlockEntity) blockEntity); // Fix the casting here
+                ItemScatterer.spawn(world, pos, (IronGeneratorBlockEntity) blockEntity);
                 world.updateComparators(pos, this);
             }
             super.onStateReplaced(state, world, pos, newState, moved);
         }
     }
 
-
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (!world.isClient) {  // Ensure this runs on the server side
+        if (!world.isClient) {
             IronGeneratorBlockEntity blockEntity = (IronGeneratorBlockEntity) world.getBlockEntity(pos);
-
-            // Send data packet to client to sync block type index
             PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
             buf.writeBlockPos(blockEntity.getPos());
-            buf.writeInt(blockEntity.getCurrentBlockTypeIndex()); // Assuming you have this method in your block entity
+            buf.writeInt(blockEntity.getCurrentBlockTypeIndex());
             ServerPlayNetworking.send((ServerPlayerEntity) player, ModMessages.IRON_GENERATOR_SYNC_ID, buf);
-
-            // Open the GUI for the player
             NamedScreenHandlerFactory screenHandlerFactory = blockEntity;
             if (screenHandlerFactory != null) {
                 player.openHandledScreen(screenHandlerFactory);

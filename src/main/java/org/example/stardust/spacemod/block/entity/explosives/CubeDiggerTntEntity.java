@@ -29,8 +29,6 @@ public class CubeDiggerTntEntity extends TntEntity {
     private void explodincube() {
         World world = this.getWorld();
         BlockPos explosionPos = this.getBlockPos();
-
-        // The explosion size is 4, so we iterate from -4 to +4 in all three dimensions
         int explosionSize = 4;
         for (int x = -explosionSize; x <= explosionSize; x++) {
             for (int y = -explosionSize; y <= explosionSize; y++) {
@@ -38,20 +36,13 @@ public class CubeDiggerTntEntity extends TntEntity {
                     BlockPos blockPos = explosionPos.add(x, y, z);
                     BlockState blockState = world.getBlockState(blockPos);
                     Block block = blockState.getBlock();
-
-                    // Check if the block is not air and is breakable
                     if (!block.isTransparent(blockState, world, blockPos) && block != Blocks.BEDROCK) {
-                        // Drop the block as an item
                         block.dropStacks(blockState, world, blockPos, null, null, ItemStack.EMPTY);
-
-                        // Remove the block from the world
                         world.removeBlock(blockPos, false);
                     }
                 }
             }
         }
-
-        // Create the explosion
         world.createExplosion(this, this.getX(), this.getBodyY(0.0625D), this.getZ(), 0.0F, World.ExplosionSourceType.BLOCK);
     }
 

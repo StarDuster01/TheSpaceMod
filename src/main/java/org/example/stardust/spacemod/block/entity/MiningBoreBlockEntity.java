@@ -44,12 +44,12 @@ public class MiningBoreBlockEntity extends BlockEntity implements ExtendedScreen
     protected final PropertyDelegate propertyDelegate;
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(36, ItemStack.EMPTY);
     private final SimpleSidedEnergyContainer energyContainer;
-    private Vector2i miningAreaDimensions = new Vector2i(4, 4);  // Default dimensions of 4x4
+    private Vector2i miningAreaDimensions = new Vector2i(4, 4);
     private BlockPos currentMiningPosition;
     private int currentMiningDepth = 0;
-    private static final int MAX_DEPTH = 128;  // Constant for the maximum allowed depth
+    private static final int MAX_DEPTH = 128;
 
-    private int chestSearchRadius = 5;  // Default radius of 5
+    private int chestSearchRadius = 5;
 
 
 
@@ -81,11 +81,6 @@ public class MiningBoreBlockEntity extends BlockEntity implements ExtendedScreen
         return ENERGY_PER_BLOCK;
     }
 
-
-
-
-
-    // Creating an Energy Storage with a given capacity and charge/decharge rate
     public final MiningBoreEnergyStorage energyStorage = new MiningBoreEnergyStorage(3600000, 100000, 2000) {
         @Override
         protected void onFinalCommit() {
@@ -120,18 +115,18 @@ public class MiningBoreBlockEntity extends BlockEntity implements ExtendedScreen
             @Override
             public int get(int index) {
                 if(index == 0)
-                    return (int) energyStorage.amount; // Example, assuming you want to display energy amount in GUI at index 0
-                return 0; // Or handle other indexes
+                    return (int) energyStorage.amount;
+                return 0;
             }
 
             @Override
             public void set(int index, int value) {
-                // Usually, it's left empty for read-only properties in GUI
+
             }
 
             @Override
             public int size() {
-                return 1; // Or more, if you have more properties to display
+                return 1;
             }
         };
 
@@ -153,7 +148,6 @@ public class MiningBoreBlockEntity extends BlockEntity implements ExtendedScreen
     }
 
     public boolean tryInsertIntoNeighboringChests(ItemStack itemStack) {
-        // Assuming chestSearchRadius is a field in your class that specifies the search radius
         for (int dx = -chestSearchRadius; dx <= chestSearchRadius; dx++) {
             for (int dy = -chestSearchRadius; dy <= chestSearchRadius; dy++) {
                 for (int dz = -chestSearchRadius; dz <= chestSearchRadius; dz++) {
@@ -164,7 +158,6 @@ public class MiningBoreBlockEntity extends BlockEntity implements ExtendedScreen
                         if (chestBlockEntity != null) {
                             ChestType chestType = currentState.get(ChestBlock.CHEST_TYPE);
                             if (chestType != ChestType.SINGLE) {
-                                // This is a double chest
                                 BlockPos otherHalfPos = currentPos.offset(ChestBlock.getFacing(currentState));
                                 ChestBlockEntity otherHalf = (ChestBlockEntity) world.getBlockEntity(otherHalfPos);
                                 if (otherHalf != null) {
@@ -174,7 +167,6 @@ public class MiningBoreBlockEntity extends BlockEntity implements ExtendedScreen
                                     }
                                 }
                             } else {
-                                // This is a single chest
                                 if (tryInsertIntoInventory(chestBlockEntity, itemStack)) {
                                     return true;
                                 }
@@ -184,11 +176,8 @@ public class MiningBoreBlockEntity extends BlockEntity implements ExtendedScreen
                 }
             }
         }
-        return false;  // Return false if item could not be inserted into any chest within radius
+        return false;
     }
-
-
-    // Helper method to handle inserting item into an Inventory
     private boolean tryInsertIntoInventory(net.minecraft.inventory.Inventory inventory, ItemStack itemStack) {
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stackInSlot = inventory.getStack(i);
@@ -219,7 +208,7 @@ private int currentMiningLayer = 0;
     public void mineBlocks() {
         if (currentMiningDepth >= MAX_DEPTH) return;
         World currentWorld = this.getWorld();
-        if (currentWorld == null || currentWorld.isClient) return;  // Execute only on the server side
+        if (currentWorld == null || currentWorld.isClient) return;
 
         Direction facing = getCachedState().get(MiningBoreBlock.FACING);
 
@@ -248,7 +237,7 @@ private int currentMiningLayer = 0;
                 throw new IllegalStateException("Unexpected value: " + facing);
         }
 
-        boolean allBlocksMined = true;  // Assume all blocks are mined initially
+        boolean allBlocksMined = true;
 
         for (BlockPos currentPos : BlockPos.iterate(start, end)) {
             BlockState state = world.getBlockState(currentPos);
@@ -256,7 +245,7 @@ private int currentMiningLayer = 0;
             if (canBreak(state, currentPos) && hasEnoughEnergy()) {
                 mineBlock(currentPos, state);
             } else if (canBreak(state,currentPos)){
-                    allBlocksMined = false;  // Set to false if any block cannot be mined due to lack of energy
+                    allBlocksMined = false;
                 }
             }
 
@@ -276,7 +265,7 @@ private int currentMiningLayer = 0;
 
 
 
-    // Improved canBreak Method considering Block hardness
+
     public boolean canBreak(BlockState state, BlockPos pos) {
         Block block = state.getBlock();
         return block != Blocks.BEDROCK
@@ -293,28 +282,24 @@ private int currentMiningLayer = 0;
     }
 
     public void validateChestConnections() {
-        // Reset any cached chest connections here (if you have any)
-
-        // Check connections anew
         Direction[] directions = Direction.values();
         for (Direction direction : directions) {
             BlockPos neighborPos = pos.offset(direction);
             BlockState neighborState = world.getBlockState(neighborPos);
             if (neighborState.getBlock() instanceof ChestBlock) {
-                // Re-establish connection or cache this chest for later use
             }
         }
     }
 
     private void mineBlock(BlockPos pos, BlockState state) {
-        // Extract energy for mining operation.
+
         extractEnergy(ENERGY_PER_BLOCK);
-        // Get the drops for the block being broken.
+
         List<ItemStack> drops = Block.getDroppedStacks(state, (ServerWorld) world, pos, world.getBlockEntity(pos));
         for (ItemStack drop : drops) {
             boolean inserted = insertItem(drop);
             if (!inserted) {
-                inserted = tryInsertIntoNeighboringChests(drop);  // Try to insert into neighboring chests
+                inserted = tryInsertIntoNeighboringChests(drop);
                 if (!inserted) {
                     // The inventory and neighboring chests are full, drop the item in the world
                   //  ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, drop);
@@ -330,9 +315,6 @@ private int currentMiningLayer = 0;
         markDirty();
     }
 
-
-
-    // Method to insert an item into the inventory. Returns whether the item was successfully inserted.
     private boolean insertItem(ItemStack itemStack) {
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stackInSlot = inventory.get(i);
@@ -354,7 +336,6 @@ private int currentMiningLayer = 0;
             }
         }
         if(itemStack.getCount() > 0) {
-            // If there are still items left, find an empty slot to place the remaining items.
             for(int i = 0; i < inventory.size(); i++) {
                 if(inventory.get(i).isEmpty()) {
                     inventory.set(i, itemStack.copy());
@@ -370,7 +351,7 @@ private int currentMiningLayer = 0;
 
 
     private boolean hasEnoughEnergy() {
-        return energyStorage.getAmount() >= ENERGY_PER_BLOCK; // Ensure you have defined ENERGY_PER_BLOCK.
+        return energyStorage.getAmount() >= ENERGY_PER_BLOCK;
     }
 
     private void extractEnergy(long amount) {
@@ -385,10 +366,9 @@ private int currentMiningLayer = 0;
 
 
     public void tick(World world, BlockPos pos, BlockState state) {
-        // Increment the tick counter every tick
         Vector2i dimensions = this.getMiningAreaDimensions();
         tickCounter++;
-        if(!world.isClient) { // Check if on server side
+        if(!world.isClient) {
             validateChestConnections();
             for (PlayerEntity playerEntity : world.getPlayers()) {
                 if (playerEntity instanceof ServerPlayerEntity && playerEntity.squaredDistanceTo(Vec3d.of(pos)) < 20*20) {
@@ -398,11 +378,9 @@ private int currentMiningLayer = 0;
             }
 
         }
-        // Increase power every tick, if there's room for more energy.
         if (this.energyStorage.getAmount() < this.energyStorage.getCapacity()) {
             markDirty(world, pos, state);
         }
-        // Check if there is 200 or more energy and if so, mine the block.
         if (isMiningActive && this.energyStorage.getAmount() >= ENERGY_PER_BLOCK) {
             mineBlocks();
             markDirty();
@@ -436,7 +414,7 @@ private int currentMiningLayer = 0;
     @Override
     public long insert(long maxAmount, TransactionContext transaction) {
         long inserted = energyStorage.insert(maxAmount, transaction);
-        System.out.println("Energy inserted: " + inserted);  // Log statement
+        System.out.println("Energy inserted: " + inserted);
         if (inserted > 0) {
 
             markDirty();
@@ -465,13 +443,13 @@ private int currentMiningLayer = 0;
     @Override
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
-        Inventories.writeNbt(nbt, inventory); // If you have inventory
-        nbt.putLong("mining_bore.energy", energyStorage.amount); // Save the energy amount
+        Inventories.writeNbt(nbt, inventory);
+        nbt.putLong("mining_bore.energy", energyStorage.amount);
     }
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        Inventories.readNbt(nbt, inventory); // If you have inventory
+        Inventories.readNbt(nbt, inventory);
         if(nbt.contains("mining_bore.energy")) {
             energyStorage.amount = nbt.getLong("mining_bore.energy");
         }

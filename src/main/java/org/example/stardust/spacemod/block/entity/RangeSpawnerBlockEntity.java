@@ -67,7 +67,6 @@ public class RangeSpawnerBlockEntity extends BlockEntity implements ExtendedScre
     }
 
 
-    // Creating an Energy Storage with a given capacity and charge/decharge rate
     public final RangeSpawnerEnergyStorage energyStorage = new RangeSpawnerEnergyStorage(1000000, 10000, 1000000) {
         @Override
         protected void onFinalCommit() {
@@ -101,13 +100,12 @@ public class RangeSpawnerBlockEntity extends BlockEntity implements ExtendedScre
             @Override
             public int get(int index) {
                 if(index == 0)
-                    return (int) energyStorage.amount; // Example, assuming you want to display energy amount in GUI at index 0
-                return 0; // Or handle other indexes
+                    return (int) energyStorage.amount;
+                return 0;
             }
 
             @Override
             public void set(int index, int value) {
-                // Usually, it's left empty for read-only properties in GUI
             }
 
             @Override
@@ -128,14 +126,10 @@ public class RangeSpawnerBlockEntity extends BlockEntity implements ExtendedScre
     }
 
     public void spawnTNTOnTop() {
-        if (!world.isClient) { // Ensure you're on the server side
+        if (!world.isClient) {
             if (energyStorage.getAmount() >= 1000000) {
-            BlockPos tntPos = pos.up(); // The position right above the current block entity
-
-            // Create a primed TNT entity at that position
+            BlockPos tntPos = pos.up();
             TntEntity tntEntity = new TntEntity(world, tntPos.getX() + 0.5, tntPos.getY(), tntPos.getZ() + 0.5, null);
-
-            // Spawn the primed TNT into the world
             world.spawnEntity(tntEntity);
             extractEnergy(1000000);
         }
@@ -148,25 +142,18 @@ public class RangeSpawnerBlockEntity extends BlockEntity implements ExtendedScre
         }
         ServerWorld serverWorld = (ServerWorld) world;
 
-        // Determine the chunk coordinates
+
         int chunkX = coordinate.getX() >> 4;
         int chunkZ = coordinate.getZ() >> 4;
         serverWorld.setChunkForced(chunkX, chunkZ, true);
-        // The spread distance around the main coordinate
-        int spread = 10;  // Change this value as needed
+        int spread = 10;
         Random rand = new Random();
-
-        // For this example, I'll spawn 10 TNT entities. Adjust this value as needed.
         for (int i = 0; i < 100; i++) {
             // Calculate random offsets for x, y, and z coordinates
-            int xOffset = rand.nextInt(spread * 2) - spread;  // This gives values between -spread to spread
-            int yOffset = rand.nextInt(2);  // This will drop TNT from slightly above
+            int xOffset = rand.nextInt(spread * 2) - spread;
+            int yOffset = rand.nextInt(2);
             int zOffset = rand.nextInt(spread * 2) - spread;
-
-            // New position for TNT entity
             BlockPos tntPos = coordinate.add(xOffset, yOffset, zOffset);
-
-            // Create and spawn the TNT entity
             TntEntity tnt = new TntEntity(world, tntPos.getX() + 0.5, tntPos.getY() + 10, tntPos.getZ() + 0.5, null);
             tnt.setFuse(fuseTime);
             world.spawnEntity(tnt);
@@ -176,7 +163,7 @@ public class RangeSpawnerBlockEntity extends BlockEntity implements ExtendedScre
                 if (serverWorld.getChunk(chunkX, chunkZ).isEmpty()) {
                     serverWorld.setChunkForced(chunkX, chunkZ, false);
                 }
-            }, 5, TimeUnit.MINUTES); // Unload after 5 minutes, for example
+            }, 5, TimeUnit.MINUTES); // Unload after 5 minutes
 
 
         }
@@ -187,16 +174,15 @@ public class RangeSpawnerBlockEntity extends BlockEntity implements ExtendedScre
 
 
     public void tick(World world, BlockPos pos, BlockState state) {
-        // Increment the tick counter every tick
+
         tickCounter++;
-        if(!world.isClient) { // Check if on server side
+        if(!world.isClient) {
             for (PlayerEntity playerEntity : world.getPlayers()) {
                 if (playerEntity instanceof ServerPlayerEntity && playerEntity.squaredDistanceTo(Vec3d.of(pos)) < 20*20) {
                     ModMessages.sendRangeSpawnerUpdate((ServerPlayerEntity) playerEntity, pos, energyStorage.amount);
                 }
             }
         }
-        // Increase power every tick, if there's room for more energy.
         if (this.energyStorage.getAmount() < this.energyStorage.getCapacity()) {
             markDirty(world, pos, state);
         }
@@ -223,7 +209,7 @@ public class RangeSpawnerBlockEntity extends BlockEntity implements ExtendedScre
     @Override
     public long insert(long maxAmount, TransactionContext transaction) {
         long inserted = energyStorage.insert(maxAmount, transaction);
-        System.out.println("Energy inserted: " + inserted);  // Log statement
+        System.out.println("Energy inserted: " + inserted);
         if (inserted > 0) {
 
             markDirty();
@@ -252,13 +238,13 @@ public class RangeSpawnerBlockEntity extends BlockEntity implements ExtendedScre
     @Override
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
-        Inventories.writeNbt(nbt, inventory); // If you have inventory
-        nbt.putLong("range_spawner.energy", energyStorage.amount); // Save the energy amount
+        Inventories.writeNbt(nbt, inventory);
+        nbt.putLong("range_spawner.energy", energyStorage.amount);
     }
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        Inventories.readNbt(nbt, inventory); // If you have inventory
+        Inventories.readNbt(nbt, inventory);
         if(nbt.contains("range_spawner.energy")) {
             energyStorage.amount = nbt.getLong("range_spawner.energy");
         }

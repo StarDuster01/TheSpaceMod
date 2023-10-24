@@ -78,7 +78,7 @@ public class AlienPowerCore extends BlockWithEntity implements BlockEntityProvid
     }
     @Override
     public boolean isSideInvisible(BlockState state, BlockState adjacentBlockState, Direction side) {
-        return false; // return false to ensure no sides are culled
+        return false;
     }
 
 
@@ -88,10 +88,6 @@ public class AlienPowerCore extends BlockWithEntity implements BlockEntityProvid
     }
 
     public static final BooleanProperty ACTIVE = BooleanProperty.of("active");
-
-
-
-    // When block breaks, the inventory drops
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
@@ -103,7 +99,6 @@ public class AlienPowerCore extends BlockWithEntity implements BlockEntityProvid
             super.onStateReplaced(state, world, pos, newState, moved);
         }
     }
-// When you right click it, it takes you to the gui screen thing
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {

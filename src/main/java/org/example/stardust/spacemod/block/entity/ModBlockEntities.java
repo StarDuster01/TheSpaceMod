@@ -64,13 +64,13 @@ public class ModBlockEntities {
     public static void registerBlockEntities() {
         SpaceMod.LOGGER.info("Registering Block Entities for" + SpaceMod.MOD_ID);
 
-        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, DOOM_FURNACE_BE); // Allows the machine to accept energy from the sides
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, DOOM_FURNACE_BE);
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, EXCAVATOR_BLOCK_BE); // Allows the machine to accept energy from the sides
 
-        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, MINING_BORE_BLOCK_BE); // Allows the machine to accept energy from the sides
-        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, IRON_GENERATOR_BLOCK_BE); // Allows the machine to accept energy from the sides
-        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, WALLPLACER_BLOCK_BE); // Allows the machine to accept energy from the sides IF A MACHINE DOES NOT WORK THIS IS PROBABLY THE ISSUE
-        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, RANGE_SPAWNER_BLOCK_BE); // Allows the machine to accept energy from the sides IF A MACHINE DOES NOT WORK THIS IS PROBABLY THE ISSUE
-        FluidStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.fluidStorage, DOOM_FURNACE_BE); // Allows the machine to accept fluid from the sides
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, MINING_BORE_BLOCK_BE);
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, IRON_GENERATOR_BLOCK_BE);
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, WALLPLACER_BLOCK_BE);
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, RANGE_SPAWNER_BLOCK_BE);
+        FluidStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.fluidStorage, DOOM_FURNACE_BE);
     }
 }

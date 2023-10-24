@@ -26,6 +26,8 @@ public class ModItemGroups {
                         entries.add(ModItems.FROST_WAND);
                         entries.add(ModItems.VIEW_FINDER);
                         entries.add(ModItems.CLOAKING_DEVICE_ITEM);
+                        entries.add(ModItems.CIRCUIT_BOARD);
+                        entries.add(ModItems.URANIUM_ROD);
                         entries.add(ModItems.SACRIFICIAL_KNIFE);
                         entries.add(ModItems.UNICORN_SPAWN_EGG);
                         entries.add(ModItems.FORMIC_SPAWN_EGG);
@@ -51,11 +53,6 @@ public class ModItemGroups {
                         entries.add(ModItems.NEW_ARIA_MATH_MUSIC_DISC);
                         entries.add(ModBlocks.ALIEN_COCKPIT);
                         entries.add(ModBlocks.ALIEN_POWER_CORE);
-
-
-
-
-
                     }).build());
 
 

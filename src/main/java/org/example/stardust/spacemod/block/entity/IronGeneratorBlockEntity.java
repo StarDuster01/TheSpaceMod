@@ -70,7 +70,6 @@ public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
     @Override
     public long receiveEnergy(long amount, Transaction transaction) {
-        // Assuming you want to receive energy from the 'null' side (meaning any side), but you can specify any Direction.
         EnergyStorage sideStorage = this.energyContainer.getSideStorage(null);
 
         long acceptedEnergy = Math.min(amount, this.energyContainer.getMaxInsert(null));
@@ -111,14 +110,12 @@ public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
 
     private Direction getBlockFacing() {
-        return getCachedState().get(IronGeneratorBlock.FACING); // Assuming IronGeneratorBlock has a FACING property
+        return getCachedState().get(IronGeneratorBlock.FACING);
     }
 
     private void generateIronBlock() {
         if (hasEnoughEnergy()) {
             long requiredEnergy = BLOCK_ENERGY_MAP.getOrDefault(currentResourceType, 2000000);
-
-            // Extract the required energy directly from the generator's energy storage
             long extractedEnergy = energyStorage.extract(requiredEnergy, Transaction.openOuter());
             if (extractedEnergy >= requiredEnergy) {
                 BlockPos frontBlockPos = pos.offset(getBlockFacing());
@@ -210,37 +207,33 @@ public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScr
             @Override
             public int get(int index) {
                 if(index == 0)
-                    return (int) energyStorage.amount; // Example, assuming you want to display energy amount in GUI at index 0
-                return 0; // Or handle other indexes
+                    return (int) energyStorage.amount;
+                return 0;
             }
 
             @Override
             public void set(int index, int value) {
-                // Usually, it's left empty for read-only properties in GUI
+
             }
 
             @Override
             public int size() {
-                return 1; // Or more, if you have more properties to display
+                return 1;
             }
         };
     }
 
     private int tickCounter = 0;
     public void validateChestConnections() {
-        // Reset any cached chest connections here (if you have any)
-
-        // Check connections anew
         Direction[] directions = Direction.values();
         for (Direction direction : directions) {
             BlockPos neighborPos = pos.offset(direction);
             BlockState neighborState = world.getBlockState(neighborPos);
             if (neighborState.getBlock() instanceof ChestBlock) {
-                // Re-establish connection or cache this chest for later use
             }
         }
     }
-    // Method to insert an item into the inventory. Returns whether the item was successfully inserted.
+
     private boolean hasEnoughEnergy() {
         int requiredEnergy = BLOCK_ENERGY_MAP.getOrDefault(currentResourceType, 2000000);
         return energyStorage.getAmount() >= requiredEnergy;
@@ -265,14 +258,11 @@ public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScr
     public void tick(World world, BlockPos pos, BlockState state) {
         tickCounter++;
 
-        if (!world.isClient) { // Server side operations
+        if (!world.isClient) {
             validateChestConnections();
             notifyNearbyPlayers(world, pos);
             markDirty();
             generateIronBlock();
-
-            // Check for nearby cables and request energy if needed
-
         }
     }
 

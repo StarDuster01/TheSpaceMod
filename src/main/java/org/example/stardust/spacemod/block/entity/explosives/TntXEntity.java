@@ -24,8 +24,6 @@ public class TntXEntity extends TntEntity {
     }
 
     protected void explodemyballs() {
-        // Example: Explosion with customized power
         this.getWorld().createExplosion(this, this.getX(), this.getBodyY(0.0625D), this.getZ(), 64.0F, World.ExplosionSourceType.BLOCK);
-        // Additional effects can be added here, for example, spawning entities, applying status effects etc.
     }
 }

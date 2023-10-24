@@ -21,8 +21,10 @@ public class ModItems {
     public static final Item GRIFFIN_SPAWN_EGG = registerItem("griffin_spawn_egg", new SpawnEggItem(ModEntities.GRIFFIN, 0xE7E7E7, 0xFFB5B5, new FabricItemSettings()));
     public static final Item GIANT_SALAMANDER_SPAWN_EGG = registerItem("giant_salamander_spawn_egg", new SpawnEggItem(ModEntities.GIANT_SALAMANDER, 0xFFB5B5, 0xE7E7E7, new FabricItemSettings()));
     public static final Item PURE_BLOOD = registerItem("pure_blood", new Item(new FabricItemSettings()));
+    public static final Item CIRCUIT_BOARD = registerItem("circuit_board", new Item(new FabricItemSettings()));
     public static final Item CLOAKING_DEVICE_ITEM = registerItem("cloaking_device_item", new CloakingDeviceItem(new FabricItemSettings().maxDamage(100)));
     public static final Item FROST_WAND = registerItem("frost_wand", new FrostWand(new FabricItemSettings().maxDamage(300)));
+    public static final Item URANIUM_ROD = registerItem("uranium_rod", new UraniumRod(new FabricItemSettings()));
     public static final Item NEW_ARIA_MATH_MUSIC_DISC = registerItem("new_aria_math_music_disc", new MusicDiscItem(9, ModSounds.NEW_ARIA_MATH, new FabricItemSettings().maxCount(1),310));
     public static final Item VIEW_FINDER = registerItem("view_finder", new ViewFinder(new FabricItemSettings().maxDamage(10)));
     public static final Item SACRIFICIAL_KNIFE = registerItem("sacrificial_knife", new SacrificialKnife(ModToolMaterial.GALLIUM, 3, -2.4F,  new FabricItemSettings()));

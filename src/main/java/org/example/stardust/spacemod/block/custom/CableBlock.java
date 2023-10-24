@@ -53,9 +53,6 @@ public class CableBlock extends BlockWithEntity implements BlockEntityProvider {
         return false;
     }
 
-
-
-
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
@@ -77,15 +74,11 @@ public class CableBlock extends BlockWithEntity implements BlockEntityProvider {
         return false; // return false to ensure no sides are culled
     }
 
-
-
     @Override
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.MODEL;
     }
 
-
-    // When block breaks, the inventory drops
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
@@ -96,9 +89,6 @@ public class CableBlock extends BlockWithEntity implements BlockEntityProvider {
             super.onStateReplaced(state, world, pos, newState, moved);
         }
     }
-
-
-
 
     @Nullable
     @Override

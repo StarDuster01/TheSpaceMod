@@ -103,8 +103,8 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, inventory);
         nbt.putInt("doom_furnace.progress", progress);
-        nbt.putLong("doom_furnace.energy", energyStorage.amount); // writes how much energy is in the machine to save
-        nbt.put("doom_furnace.variant", fluidStorage.variant.toNbt()); //getNbt destroys the save file
+        nbt.putLong("doom_furnace.energy", energyStorage.amount);
+        nbt.put("doom_furnace.variant", fluidStorage.variant.toNbt());
         nbt.putLong("doom_furnace.fluid_amount", fluidStorage.amount);
 
     }
@@ -120,7 +120,7 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
-        fillUpOnEnergy(); // Placeholder for future energy generators
+        fillUpOnEnergy();
         fillUpOnFluid();
 
         if(canInsertIntoOutputSlot() && hasRecipe()) {
@@ -162,7 +162,7 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
     }
 
     private boolean hasFluidSourceItemInFluidSlot(int fluidItemSlot) {
-        return this.getStack(fluidItemSlot).getItem() == Items.LAVA_BUCKET; // hard coded to the input fluid type
+        return this.getStack(fluidItemSlot).getItem() == Items.LAVA_BUCKET;
     }
 
     private void extractEnergy() {
@@ -183,7 +183,6 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
     }
 
     private boolean hasEnergyItemInEnergySlot(int energyItemSlot) {
-        // List of items that can be used as energy
         return this.getStack(energyItemSlot).getItem() == ModItems.GALLIUM_INGOT;
     }
 
@@ -254,13 +253,9 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
             return false;
         }
 
-        // Down extract 2
         if(side == Direction.DOWN) {
             return slot == OUTPUT_SLOT;
         }
-
-        // bottom extract 2
-        // right extract 2
         return switch (localDir) {
             default ->  side.getOpposite() == Direction.SOUTH && slot == OUTPUT_SLOT ||
                     side.getOpposite() == Direction.EAST && slot == OUTPUT_SLOT;
@@ -283,13 +278,13 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
         if(side == Direction.DOWN) {
             return false;
         }
-        //defines that you may insert top, note this is the thing Hoppers check
+
 
         if(side == Direction.UP) {
             return slot == INPUT_SLOT;
         }
 
-        // Defines two sides that can be inserted into
+
 
         return switch (localDir) {
             default -> //NORTH
@@ -308,7 +303,7 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
     }
 
 
-//Creates an energy storage called energyStorage with a given capacity and charge/decharge rate
+
     public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(640000,2000,2000) {
         @Override
         protected void onFinalCommit() {
@@ -343,7 +338,6 @@ public class DoomFurnaceBlockEntity extends BlockEntity implements ExtendedScree
         return this.getStack(OUTPUT_SLOT).isEmpty() ||
                 this.getStack(OUTPUT_SLOT).getCount() < this.getStack(OUTPUT_SLOT).getMaxCount();
     }
-// The following two functions are used to synchronize server and client for energy stuff
     @Nullable
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {

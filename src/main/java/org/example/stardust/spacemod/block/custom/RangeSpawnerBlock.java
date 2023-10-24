@@ -55,8 +55,6 @@ public class RangeSpawnerBlock extends BlockWithEntity implements BlockEntityPro
         return BlockRenderType.MODEL;
     }
 
-
-    // When block breaks, the inventory drops
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {

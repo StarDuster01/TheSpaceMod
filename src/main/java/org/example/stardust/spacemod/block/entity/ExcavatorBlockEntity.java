@@ -56,9 +56,9 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
     protected final PropertyDelegate propertyDelegate;
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(36, ItemStack.EMPTY);
     private final SimpleSidedEnergyContainer energyContainer;
-    private Vector2i miningAreaDimensions = new Vector2i(4, 4);  // Default dimensions of 4x4
+    private Vector2i miningAreaDimensions = new Vector2i(4, 4);
 
-    private int chestSearchRadius = 5;  // Default radius of 5
+    private int chestSearchRadius = 5;
 
 
 
@@ -89,11 +89,6 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
         return ENERGY_PER_BLOCK;
     }
 
-
-
-
-
-    // Creating an Energy Storage with a given capacity and charge/decharge rate
     public final ExcavatorEnergyStorage energyStorage = new ExcavatorEnergyStorage(3600000, 100000, 2000) {
         @Override
         protected void onFinalCommit() {
@@ -128,18 +123,18 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
             @Override
             public int get(int index) {
                 if(index == 0)
-                    return (int) energyStorage.amount; // Example, assuming you want to display energy amount in GUI at index 0
-                return 0; // Or handle other indexes
+                    return (int) energyStorage.amount;
+                return 0;
             }
 
             @Override
             public void set(int index, int value) {
-                // Usually, it's left empty for read-only properties in GUI
+
             }
 
             @Override
             public int size() {
-                return 1; // Or more, if you have more properties to display
+                return 1;
             }
         };
 
@@ -161,7 +156,6 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
     }
 
     public boolean tryInsertIntoNeighboringChests(ItemStack itemStack) {
-        // Assuming chestSearchRadius is a field in your class that specifies the search radius
         for (int dx = -chestSearchRadius; dx <= chestSearchRadius; dx++) {
             for (int dy = -chestSearchRadius; dy <= chestSearchRadius; dy++) {
                 for (int dz = -chestSearchRadius; dz <= chestSearchRadius; dz++) {
@@ -172,7 +166,6 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
                         if (chestBlockEntity != null) {
                             ChestType chestType = currentState.get(ChestBlock.CHEST_TYPE);
                             if (chestType != ChestType.SINGLE) {
-                                // This is a double chest
                                 BlockPos otherHalfPos = currentPos.offset(ChestBlock.getFacing(currentState));
                                 ChestBlockEntity otherHalf = (ChestBlockEntity) world.getBlockEntity(otherHalfPos);
                                 if (otherHalf != null) {
@@ -182,7 +175,6 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
                                     }
                                 }
                             } else {
-                                // This is a single chest
                                 if (tryInsertIntoInventory(chestBlockEntity, itemStack)) {
                                     return true;
                                 }
@@ -192,7 +184,7 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
                 }
             }
         }
-        return false;  // Return false if item could not be inserted into any chest within radius
+        return false;
     }
 
 
@@ -227,11 +219,11 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
     public void mineBlocks() {
         World currentWorld = this.getWorld();
         if (currentWorld == null) return;
-        if (currentWorld.isClient) return; // Execute only on the server side
+        if (currentWorld.isClient) return;
 
-        Direction facing = getCachedState().get(ExcavatorBlock.FACING); // Assuming ExcavatorBlock has a FACING property
+        Direction facing = getCachedState().get(ExcavatorBlock.FACING);
 
-        // Define mining area in front of the BlockEntity based on the facing direction
+
         int width = miningAreaDimensions.x;
         int depth = miningAreaDimensions.y;
         BlockPos start;
@@ -239,51 +231,38 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
 
         switch (facing) {
             case NORTH:
-                start = pos.add(-width / 2, currentMiningY, 1);  // Changed from -depth to 1
-                end = pos.add(width / 2, currentMiningY, depth);  // Changed from -1 to depth
+                start = pos.add(-width / 2, currentMiningY, 1);
+                end = pos.add(width / 2, currentMiningY, depth);
                 break;
             case SOUTH:
-                start = pos.add(-width / 2, currentMiningY, -depth);  // Changed from 1 to -depth
-                end = pos.add(width / 2, currentMiningY, -1);  // Changed from depth to -1
+                start = pos.add(-width / 2, currentMiningY, -depth);
+                end = pos.add(width / 2, currentMiningY, -1);
                 break;
             case WEST:
-                start = pos.add(1, currentMiningY, -width / 2);  // Changed from -depth to 1
-                end = pos.add(depth, currentMiningY, width / 2);  // Changed from -1 to depth
+                start = pos.add(1, currentMiningY, -width / 2);
+                end = pos.add(depth, currentMiningY, width / 2);
                 break;
             case EAST:
-                start = pos.add(-depth, currentMiningY, -width / 2);  // Changed from 1 to -depth
-                end = pos.add(-1, currentMiningY, width / 2);  // Changed from depth to -1
+                start = pos.add(-depth, currentMiningY, -width / 2);
+                end = pos.add(-1, currentMiningY, width / 2);
                 break;
             default:
                 return;  // Return early for invalid facing directions
         }
 
-        boolean allBlocksMined = true; // Assume all blocks are mined initially
-
-        // Loop through each block in the area and mine it
+        boolean allBlocksMined = true;
         for (BlockPos currentPos : BlockPos.iterate(start, end)) {
             BlockState state = world.getBlockState(currentPos);
 
-            // Check if the block can be broken and has energy to mine
+
             if (canBreak(state, currentPos) && hasEnoughEnergy()) {
                 mineBlock(currentPos, state);
             } else if (canBreak(state, currentPos)) {
-                // This block can be broken but there is not enough energy,
-                // so we shouldn't move to the next layer yet.
                 allBlocksMined = false;
             }
         }
-
-        // Move to the next layer only if all mineable blocks in the current layer are mined
         if (allBlocksMined) this.currentMiningY--;
     }
-
-
-
-
-
-
-    // Improved canBreak Method considering Block hardness
     public boolean canBreak(BlockState state, BlockPos pos) {
         Block block = state.getBlock();
         return block != Blocks.BEDROCK
@@ -297,15 +276,11 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
     }
 
     public void validateChestConnections() {
-        // Reset any cached chest connections here (if you have any)
-
-        // Check connections anew
         Direction[] directions = Direction.values();
         for (Direction direction : directions) {
             BlockPos neighborPos = pos.offset(direction);
             BlockState neighborState = world.getBlockState(neighborPos);
             if (neighborState.getBlock() instanceof net.minecraft.block.ChestBlock) {
-                // Re-establish connection or cache this chest for later use
             }
         }
     }
@@ -315,14 +290,14 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
 
 
     private void mineBlock(BlockPos pos, BlockState state) {
-        // Extract energy for mining operation.
+
         extractEnergy(ENERGY_PER_BLOCK);
-        // Get the drops for the block being broken.
+
         List<ItemStack> drops = Block.getDroppedStacks(state, (ServerWorld) world, pos, world.getBlockEntity(pos));
         for (ItemStack drop : drops) {
             boolean inserted = insertItem(drop);
             if (!inserted) {
-                inserted = tryInsertIntoNeighboringChests(drop);  // Try to insert into neighboring chests
+                inserted = tryInsertIntoNeighboringChests(drop);
                 if (!inserted) {
                     // The inventory and neighboring chests are full, drop the item in the world
                   //  ItemEntity itemEntity = new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, drop);
@@ -331,16 +306,10 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
                 }
             }
         }
-
-        // Remove the block and play effect
         world.removeBlock(pos, false);
         world.syncWorldEvent(2001, pos, Block.getRawIdFromState(state));
         markDirty();
     }
-
-
-
-    // Method to insert an item into the inventory. Returns whether the item was successfully inserted.
     private boolean insertItem(ItemStack itemStack) {
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stackInSlot = inventory.get(i);
@@ -362,7 +331,6 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
             }
         }
         if(itemStack.getCount() > 0) {
-            // If there are still items left, find an empty slot to place the remaining items.
             for(int i = 0; i < inventory.size(); i++) {
                 if(inventory.get(i).isEmpty()) {
                     inventory.set(i, itemStack.copy());
@@ -378,9 +346,8 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
 
 
     private boolean hasEnoughEnergy() {
-        return energyStorage.getAmount() >= ENERGY_PER_BLOCK; // Ensure you have defined ENERGY_PER_BLOCK.
+        return energyStorage.getAmount() >= ENERGY_PER_BLOCK;
     }
-
     private void extractEnergy(long amount) {
         try (Transaction transaction = Transaction.openOuter()) {
             energyStorage.extract(amount, transaction);
@@ -389,14 +356,11 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
         }
     }
 
-
-
-
     public void tick(World world, BlockPos pos, BlockState state) {
-        // Increment the tick counter every tick
+
         Vector2i dimensions = this.getMiningAreaDimensions();
         tickCounter++;
-        if(!world.isClient) { // Check if on server side
+        if(!world.isClient) {
             validateChestConnections();
             for (PlayerEntity playerEntity : world.getPlayers()) {
                 if (playerEntity instanceof ServerPlayerEntity && playerEntity.squaredDistanceTo(Vec3d.of(pos)) < 20*20) {
@@ -406,11 +370,11 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
             }
 
         }
-        // Increase power every tick, if there's room for more energy.
+
         if (this.energyStorage.getAmount() < this.energyStorage.getCapacity()) {
             markDirty(world, pos, state);
         }
-        // Check if there is 200 or more energy and if so, mine the block.
+
         if (isMiningActive && this.energyStorage.getAmount() >= ENERGY_PER_BLOCK) {
             mineBlocks();
             markDirty();
@@ -444,7 +408,7 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
     @Override
     public long insert(long maxAmount, TransactionContext transaction) {
         long inserted = energyStorage.insert(maxAmount, transaction);
-        System.out.println("Energy inserted: " + inserted);  // Log statement
+        System.out.println("Energy inserted: " + inserted);
         if (inserted > 0) {
 
             markDirty();
@@ -473,13 +437,13 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
     @Override
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
-        Inventories.writeNbt(nbt, inventory); // If you have inventory
-        nbt.putLong("excavator.energy", energyStorage.amount); // Save the energy amount
+        Inventories.writeNbt(nbt, inventory);
+        nbt.putLong("excavator.energy", energyStorage.amount);
     }
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        Inventories.readNbt(nbt, inventory); // If you have inventory
+        Inventories.readNbt(nbt, inventory);
         if(nbt.contains("excavator.energy")) {
             energyStorage.amount = nbt.getLong("excavator.energy");
         }

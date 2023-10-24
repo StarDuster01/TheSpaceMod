@@ -79,17 +79,16 @@ public class AlienPowerCoreBlockEntity extends BlockEntity implements ExtendedSc
             public int get(int index) {
                 if(index == 0)
                     return (int) energyStorage.amount;
-                return 0; // Or handle other indexes
+                return 0;
             }
 
             @Override
             public void set(int index, int value) {
-                // Usually, it's left empty for read-only properties in GUI
             }
 
             @Override
             public int size() {
-                return 1; // Or more, if you have more properties to display
+                return 1;
             }
         };
     }
@@ -99,17 +98,19 @@ public class AlienPowerCoreBlockEntity extends BlockEntity implements ExtendedSc
         BlockPos pos = this.getPos();
         BlockState currentState = world.getBlockState(pos);
         if (currentState.getBlock() instanceof AlienPowerCore) {
-            BlockState newState = currentState.with(AlienPowerCore.ACTIVE, true);
-            world.setBlockState(pos, newState);
-            // Optionally, send a message to the player or perform other actions upon unlocking.
+            boolean isCurrentlyActive = currentState.get(AlienPowerCore.ACTIVE);
+            if (!isCurrentlyActive) {
+                BlockState newState = currentState.with(AlienPowerCore.ACTIVE, true);
+                world.setBlockState(pos, newState);
+                if (!world.isClient) {
+                    ItemStack netheriteShardStack = new ItemStack(Items.NETHERITE_SCRAP);
+                    Vec3d spawnPos = Vec3d.ofCenter(pos.up());
+                    ItemScatterer.spawn((ServerWorld) world, spawnPos.x, spawnPos.y, spawnPos.z, netheriteShardStack);
+                }
+            }
         }
-        if (!world.isClient) {
-            ItemStack netheriteShardStack = new ItemStack(Items.NETHERITE_SCRAP);
-            Vec3d spawnPos = Vec3d.ofCenter(pos.up());
-            ItemScatterer.spawn((ServerWorld) world, spawnPos.x, spawnPos.y, spawnPos.z, netheriteShardStack);
-        }
-
     }
+
 
 
     @Override
@@ -156,7 +157,6 @@ public class AlienPowerCoreBlockEntity extends BlockEntity implements ExtendedSc
         }
     }
 
-    // The following two functions are used to synchronize server and client for energy stuff
     @Nullable
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {

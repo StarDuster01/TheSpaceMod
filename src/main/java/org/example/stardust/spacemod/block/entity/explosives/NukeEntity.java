@@ -32,13 +32,11 @@ public class NukeEntity extends TntEntity {
         int i = this.getFuse() - 1;
         this.setFuse(i);
         if (i <= 0) {
-            // this.discard();   <-- Comment out or remove this line
             if (!this.getWorld().isClient) {
-                // Call your custom explosion logic instead of the explode() method
                 this.explodeFromCenter(currentRadius);
                 currentRadius++;
                 if (currentRadius > MAX_RADIUS) {
-                    this.remove(RemovalReason.DISCARDED); // End after your explosion logic completes
+                    this.remove(RemovalReason.DISCARDED);
                 }
             }
         } else {
@@ -61,11 +59,10 @@ public class NukeEntity extends TntEntity {
                     double distanceSquared = explosionCenter.getSquaredDistance(currentPos);
                     if (distanceSquared <= currentRadius * currentRadius && distanceSquared > (currentRadius-1) * (currentRadius-1)) {
                         world.setBlockState(currentPos, Blocks.AIR.getDefaultState(), 2 | 16);
-                        blocksRemoved++; // debug
+                        blocksRemoved++;
                     }
                 }
             }
         }
-        System.out.println("Blocks removed in this tick: " + blocksRemoved); // debug
     }
 }

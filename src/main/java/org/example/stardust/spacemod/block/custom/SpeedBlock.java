@@ -19,12 +19,9 @@ public class SpeedBlock extends Block {
     @Override
     public void onEntityLand(BlockView world, Entity entity) {
         if (entity instanceof net.minecraft.entity.player.PlayerEntity) {
-            // Multiply the player's current speed by 3
             Vec3d velocity = entity.getVelocity();
             double multiplier = 3.0D;
             entity.setVelocity(velocity.x * multiplier, velocity.y, velocity.z * multiplier);
-         //   World entityWorld = entity.getEntityWorld();
-
         }
     }
 }

@@ -25,10 +25,6 @@ public class ZombieTntBlock extends Block {
             world.removeBlock(pos, false);
         }
     }
-
-    // other necessary overrides for interaction, like onUse, onBreak, etc.
-
-
     private static void ZombieTnt(World world, BlockPos pos, @Nullable LivingEntity igniter) {
         if (world.isClient) {
             return;

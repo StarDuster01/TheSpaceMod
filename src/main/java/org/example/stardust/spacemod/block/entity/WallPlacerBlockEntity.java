@@ -77,7 +77,6 @@ public class WallPlacerBlockEntity extends BlockEntity implements ExtendedScreen
     public static int getEnergyPerBlock() {
         return ENERGY_PER_BLOCK;
     }
-    // Creating an Energy Storage with a given capacity and charge/decharge rate
     public final WallPlacerEnergyStorage energyStorage = new WallPlacerEnergyStorage(3600000, 2000, 2000) {
         @Override
         protected void onFinalCommit() {
@@ -112,18 +111,18 @@ public class WallPlacerBlockEntity extends BlockEntity implements ExtendedScreen
             @Override
             public int get(int index) {
                 if(index == 0)
-                    return (int) energyStorage.amount; // Example, assuming you want to display energy amount in GUI at index 0
-                return 0; // Or handle other indexes
+                    return (int) energyStorage.amount;
+                return 0;
             }
 
             @Override
             public void set(int index, int value) {
-                // Usually, it's left empty for read-only properties in GUI
+
             }
 
             @Override
             public int size() {
-                return 1; // Or more, if you have more properties to display
+                return 1;
             }
         };
     }
@@ -141,25 +140,22 @@ public class WallPlacerBlockEntity extends BlockEntity implements ExtendedScreen
     public void placeWall() {
         World currentWorld = this.getWorld();
         if (currentWorld == null) return;
-        if (currentWorld.isClient) return; // Execute only on the server side
+        if (currentWorld.isClient) return;
 
-        int wallLength = 20;  // Define the length of the wall
-        int wallHeight = 4;   // Define the height of the wall
-        Direction facing = getCachedState().get(Properties.HORIZONTAL_FACING);  // Get the direction the block entity is facing
+        int wallLength = 20;
+        int wallHeight = 4;
+        Direction facing = getCachedState().get(Properties.HORIZONTAL_FACING);
 
         for (int i = 0; i < wallLength; i++) {
             for (int j = 0; j < wallHeight; j++) {
-                BlockPos targetPos = pos.offset(facing.getOpposite(), i+1).up(j);  // Adjusts to the opposite direction
-
-
-                // Check if the position is empty and there are blocks in the inventory
+                BlockPos targetPos = pos.offset(facing.getOpposite(), i+1).up(j);
                 if ((currentWorld.isAir(targetPos) || currentWorld.getBlockState(targetPos).isOf(Blocks.GRASS) || currentWorld.getBlockState(targetPos).isOf(Blocks.SNOW)) && !inventory.isEmpty()) {
                     ItemStack blockStack = findBlockInInventory();
                     if (!blockStack.isEmpty()) {
                         Block block = Block.getBlockFromItem(blockStack.getItem());
                         currentWorld.setBlockState(targetPos, block.getDefaultState());
-                        blockStack.decrement(1);  // Decrease the stack size by 1
-                        extractEnergy(ENERGY_PER_BLOCK);  // Assume it also costs energy to place blocks
+                        blockStack.decrement(1);
+                        extractEnergy(ENERGY_PER_BLOCK);
                         markDirty();
                     }
                 }
@@ -169,28 +165,27 @@ public class WallPlacerBlockEntity extends BlockEntity implements ExtendedScreen
 
     public void placeTower() {
         World currentWorld = this.getWorld();
-        if (currentWorld == null || currentWorld.isClient) return;  // Execute only on the server side
+        if (currentWorld == null || currentWorld.isClient) return;
 
-        int towerRadius = 8;  // Define the radius of the tower
-        int towerHeight = 64;  // Define the height of the tower
-        BlockPos centerPos = this.pos;  // Center position of the tower
+        int towerRadius = 8;
+        int towerHeight = 64;
+        BlockPos centerPos = this.pos;
 
-        for (int y = 0; y <= towerHeight; y++) {  // Iterate through the height of the tower
+        for (int y = 0; y <= towerHeight; y++) {
             for (int x = -towerRadius; x <= towerRadius; x++) {
                 for (int z = -towerRadius; z <= towerRadius; z++) {
-                    double distanceSquared = x * x + z * z;  // Calculate the squared distance from the center
-                    // Check if the position is on the outer surface of the circular cross-section
+                    double distanceSquared = x * x + z * z;
                     if (distanceSquared >= (towerRadius - 1) * (towerRadius - 1) && distanceSquared <= towerRadius * towerRadius) {
-                        BlockPos targetPos = centerPos.add(x, y, z);  // Calculate the target position
+                        BlockPos targetPos = centerPos.add(x, y, z);
 
-                        // Check if the position is empty and there are blocks in the inventory
+
                         if ((currentWorld.isAir(targetPos) || currentWorld.getBlockState(targetPos).isOf(Blocks.GRASS) || currentWorld.getBlockState(targetPos).isOf(Blocks.SNOW)) && !inventory.isEmpty()) {
                             ItemStack blockStack = findBlockInInventory();
                             if (!blockStack.isEmpty()) {
                                 Block block = Block.getBlockFromItem(blockStack.getItem());
                                 currentWorld.setBlockState(targetPos, block.getDefaultState());
-                                blockStack.decrement(1);  // Decrease the stack size by 1
-                                extractEnergy(ENERGY_PER_BLOCK);  // Assume it also costs energy to place blocks
+                                blockStack.decrement(1);
+                                extractEnergy(ENERGY_PER_BLOCK);
                                 markDirty();
                             }
                         }
@@ -212,10 +207,7 @@ public class WallPlacerBlockEntity extends BlockEntity implements ExtendedScreen
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
-        // Increment the tick counter every tick
         tickCounter++;
-
-        // Existing server-side code
         if(!world.isClient) {
             for (PlayerEntity playerEntity : world.getPlayers()) {
                 if (playerEntity instanceof ServerPlayerEntity && playerEntity.squaredDistanceTo(Vec3d.of(pos)) < 20*20) {
@@ -224,7 +216,6 @@ public class WallPlacerBlockEntity extends BlockEntity implements ExtendedScreen
             }
         }
 
-        // Increase power every tick, if there's room for more energy.
         if (this.energyStorage.getAmount() < this.energyStorage.getCapacity()) {
             System.out.println("Energy level: " + this.energyStorage.getAmount());
             System.out.println("Current Mode: " + currentMode);
@@ -232,7 +223,6 @@ public class WallPlacerBlockEntity extends BlockEntity implements ExtendedScreen
             markDirty(world, pos, state);
         }
 
-        // Check if there is 200 or more energy and if so, perform the action based on the current mode
         if (this.energyStorage.getAmount() >= ENERGY_PER_BLOCK) {
             switch (currentMode) {
                 case PLACE_WALL:
@@ -324,7 +314,7 @@ public class WallPlacerBlockEntity extends BlockEntity implements ExtendedScreen
     }
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        Inventories.readNbt(nbt, inventory);  // If you have inventory
+        Inventories.readNbt(nbt, inventory);
         if (nbt.contains("wallplacer.energy")) {
             energyStorage.amount = nbt.getLong("wallplacer.energy");
         }

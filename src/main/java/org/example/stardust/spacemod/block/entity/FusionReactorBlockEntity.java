@@ -38,9 +38,9 @@ public class FusionReactorBlockEntity extends BlockEntity implements ExtendedScr
     private final SimpleSidedEnergyContainer energyContainer;
 
     private static final int INPUT_SLOT = 0;
-    // Creating an Energy Storage with a given capacity and charge/decharge rate
+
     public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(512000, 100000, 100000) {
-        // These settings are allowing the quarry to run at about 10000 blocks a second
+
         @Override
         protected void onFinalCommit() {
             markDirty();
@@ -59,7 +59,7 @@ public class FusionReactorBlockEntity extends BlockEntity implements ExtendedScr
 
             @Override
             public long getMaxInsert(Direction side) {
-                return side == Direction.UP ? 100000 : 0; // Allow insertion from the top only
+                return side == Direction.UP ? 100000 : 0;
             }
 
             @Override
@@ -73,17 +73,17 @@ public class FusionReactorBlockEntity extends BlockEntity implements ExtendedScr
             public int get(int index) {
                 if(index == 0)
                     return (int) energyStorage.amount;
-                return 0; // Or handle other indexes
+                return 0;
             }
 
             @Override
             public void set(int index, int value) {
-                // Usually, it's left empty for read-only properties in GUI
+
             }
 
             @Override
             public int size() {
-                return 1; // Or more, if you have more properties to display
+                return 1;
             }
         };
     }
@@ -104,10 +104,7 @@ public class FusionReactorBlockEntity extends BlockEntity implements ExtendedScr
                 generateEnergy();
                 markDirty();
             }
-
-            // Group all energy transfers into a single outer transaction.
             try (Transaction transaction = Transaction.openOuter()) {
-                // Send energy to adjacent blocks
                 for (Direction side : Direction.values()) {
                     long amountToSend = Math.min(energyStorage.maxExtract, energyStorage.getAmount());
                     if (amountToSend > 0) {
@@ -134,7 +131,7 @@ public class FusionReactorBlockEntity extends BlockEntity implements ExtendedScr
 
     private void generateEnergy() {
         if (hasFuelSource(INPUT_SLOT)) {
-            long energyToAdd = 10000000;  // Set the energy value for the Nether Star.
+            long energyToAdd = 10000000;
             try (Transaction transaction = Transaction.openOuter()) {
                 energyStorage.insert(energyToAdd, transaction);
                 // transaction.commit();
@@ -144,9 +141,6 @@ public class FusionReactorBlockEntity extends BlockEntity implements ExtendedScr
             markDirty();
         }
     }
-
-    // ... (rest of the code remains unchanged)
-
 
     @Override
     public long insert(long maxAmount, TransactionContext transaction) {
@@ -180,7 +174,7 @@ public class FusionReactorBlockEntity extends BlockEntity implements ExtendedScr
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, inventory);
-        nbt.putLong("fusion_reactor.energy", energyStorage.amount); // Save the energy amount
+        nbt.putLong("fusion_reactor.energy", energyStorage.amount);
     }
 
     @Override
@@ -192,7 +186,7 @@ public class FusionReactorBlockEntity extends BlockEntity implements ExtendedScr
         }
     }
 
-    // The following two functions are used to synchronize server and client for energy stuff
+
     @Nullable
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {

@@ -24,10 +24,6 @@ public class TntXBlock extends Block {
             world.removeBlock(pos, false);
         }
     }
-
-    // other necessary overrides for interaction, like onUse, onBreak, etc.
-
-
     private static void primeTntX(World world, BlockPos pos, @Nullable LivingEntity igniter) {
         if (world.isClient) {
             return;

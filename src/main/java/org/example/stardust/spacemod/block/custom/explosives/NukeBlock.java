@@ -26,15 +26,12 @@ public class NukeBlock extends Block {
             world.removeBlock(pos, false);
         }
     }
-
-
-
     private static void primeNuke(World world, BlockPos pos, @Nullable LivingEntity igniter) {
         if (world.isClient) {
             return;
         }
         NukeEntity nukeEntity = new NukeEntity(world, (double)pos.getX() +0.5, pos.getY(), (double)pos.getZ() +0.5, igniter);
-        world.spawnEntity(nukeEntity); //
+        world.spawnEntity(nukeEntity);
         world.playSound(null, nukeEntity.getX(), nukeEntity.getY(), nukeEntity.getZ(), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.BLOCKS, 1.0f, 1.0f);
         world.emitGameEvent(igniter, GameEvent.PRIME_FUSE, pos);
     }

@@ -45,7 +45,6 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
     private final SimpleSidedEnergyContainer energyContainer;
 
     private static final int INPUT_SLOT = 0;
-    // Creating an Energy Storage with a given capacity and charge/decharge rate
     public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(3600000, 18000, 2000) {
         @Override
         protected void onFinalCommit() {
@@ -86,24 +85,24 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
             public int get(int index) {
                 if(index == 0)
                     return (int) energyStorage.amount;
-                return 0; // Or handle other indexes
+                return 0;
             }
 
             @Override
             public void set(int index, int value) {
-                // Usually, it's left empty for read-only properties in GUI
+
             }
 
             @Override
             public int size() {
-                return 1; // Or more, if you have more properties to display
+                return 1;
             }
         };
 
 
     }
     private int tickCounter = 0;
-    private static final int FUEL_CONSUMPTION_INTERVAL = 1; // The interval of ticks between fuel consumptions
+    private static final int FUEL_CONSUMPTION_INTERVAL = 1;
 
 
 
@@ -117,7 +116,7 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
         if (!world.isClient) {
             if (hasFuelSource(INPUT_SLOT) && this.energyStorage.amount < this.energyStorage.getCapacity()) {
-                consumeFuel(); // Assuming that this will burn the coal and add the appropriate amount of energy.
+                consumeFuel();
                 markDirty();
             }
 
@@ -135,9 +134,9 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
             ItemStack fuelStack = inventory.get(INPUT_SLOT);
             long energyToAdd = 0;
             if (fuelStack.isOf(Items.COAL)) {
-                energyToAdd = 4000;  // The energy value for coal.
+                energyToAdd = 4000;
             } else if (fuelStack.isOf(Items.COAL_BLOCK)) {
-                energyToAdd = 4000 * 9;  // The energy value for coal block, assuming it's 9 times the energy value of coal.
+                energyToAdd = 4000 * 9;
             }
             fuelStack.decrement(1);
             try (Transaction transaction = Transaction.openOuter()) {
@@ -159,10 +158,8 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
     // New Method to Distribute Energy
     private void distributeEnergy() {
-        // Check if we are on the server side
         if (!world.isClient) {
             for (Direction direction : Direction.values()) {
-                // Attempt to find an adjacent EnergyStorage in the given direction.
                 @Nullable
                 EnergyStorage maybeStorage = EnergyStorage.SIDED.find(world, pos.offset(direction), direction.getOpposite());
                 System.out.println("Found storage at direction " + direction + ": " + (maybeStorage != null));  // Log statement
@@ -173,11 +170,11 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
                         if (amountToSend > 0) {
                             long extracted = energyStorage.extract(amountToSend, transaction);
-                            System.out.println("Energy extracted: " + extracted); // Log the amount extracted
+                            System.out.println("Energy extracted: " + extracted);
                             long inserted = maybeStorage.insert(extracted, transaction);
 
                             if (inserted > 0) {
-                                transaction.commit(); // Commit transaction if energy is transferred.
+                                transaction.commit();
                                 markDirty();
                             }
                         }
@@ -255,20 +252,18 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
     @Override
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
-        Inventories.writeNbt(nbt, inventory); // If you have inventory
-        nbt.putLong("coal_generator.energy", energyStorage.amount); // Save the energy amount
+        Inventories.writeNbt(nbt, inventory);
+        nbt.putLong("coal_generator.energy", energyStorage.amount);
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        Inventories.readNbt(nbt, inventory); // If you have inventory
+        Inventories.readNbt(nbt, inventory);
         if(nbt.contains("coal_generator.energy")) {
             energyStorage.amount = nbt.getLong("coal_generator.energy");
         }
     }
-
-    // The following two functions are used to synchronize server and client for energy stuff
     @Nullable
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {

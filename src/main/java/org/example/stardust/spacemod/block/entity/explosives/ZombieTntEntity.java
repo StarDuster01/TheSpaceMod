@@ -34,7 +34,6 @@ public class ZombieTntEntity extends TntEntity {
         BlockPos explosionPos = this.getBlockPos();
 
         if (!world.isClient) {
-            // Iterate over all adjacent and diagonal blocks in the horizontal plane
             for (BlockPos adjacentPos : new BlockPos[]{
                     explosionPos.north(),
                     explosionPos.south(),
@@ -45,7 +44,6 @@ public class ZombieTntEntity extends TntEntity {
                     explosionPos.south().east(), // South-East diagonal
                     explosionPos.south().west()  // South-West diagonal
             }) {
-                // Spawn 2 zombies at each adjacent and diagonal block
                 for (int i = 0; i < 2; i++) {
                     ZombieEntity zombie = new ZombieEntity(EntityType.ZOMBIE, (ServerWorld) world);
                     zombie.refreshPositionAndAngles(adjacentPos.getX() + 0.5, adjacentPos.getY(), adjacentPos.getZ() + 0.5, 0, 0);
