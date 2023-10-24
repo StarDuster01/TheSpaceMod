@@ -69,16 +69,14 @@ public class AlienCockpit extends Block {
 
 
     @Nullable
-    @Override
+     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         return this.getDefaultState().with(FACING, ctx.getPlayer().getHorizontalFacing().getOpposite());
     }
     @Override
     public boolean isSideInvisible(BlockState state, BlockState adjacentBlockState, Direction side) {
-        return false; // return false to ensure no sides are culled
+        return false;
     }
-
-
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {

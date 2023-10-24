@@ -1,11 +1,11 @@
 {
 	"credit": "Made by GreatCow with Blockbench",
 	"textures": {
-		"0": "spacemod:block/uranium_rod",
+		"0": "spacemod:item/uranium_rod",
 		"1": "minecraft:block/cyan_terracotta",
 		"2": "minecraft:block/iron_block",
 		"3": "minecraft:block/white_stained_glass",
-		"particle": "spacemod:block/uranium_rod"
+		"particle": "spacemod:item/uranium_rod"
 	},
 	"elements": [
 		{
