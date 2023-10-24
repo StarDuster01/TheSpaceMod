@@ -55,12 +55,12 @@ public class UnicornEntity extends AbstractHorseEntity implements GeoEntity {
         super(entityType, world);
     }
 
-    // This provides an identifer for the Abstract Horse Entity this is based off of to use
+
     private static final UUID UNICORN_ARMOR_BONUS_ID = UUID.fromString("8a72f69b-ef9d-4008-9c4a-9fb564ea9d8b");
 
 
 
-// This defines the health attack damage speed movement and jump strength of the unicorn
+
     public static DefaultAttributeContainer setAttributes() {
         return AnimalEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 16.0f)
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0f)
@@ -71,7 +71,7 @@ public class UnicornEntity extends AbstractHorseEntity implements GeoEntity {
 
     }
 
-    // This makes it so the unicorn does not take fall damage
+
     @Override
     public boolean handleFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
         if (fallDistance > 1.0f) {
@@ -82,7 +82,7 @@ public class UnicornEntity extends AbstractHorseEntity implements GeoEntity {
 
 
 
-// This allows the unicorn
+
     @Override
     protected void updateSaddle() {
         if (this.getWorld().isClient) {
@@ -109,13 +109,13 @@ public class UnicornEntity extends AbstractHorseEntity implements GeoEntity {
         return ModEntities.UNICORN.create(world);
     }
 
-    // This gives the unicorn an armor slot
+
     @Override
     public boolean hasArmorSlot() {
         return true;
     }
 
-    // this checks if the item is horse armor
+
     @Override
     public boolean isHorseArmor(ItemStack item) {
         return item.getItem() instanceof HorseArmorItem;
@@ -159,7 +159,7 @@ public class UnicornEntity extends AbstractHorseEntity implements GeoEntity {
     }
 
 
-    // This method is required to build the animations in the playstate, the animations will not work without this
+
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
         controllerRegistrar.add(new AnimationController<>(this, "controller", 0, this::predicate));

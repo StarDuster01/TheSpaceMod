@@ -15,7 +15,7 @@ public class GravitySword extends SwordItem {
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        target.addStatusEffect(new StatusEffectInstance(StatusEffects.LEVITATION, 100, 0)); // 100 ticks = 5 seconds, 0 = Levitation I
+        target.addStatusEffect(new StatusEffectInstance(StatusEffects.LEVITATION, 100, 0));
         return super.postHit(stack, target, attacker);
     }
 

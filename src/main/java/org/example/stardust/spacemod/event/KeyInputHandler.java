@@ -23,8 +23,6 @@ public class KeyInputHandler {
     public static void registerKeyInputs() {
         ClientTickEvents.END_CLIENT_TICK.register(client ->  {
             if(flyUpKey.wasPressed()) {
-               // ClientPlayNetworking.send(ModMessages.EXAMPLE_ID, PacketByteBufs.create());
-
             }
             if(flyDownKey.wasPressed()) {
             }

@@ -23,7 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class FrostWand extends Item {
-    private static final UUID FROST_WAND_MODIFIER_UUID = UUID.randomUUID(); // Unique identifier for the speed modifier
+    private static final UUID FROST_WAND_MODIFIER_UUID = UUID.randomUUID();
     private static final double ALMOST_ZERO_SPEED = 0.0001D;
 
 

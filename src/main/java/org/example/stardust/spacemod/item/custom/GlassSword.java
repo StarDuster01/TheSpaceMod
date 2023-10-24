@@ -16,7 +16,7 @@ public class GlassSword extends SwordItem {
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        target.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 200, 1)); // 200 ticks = 10 seconds, 1 = Wither II
+        target.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 200, 1));
         return super.postHit(stack, target, attacker);
     }
 

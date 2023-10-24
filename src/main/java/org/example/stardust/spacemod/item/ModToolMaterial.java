@@ -10,7 +10,7 @@ public enum ModToolMaterial implements ToolMaterial {
     GALLIUM(5, 650, 4.5f, 3.5f, 26,
             () -> Ingredient.ofItems(ModItems.GALLIUM_INGOT)),
     GLASS(3, 32, 1.0f, 6.0f, 15,
-            () -> Ingredient.ofItems(Items.GLASS)); // assume you have GLASS_SHARD in ModItems.
+            () -> Ingredient.ofItems(Items.GLASS));
 
 
 

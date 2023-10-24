@@ -69,7 +69,7 @@ public class GriffinEntity extends TameableEntity implements InventoryChangedLis
     public GriffinEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
         this.dataTracker.startTracking(SADDLED, false);
-        this.dataTracker.startTracking(IN_AIR, false); // Assuming Griffin starts not in the air
+        this.dataTracker.startTracking(IN_AIR, false);
     }
 
     public static DefaultAttributeContainer setAttributes() {
@@ -82,7 +82,6 @@ public class GriffinEntity extends TameableEntity implements InventoryChangedLis
 
     }
 
-    // Call this method when the player interacts with the Griffin to attempt to tame it
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
@@ -194,7 +193,7 @@ public class GriffinEntity extends TameableEntity implements InventoryChangedLis
     }
 
     private boolean isKeyPressed(int keyCode) {
-        if(this.getWorld().isClient) { // Check if we're on the client side
+        if(this.getWorld().isClient) {
             return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), keyCode);
         }
         return false;
@@ -202,7 +201,7 @@ public class GriffinEntity extends TameableEntity implements InventoryChangedLis
 
     @Override
     protected void fall(double heightDifference, boolean onGround, BlockState state, BlockPos landedPosition) {
-        // Do nothing, whether or not a player is riding
+
     }
 
 
@@ -212,10 +211,10 @@ public class GriffinEntity extends TameableEntity implements InventoryChangedLis
         return false;
     }
 
-    // Other fields...
-    private boolean ascending;  // Add this field to your GriffinEntity class
 
-    // Other methods...
+    private boolean ascending;
+
+
 
     public boolean isAscending() {
         return this.ascending;
@@ -243,34 +242,32 @@ public class GriffinEntity extends TameableEntity implements InventoryChangedLis
                 float z = passenger.forwardSpeed;
 
                 if (!this.isInAir()) {
-                    z *= 0.2; // Increase forward speed when in air. Adjust as needed.
+                    z *= 0.2;
                     x *= 0.2;
                 }
 
 
                 if (this.getWorld().isClient) {
-                    double verticalSpeed = 0.0D; // Initialize verticalSpeed to 0.0D
-                    // Handle Client-side logic here.
+                    double verticalSpeed = 0.0D;
                     if (KeyInputHandler.flyUpKey.isPressed()) {
                         setAscending(true);
                         verticalSpeed = 0.4D;
                         PacketByteBuf buf = PacketByteBufs.create();
-                        buf.writeDouble(verticalSpeed); // send the verticalSpeed to the server.
+                        buf.writeDouble(verticalSpeed);
                         ClientPlayNetworking.send(ModMessages.GRIFFIN_MOVEMENT_ID, buf);
                     } else if (KeyInputHandler.flyDownKey.isPressed()) {
                         setAscending(false);
                         verticalSpeed = -0.4D;
                         PacketByteBuf buf = PacketByteBufs.create();
-                        buf.writeDouble(verticalSpeed); // send the verticalSpeed to the server.
+                        buf.writeDouble(verticalSpeed);
                         ClientPlayNetworking.send(ModMessages.GRIFFIN_MOVEMENT_ID, buf);
                     }
-                    // only change velocity if a key is pressed
                     if(verticalSpeed != 0.0D) {
                         this.setVelocity(this.getVelocity().x, verticalSpeed, this.getVelocity().z);
                     }
 
                     this.setMovementSpeed(1.3f);
-                    super.travel(new Vec3d(x, 0, z)); // Set vertical component of movement input to 0
+                    super.travel(new Vec3d(x, 0, z));
                 }
                 if(!this.getWorld().isClient) {
                     if (this.isInAir() && this.isAscending()) {
@@ -291,7 +288,7 @@ public class GriffinEntity extends TameableEntity implements InventoryChangedLis
 
     @Override
     public boolean handleFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {
-        if (this.isInAir()) { // If Griffin is in the air, don't apply fall damage.
+        if (this.isInAir()) {
             return false;
         }
         if (this.hasPassengers()) {
@@ -308,18 +305,16 @@ public class GriffinEntity extends TameableEntity implements InventoryChangedLis
     public void tick() {
         super.tick();
 
-        // Check if the griffin is in the air and set IN_AIR accordingly
-        if (!this.isOnGround() && !this.isTouchingWater()) {
-            this.setInAir(true); // Set IN_AIR to true if Griffin is in the air.
-        } else {
-            this.setInAir(false); // Set IN_AIR to false if Griffin is on the ground or in water.
-        }
 
-        // Reset fall distance if in the air
+        if (!this.isOnGround() && !this.isTouchingWater()) {
+            this.setInAir(true);
+        } else {
+            this.setInAir(false);
+        }
         if (this.isInAir()) {
-            this.fallDistance = 0; // Reset the fall distance of the Griffin
+            this.fallDistance = 0;
             for (Entity entity : this.getPassengerList()) {
-                entity.fallDistance = 0; // Reset the fall distance of the passengers
+                entity.fallDistance = 0;
             }
         }
     }

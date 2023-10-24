@@ -67,7 +67,6 @@ public class FormicEntity extends HostileEntity implements GeoEntity {
     private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
         if(tAnimationState.isMoving()) {
             tAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.formic.run", Animation.LoopType.LOOP));
-            System.out.println("Entity is moving"); // Add a print statement here for debugging
         }
         else if(isAttacking()) {
             // tAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.model.attack", Animation.LoopType.LOOP));
@@ -82,7 +81,6 @@ public class FormicEntity extends HostileEntity implements GeoEntity {
 
 
 
-    // GOALS
     static class AttackGoal
             extends MeleeAttackGoal {
         public AttackGoal(FormicEntity formic) {
@@ -93,9 +91,6 @@ public class FormicEntity extends HostileEntity implements GeoEntity {
         public boolean canStart() {
             return super.canStart() && !this.mob.hasPassengers();
         }
-
-
-        // Set too always hostile, but can be changed EZ
         @Override
         public boolean shouldContinue() {
             float f = this.mob.getBrightnessAtEyes();
