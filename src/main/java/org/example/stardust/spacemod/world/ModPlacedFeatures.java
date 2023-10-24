@@ -16,15 +16,15 @@ import org.example.stardust.spacemod.world.ModConfiguredFeatures;
 import java.util.List;
 
 public class ModPlacedFeatures {
-    public static final RegistryKey<PlacedFeature> GIANT_JUNGLE_PLACED_KEY = registerKey("giant_jungle_placed");
+    public static final RegistryKey<PlacedFeature> GIANT_JUNGLE_TREE_PLACED_KEY = registerKey("giant_jungle_tree_placed");
     public static final RegistryKey<PlacedFeature> GIANT_DIAMOND_ORE_PLACED_KEY = registerKey("giant_diamond_ore_placed");
 
     public static void bootstrap(Registerable<PlacedFeature> context) {
         var configuredFeatureRegistryEntryLookup = context.getRegistryLookup(RegistryKeys.CONFIGURED_FEATURE);
 
-        register(context, GIANT_JUNGLE_PLACED_KEY, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.GIANT_JUNGLE_KEY),
+        register(context, GIANT_JUNGLE_TREE_PLACED_KEY, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.GIANT_JUNGLE_TREE_KEY),
                 VegetationPlacedFeatures.treeModifiersWithWouldSurvive(
-                        PlacedFeatures.createCountExtraModifier(4, 0.1f, 2), ModBlocks.GIANT_JUNGLE_SAPLING)); // per chunk
+                        PlacedFeatures.createCountExtraModifier(1, 0.1f, 1), ModBlocks.GIANT_JUNGLE_SAPLING)); // per chunk
 
         register(context, GIANT_DIAMOND_ORE_PLACED_KEY, configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.GIANT_DIAMOND_ORE_KEY),
                 ModOrePlacement.modifiersWithCount(10,

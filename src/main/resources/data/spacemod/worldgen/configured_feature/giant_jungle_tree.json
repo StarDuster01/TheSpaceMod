@@ -36,16 +36,16 @@
       }
     },
     "trunk_placer": {
-      "type": "minecraft:mega_jungle_trunk_placer",
-      "base_height": 10,
-      "height_rand_a": 2,
-      "height_rand_b": 19
+      "type": "spacemod:giant_jungle_trunk_placer",
+      "base_height": 16,
+      "height_rand_a": 8,
+      "height_rand_b": 24
     },
     "foliage_placer": {
       "type": "minecraft:jungle_foliage_placer",
-      "radius": 2,
+      "radius": 16,
       "offset": 0,
-      "height": 2
+      "height": 4
     },
     "decorators": [
       {

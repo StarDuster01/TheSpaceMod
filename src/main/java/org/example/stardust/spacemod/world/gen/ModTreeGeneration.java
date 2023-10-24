@@ -12,5 +12,6 @@ import java.util.function.Predicate;
 
 public class ModTreeGeneration {
     public static void generateTrees() {
+        BiomeModifications.addFeature(BiomeSelectors.includeByKey(ModBiomes.FORMIC_BIOME), GenerationStep.Feature.VEGETAL_DECORATION, ModPlacedFeatures.GIANT_JUNGLE_TREE_PLACED_KEY);
     }
 }

@@ -11,6 +11,6 @@ public class GiantJungleSaplingGenerator extends SaplingGenerator {
     @Nullable
     @Override
     protected RegistryKey<ConfiguredFeature<?, ?>> getTreeFeature(Random random, boolean bees) {
-        return ModConfiguredFeatures.GIANT_JUNGLE_KEY;
+        return ModConfiguredFeatures.GIANT_JUNGLE_TREE_KEY;
     }
 }

@@ -19,11 +19,12 @@ import net.minecraft.world.gen.stateprovider.BlockStateProvider;
 import net.minecraft.world.gen.trunk.MegaJungleTrunkPlacer;
 import net.minecraft.world.gen.trunk.StraightTrunkPlacer;
 import org.example.stardust.spacemod.SpaceMod;
+import org.example.stardust.spacemod.world.gen.trunk.GiantJungleTrunkPlacer;
 
 import java.util.List;
 
 public class ModConfiguredFeatures {
-    public static final RegistryKey<ConfiguredFeature<?, ?>> GIANT_JUNGLE_KEY = registerKey("giant_jungle");
+    public static final RegistryKey<ConfiguredFeature<?, ?>> GIANT_JUNGLE_TREE_KEY = registerKey("giant_jungle_tree");
     public static final RegistryKey<ConfiguredFeature<?, ?>> GIANT_DIAMOND_ORE_KEY = registerKey("giant_diamond_ore");
 
     public static void bootstrap(Registerable<ConfiguredFeature<?, ?>> context) {
@@ -35,9 +36,9 @@ public class ModConfiguredFeatures {
                 List.of(OreFeatureConfig.createTarget(stoneReplaceables, Blocks.DIAMOND_ORE.getDefaultState()),
                         OreFeatureConfig.createTarget(deepslateReplaceables, Blocks.DEEPSLATE_DIAMOND_ORE.getDefaultState()));
 
-        register(context, GIANT_JUNGLE_KEY, Feature.TREE, new TreeFeatureConfig.Builder(
+        register(context, GIANT_JUNGLE_TREE_KEY, Feature.TREE, new TreeFeatureConfig.Builder(
                 BlockStateProvider.of(Blocks.JUNGLE_LOG),
-                new MegaJungleTrunkPlacer(5, 6, 3),
+                new GiantJungleTrunkPlacer(40,10,20),
                 BlockStateProvider.of(Blocks.JUNGLE_LEAVES),
                 new JungleFoliagePlacer(ConstantIntProvider.create(2), ConstantIntProvider.create(1), 2),
                 new TwoLayersFeatureSize(1, 0, 2)).build());
