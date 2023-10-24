@@ -1,13 +1,13 @@
 {
 	"credit": "Made by GreatCow with Blockbench",
 	"textures": {
-		"0": "block/purple_wool",
-		"1": "block/light_gray_terracotta",
-		"4": "block/light_gray_concrete",
-		"5": "block/gray_concrete",
-		"6": "block/quartz_block_bottom",
-		"7": "tan_woolish",
-		"particle": "block/purple_wool"
+		"0": "minecraft:block/purple_wool",
+		"1": "minecraft:block/light_gray_terracotta",
+		"4": "minecraft:block/light_gray_concrete",
+		"5": "minecraft:block/gray_concrete",
+		"6": "minecraft:block/quartz_block_bottom",
+		"7": "spacemod:block/tan_woolish",
+		"particle": "minecraft:block/quartz_block_bottom"
 	},
 	"elements": [
 		{
