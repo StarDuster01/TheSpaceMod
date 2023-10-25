@@ -12,6 +12,7 @@ import org.example.stardust.spacemod.entity.custom.FormicEntity;
 import org.example.stardust.spacemod.entity.custom.GiantSalamanderEntity;
 import org.example.stardust.spacemod.entity.custom.GriffinEntity;
 import org.example.stardust.spacemod.entity.custom.UnicornEntity;
+import org.example.stardust.spacemod.item.entity.MiningExplosiveEntity;
 
 public class ModEntities {
 
@@ -29,4 +30,13 @@ public class ModEntities {
     public static final EntityType<GiantSalamanderEntity> GIANT_SALAMANDER= Registry.register(Registries.ENTITY_TYPE,
             new Identifier(SpaceMod.MOD_ID, "giant_salamander"), FabricEntityTypeBuilder.create(SpawnGroup.CREATURE,
                     GiantSalamanderEntity::new).dimensions(EntityDimensions.fixed(1.0f,1.0f)).build());
+
+    public static final EntityType<MiningExplosiveEntity> MINING_EXPLOSIVE_ENTITY_ENTITY_TYPE = Registry.register(
+            Registries.ENTITY_TYPE,
+            new Identifier(SpaceMod.MOD_ID, "mining_explosive"),
+            FabricEntityTypeBuilder.<MiningExplosiveEntity>create(SpawnGroup.MISC, MiningExplosiveEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.25F, 0.25F))
+                    .trackRangeBlocks(4).trackedUpdateRate(10)
+                    .build()
+    );
 }

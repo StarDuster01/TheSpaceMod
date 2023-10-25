@@ -3,6 +3,7 @@ package org.example.stardust.spacemod.client;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
+import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import org.example.stardust.spacemod.entity.ModEntities;
 import org.example.stardust.spacemod.entity.client.GiantSalamanderRenderer;
 import org.example.stardust.spacemod.entity.client.GriffinRenderer;
@@ -22,6 +23,7 @@ public class SpaceModClient implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.FORMIC, FormicRenderer::new);
         EntityRendererRegistry.register(ModEntities.GRIFFIN, GriffinRenderer::new);
         EntityRendererRegistry.register(ModEntities.GIANT_SALAMANDER, GiantSalamanderRenderer::new);
+        EntityRendererRegistry.register(ModEntities.MINING_EXPLOSIVE_ENTITY_ENTITY_TYPE, (context) -> new FlyingItemEntityRenderer(context));
 
 
         HandledScreens.register(ModScreenHandlers.DOOM_FURNACE_SCREEN_HANDLER, DoomFurnaceScreen::new);
