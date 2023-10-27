@@ -35,6 +35,7 @@ import org.example.stardust.spacemod.screen.MediumCoalGeneratorScreenHandler;
 import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.EnergyStorage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MediumCoalGeneratorBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory, EnergyStorage {
@@ -144,67 +145,10 @@ public class MediumCoalGeneratorBlockEntity extends BlockEntity implements Exten
     private long currentEnergy = 0;
 
     private int tickCounter = 0;
-  /*  private void distributeEnergy() {
-
-        if (currentEnergy <= 0) {
-            System.out.println("Generator Energy Empty. No distribution.");
-            return;
-        }
+    private List<EnergyStorage> findEnergyTargets(BlockPos currentPosition, @Nullable Direction fromDirection) {
+        List<EnergyStorage> targets = new ArrayList<>();
 
         for (Direction direction : Direction.values()) {
-            BlockEntity neighborEntity = world.getBlockEntity(pos.offset(direction));
-            if (neighborEntity != null) {
-
-                // Case 1: The neighbor block is EnergyStorage.SIDED
-                EnergyStorage neighborSided = EnergyStorage.SIDED.find(world, pos.offset(direction), direction.getOpposite());
-                if (neighborSided != null && neighborSided.supportsInsertion()) {
-                   // System.out.println("Detected SIDED Energy Storage at direction: " + direction);
-                    try (Transaction transaction = Transaction.openOuter()) {
-                        long extracted = extract(100000, transaction);
-                       // System.out.println("Trying to extract " + extracted + " energy units from Generator.");
-                        long remaining = neighborSided.insert(extracted, transaction);
-                       // System.out.println("Inserted energy to SIDED. Remaining energy: " + remaining);
-                        if (remaining < extracted) {
-                            insert(extracted - remaining, transaction);
-                        //    System.out.println("Reinserted remaining energy back to Generator: " + (extracted - remaining));
-                        }
-                        transaction.commit();
-                    }
-                    continue;  // Skip to next iteration since we've handled this direction
-                }
-
-                // Case 2: The neighbor block is just EnergyStorage
-                if (neighborEntity instanceof EnergyStorage) {
-                  //  System.out.println("Detected simple Energy Storage at direction: " + direction);
-                    EnergyStorage neighbor = (EnergyStorage) neighborEntity;
-                    if (neighbor.supportsInsertion()) {
-                        try (Transaction transaction = Transaction.openOuter()) {
-                            long extracted = extract(100000, transaction);
-                          //  System.out.println("Trying to extract " + extracted + " energy units from Generator.");
-                            long remaining = neighbor.insert(extracted, transaction);
-                           // System.out.println("Inserted energy to simple Energy Storage. Remaining energy int reactor: " + remaining);
-                            if (remaining < extracted) {
-                                insert(extracted - remaining, transaction);
-                            //    System.out.println("Reinserted remaining energy back to Generator: " + (extracted - remaining));
-                            }
-                            transaction.commit();
-                        }
-                    }
-                }
-            } else {
-               // System.out.println("No neighbor detected at direction: " + direction);
-            }
-        }
-    } */
-    // ... [rest of the MediumCoalGeneratorBlockEntity class]
-
-    // Recursive function to find the end target of the chain of ConductorBlockEntity blocks
-    // Recursive function to find the end target of the chain of ConductorBlockEntity blocks
-    private EnergyStorage findEnergyTarget(BlockPos currentPosition, @Nullable Direction fromDirection) {
-        EnergyStorage target = null;
-
-        for (Direction direction : Direction.values()) {
-            // We don't want to go back to the block we came from
             if (fromDirection != null && direction == fromDirection.getOpposite()) {
                 continue;
             }
@@ -213,35 +157,75 @@ public class MediumCoalGeneratorBlockEntity extends BlockEntity implements Exten
             BlockEntity nextEntity = world.getBlockEntity(nextPos);
 
             if (nextEntity instanceof ConductorBlockEntity) {
-                // Continue following the chain of ConductorBlockEntity
-                target = findEnergyTarget(nextPos, direction);
+                targets.addAll(findEnergyTargets(nextPos, direction));
             } else if (nextEntity != null) {
-                // If it's not a ConductorBlockEntity, check if it's a sided energy storage and not a generator
-                target = EnergyStorage.SIDED.find(world, nextPos, direction.getOpposite());
+                EnergyStorage target = EnergyStorage.SIDED.find(world, nextPos, direction.getOpposite());
                 if (target != null && !(nextEntity instanceof MediumCoalGeneratorBlockEntity)) {
-                    System.out.println("Found a sided energy storage connected to ConductorBlockEntity at position: " + nextPos);
-                    return target;
+                    targets.add(target);
                 }
             }
         }
 
-        return target;
+        return targets;
     }
 
+    private void distributeEnergyToTargets() {
+        List<EnergyStorage> targets = findEnergyTargets(this.pos, null);
 
-    private void distributeEnergyToTarget() {
-        EnergyStorage target = findEnergyTarget(this.pos, null);
-        if (target != null) {
-            try (Transaction transaction = Transaction.openOuter()) {
-                long extracted = extract(100000, transaction);
-                long remaining = target.insert(extracted, transaction);
-                if (remaining < extracted) {
-                    insert(extracted - remaining, transaction);
+        System.out.println("Starting energy distribution. Current energy: " + currentEnergy);
+
+        if (!targets.isEmpty() && currentEnergy > 0) {
+            long totalEnergyToDistribute = Math.min(currentEnergy, 100000);
+            long remainingEnergy = totalEnergyToDistribute;
+            long actualExtractedTotal = 0;
+
+            System.out.println("Total energy to distribute: " + totalEnergyToDistribute);
+
+            while (!targets.isEmpty() && remainingEnergy > 0) {
+                long energyToEachTarget = remainingEnergy / targets.size(); // equally distribute the remaining energy among the remaining targets
+                List<EnergyStorage> incompleteTargets = new ArrayList<>();
+
+                System.out.println("Energy to each target in this iteration: " + energyToEachTarget);
+
+                for (EnergyStorage target : targets) {
+                    try (Transaction transaction = Transaction.openOuter()) {
+                        long extracted = extract(energyToEachTarget, transaction);
+
+                        System.out.println("Attempting to send " + extracted);
+
+                        if (extracted > 0) {
+                            long remainingForTarget = target.insert(extracted, transaction);
+
+                            System.out.println("Target" + " accepted " + (extracted - remainingForTarget) + " energy. Remaining for target: " + remainingForTarget);
+
+                            // if the target does not accept all the energy, add to incompleteTargets list
+                            if (remainingForTarget > 0) {
+                                // insert(remainingForTarget, transaction);
+                                incompleteTargets.add(target);
+                            }
+
+                            actualExtractedTotal += (extracted - remainingForTarget);
+                        }
+                        transaction.commit();
+                    }
                 }
-                transaction.commit();
+
+                remainingEnergy = totalEnergyToDistribute - actualExtractedTotal;
+                targets = incompleteTargets; // update targets list for next iteration
             }
+
+            currentEnergy -= actualExtractedTotal;
+            if (currentEnergy < 0) currentEnergy = 0; // Ensure energy doesn't go negative
+            markDirty();
         }
+
+        System.out.println("Ending energy distribution. Remaining energy: " + currentEnergy);
     }
+
+
+
+
+
 
 
 
@@ -277,7 +261,7 @@ public class MediumCoalGeneratorBlockEntity extends BlockEntity implements Exten
         System.out.println("Current Energy: " + currentEnergy); // Print current energy
 
         // Distribute energy to neighboring blocks
-        distributeEnergyToTarget();
+        distributeEnergyToTargets();
     }
 
 

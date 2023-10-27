@@ -357,6 +357,7 @@ public class ExcavatorBlockEntity extends BlockEntity implements ExtendedScreenH
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
+        System.out.println("Excavator energy: " + this.energyStorage.getAmount());
 
         Vector2i dimensions = this.getMiningAreaDimensions();
         tickCounter++;

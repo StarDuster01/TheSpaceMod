@@ -38,10 +38,7 @@ public class ModBlockEntities {
                     FabricBlockEntityTypeBuilder.create(AlienPowerCoreBlockEntity::new,
                             ModBlocks.ALIEN_POWER_CORE).build(null));
 
-    public static final BlockEntityType<CableBlockEntity> CABLE_BE =
-            Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "cable_block"),
-                    FabricBlockEntityTypeBuilder.create(CableBlockEntity::new,
-                            ModBlocks.CABLE_BLOCK).build(null));
+
 
     public static final BlockEntityType<ConductorBlockEntity> CONDUCTOR_BE =
             Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "conductor_block"),

@@ -40,7 +40,7 @@ import team.reborn.energy.api.base.SimpleSidedEnergyContainer;
 import java.util.List;
 import java.util.Map;
 
-public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory, EnergyStorage, CableTickManager.EnergyReceiver {
+public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory, EnergyStorage {
 
     protected final PropertyDelegate propertyDelegate;
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(36, ItemStack.EMPTY);
@@ -63,18 +63,7 @@ public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScr
         return blockTypes.indexOf(currentBlockType);
     }
 
-    @Override
-    public boolean canReceiveEnergy(Direction direction) {
-        return true;
-    }
 
-    @Override
-    public long receiveEnergy(long amount, Transaction transaction) {
-        EnergyStorage sideStorage = this.energyContainer.getSideStorage(null);
-
-        long acceptedEnergy = Math.min(amount, this.energyContainer.getMaxInsert(null));
-        return sideStorage.insert(acceptedEnergy, transaction);
-    }
 
 
 

@@ -2,23 +2,20 @@ package org.example.stardust.spacemod.block.custom;
 
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.player.PlayerEntity;
+
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.screen.NamedScreenHandlerFactory;
+
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.hit.BlockHitResult;
+
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+
 import org.example.stardust.spacemod.block.entity.ConductorBlockEntity;
-import org.example.stardust.spacemod.block.entity.ModBlockEntities;
+
 import org.jetbrains.annotations.Nullable;
 
 public class ConductorBlock extends BlockWithEntity implements BlockEntityProvider {
@@ -32,11 +29,27 @@ public class ConductorBlock extends BlockWithEntity implements BlockEntityProvid
     }
 
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
+    private static final VoxelShape CORE_SHAPE = Block.createCuboidShape(5, 5, 5, 11, 11, 11);
+    private static final VoxelShape WEST_SHAPE = Block.createCuboidShape(0, 5, 5, 5, 11, 11);
+    private static final VoxelShape EAST_SHAPE = Block.createCuboidShape(11, 5, 5, 16, 11, 11);
+    private static final VoxelShape NORTH_SHAPE = Block.createCuboidShape(5, 5, 0, 11, 11, 5);
+    private static final VoxelShape SOUTH_SHAPE = Block.createCuboidShape(5, 5, 11, 11, 11, 16);
+    private static final VoxelShape BOTTOM_SHAPE = Block.createCuboidShape(5, 0, 5, 11, 5, 11);
+    private static final VoxelShape TOP_SHAPE = Block.createCuboidShape(5, 11, 5, 11, 16, 11);
 
-    @Nullable
+    private static final VoxelShape SHAPE = VoxelShapes.union(
+            CORE_SHAPE,
+            WEST_SHAPE,
+            EAST_SHAPE,
+            NORTH_SHAPE,
+            SOUTH_SHAPE,
+            BOTTOM_SHAPE,
+            TOP_SHAPE
+    );
+
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new ConductorBlockEntity(pos, state);
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return SHAPE;
     }
 
     @Nullable
@@ -55,24 +68,10 @@ public class ConductorBlock extends BlockWithEntity implements BlockEntityProvid
         return BlockRenderType.MODEL;
     }
 
-    @Override
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (state.getBlock() != newState.getBlock()) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof ConductorBlockEntity) {
-                world.updateComparators(pos, this);
-            }
-            super.onStateReplaced(state, world, pos, newState, moved);
-        }
-    }
-    @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        return ActionResult.SUCCESS;
-    }
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlockEntities.CONDUCTOR_BE, (world1, pos, state1, blockEntity) -> blockEntity.tick(world1,pos,state1));
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new ConductorBlockEntity(pos, state);
     }
 }

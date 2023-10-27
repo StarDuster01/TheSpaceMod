@@ -1,9 +1,12 @@
 package org.example.stardust.spacemod.client;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
+import org.example.stardust.spacemod.block.ModBlocks;
 import org.example.stardust.spacemod.entity.ModEntities;
 import org.example.stardust.spacemod.entity.client.GiantSalamanderRenderer;
 import org.example.stardust.spacemod.entity.client.GriffinRenderer;
@@ -37,6 +40,10 @@ public class SpaceModClient implements ClientModInitializer {
         HandledScreens.register(ModScreenHandlers.ALIEN_POWER_CORE_SCREEN_HANDLER, AlienPowerCoreScreen::new);
 
         HandledScreens.register(ModScreenHandlers.RANGE_SPAWNER_SCREEN_HANDLER, RangeSpawnerScreen::new);
+
+
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CONDUCTOR_BLOCK, RenderLayer.getCutoutMipped());
+
 
         ModMessages.registerS2CPackets();
         KeyInputHandler.register();

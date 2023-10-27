@@ -104,22 +104,7 @@ public class FusionReactorBlockEntity extends BlockEntity implements ExtendedScr
                 generateEnergy();
                 markDirty();
             }
-            try (Transaction transaction = Transaction.openOuter()) {
-                for (Direction side : Direction.values()) {
-                    long amountToSend = Math.min(energyStorage.maxExtract, energyStorage.getAmount());
-                    if (amountToSend > 0) {
-                        BlockEntity adjacentBlockEntity = world.getBlockEntity(pos.offset(side));
-                        if (adjacentBlockEntity instanceof CableBlockEntity) {
-                            SimpleSidedEnergyContainer adjacentEnergyContainer = ((CableBlockEntity) adjacentBlockEntity).energyContainer;
-                            EnergyStorage sideEnergyStorage = adjacentEnergyContainer.getSideStorage(side.getOpposite());
 
-                            long accepted = sideEnergyStorage.insert(amountToSend, transaction);
-                            energyStorage.extract(accepted, transaction);
-                        }
-                    }
-                }
-                transaction.commit();
-            }
 
             markDirty(world, pos, state);
             if (tickCounter >= FUEL_CONSUMPTION_INTERVAL) {

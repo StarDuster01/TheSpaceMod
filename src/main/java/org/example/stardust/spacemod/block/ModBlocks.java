@@ -1,5 +1,7 @@
 package org.example.stardust.spacemod.block;
 
+
+import net.minecraft.client.render.RenderLayer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
@@ -36,9 +38,9 @@ public class ModBlocks {
     public static final Block CANNON_BLOCK = registerBlock("cannon_block",
             new CannonBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
     public static final Block MEDIUM_COAL_GENERATOR_BLOCK = registerBlock("medium_coal_generator_block",
-            new MediumCoalGeneratorBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+            new MediumCoalGeneratorBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE).nonOpaque()));
     public static final Block CONDUCTOR_BLOCK = registerBlock("conductor_block",
-            new ConductorBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+            new ConductorBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE).nonOpaque())); // Need non Opaque to make not seethrough
 
     public static final Block SPEED_BLOCK = registerBlock("speed_block",
             new SpeedBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
@@ -72,8 +74,6 @@ public class ModBlocks {
             new WallPlacerBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
     public static final Block FUSION_REACTOR_BLOCK = registerBlock("fusion_reactor_block",
             new FusionReactorBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
-    public static final Block CABLE_BLOCK = registerBlock("cable_block",
-            new CableBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
 
     public static final Block ALIEN_COCKPIT = registerBlock("alien_cockpit",
             new AlienCockpit(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.MOSS_BLOCK)));
