@@ -1,5 +1,6 @@
 package org.example.stardust.spacemod.block.entity;
 
+import gravity_changer.plating.GravityPlatingBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.minecraft.block.entity.BlockEntityType;
@@ -17,6 +18,11 @@ public class ModBlockEntities {
             Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "doom_furnace_block"),
                     FabricBlockEntityTypeBuilder.create(DoomFurnaceBlockEntity::new,
                             ModBlocks.DOOM_FURNACE_BLOCK).build(null));
+
+    public static final BlockEntityType<GravityBlockBlockEntity> GRAVITY_BLOCK_BE =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "gravity_block_block"),
+                    FabricBlockEntityTypeBuilder.create(GravityBlockBlockEntity::new,
+                            ModBlocks.GRAVITY_BLOCK_BLOCK).build(null));
 
     public static final BlockEntityType<CoalGeneratorBlockEntity> COAL_GENERATOR_BE =
             Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "coal_generator_block"),
@@ -36,6 +42,11 @@ public class ModBlockEntities {
             Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "cable_block"),
                     FabricBlockEntityTypeBuilder.create(CableBlockEntity::new,
                             ModBlocks.CABLE_BLOCK).build(null));
+
+    public static final BlockEntityType<ConductorBlockEntity> CONDUCTOR_BE =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "conductor_block"),
+                    FabricBlockEntityTypeBuilder.create(ConductorBlockEntity::new,
+                            ModBlocks.CONDUCTOR_BLOCK).build(null));
 
     public static final BlockEntityType<ExcavatorBlockEntity> EXCAVATOR_BLOCK_BE =
             Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "excavator_block"),
@@ -59,12 +70,16 @@ public class ModBlockEntities {
                     FabricBlockEntityTypeBuilder.create(WallPlacerBlockEntity::new,
                             ModBlocks.WALLPLACER).build(null));
 
-
+    public static final BlockEntityType<MediumCoalGeneratorBlockEntity> MEDIUM_COAL_GENERATOR_BE =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SpaceMod.MOD_ID, "medium_coal_generator_block"),
+                    FabricBlockEntityTypeBuilder.create(MediumCoalGeneratorBlockEntity::new,
+                            ModBlocks.MEDIUM_COAL_GENERATOR_BLOCK).build(null));
 
     public static void registerBlockEntities() {
         SpaceMod.LOGGER.info("Registering Block Entities for" + SpaceMod.MOD_ID);
 
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, DOOM_FURNACE_BE);
+        //EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, MEDIUM_COAL_GENERATOR_BE);
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, EXCAVATOR_BLOCK_BE); // Allows the machine to accept energy from the sides
 
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, MINING_BORE_BLOCK_BE);

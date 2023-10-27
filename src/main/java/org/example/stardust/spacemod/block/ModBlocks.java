@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SaplingBlock;
-import net.minecraft.block.sapling.JungleSaplingGenerator;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -20,6 +19,8 @@ import org.example.stardust.spacemod.block.custom.explosives.TntXBlock;
 import org.example.stardust.spacemod.block.custom.explosives.ZombieTntBlock;
 import org.example.stardust.spacemod.world.gen.tree.GiantJungleSaplingGenerator;
 
+import java.util.HashMap;
+
 public class ModBlocks {
     public static final Block BLOODY_STONE = registerBlock("bloody_stone",
             new Block(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.MOSS_BLOCK)));
@@ -27,8 +28,17 @@ public class ModBlocks {
     public static final Block ALTAR_BLOCK = registerBlock("altar_block",
             new AltarBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
 
+    public static final Block GRAVITY_BLOCK_BLOCK = registerBlock("gravity_block_block",
+            new GravityBlockBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+
+
+
     public static final Block CANNON_BLOCK = registerBlock("cannon_block",
             new CannonBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+    public static final Block MEDIUM_COAL_GENERATOR_BLOCK = registerBlock("medium_coal_generator_block",
+            new MediumCoalGeneratorBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+    public static final Block CONDUCTOR_BLOCK = registerBlock("conductor_block",
+            new ConductorBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
 
     public static final Block SPEED_BLOCK = registerBlock("speed_block",
             new SpeedBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
@@ -69,6 +79,7 @@ public class ModBlocks {
             new AlienCockpit(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.MOSS_BLOCK)));
     public static final Block ALIEN_POWER_CORE = registerBlock("alien_power_core",
             new AlienPowerCore(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+
 
     public static final Block GIANT_JUNGLE_SAPLING = registerBlock("giant_jungle_sapling", new SaplingBlock(new GiantJungleSaplingGenerator(), FabricBlockSettings.copyOf(Blocks.JUNGLE_SAPLING).strength(1f)));
 

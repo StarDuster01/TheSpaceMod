@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "spacemod:block/medium_coal_generator_block"
+    }
+  }
+}

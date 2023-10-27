@@ -15,6 +15,10 @@ public class ModScreenHandlers {
     public static final ScreenHandlerType<CoalGeneratorScreenHandler> COAL_GENERATOR_SCREEN_HANDLER =
             Registry.register(Registries.SCREEN_HANDLER, new Identifier(SpaceMod.MOD_ID,"coal_generator_screen_handler"),
                     new ExtendedScreenHandlerType<>(CoalGeneratorScreenHandler::new));
+
+    public static final ScreenHandlerType<MediumCoalGeneratorScreenHandler> MEDIUM_COAL_GENERATOR_SCREEN_HANDLER =
+            Registry.register(Registries.SCREEN_HANDLER, new Identifier(SpaceMod.MOD_ID,"medium_coal_generator_screen_handler"),
+                    new ExtendedScreenHandlerType<>(MediumCoalGeneratorScreenHandler::new));
     public static final ScreenHandlerType<FusionReactorScreenHandler> FUSION_REACTOR_SCREEN_HANDLER =
             Registry.register(Registries.SCREEN_HANDLER, new Identifier(SpaceMod.MOD_ID,"fusion_reactor_screen_handler"),
                     new ExtendedScreenHandlerType<>(FusionReactorScreenHandler::new));

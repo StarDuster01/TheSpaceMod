@@ -99,12 +99,12 @@ public class IronGeneratorBlockEntity extends BlockEntity implements ExtendedScr
     }
 
     public static final Map<Integer, Integer> BLOCK_ENERGY_MAP = Map.of(
-            0, 2000000, //Iron
-            1, 3000000, // Gold
-            2, 5000000, //Diamond
-            3, 2500000, // Lapis
-            4, 2300000, // Redstone
-            5, 4000000 // Emerald
+            0, 1000000, //Iron
+            1, 1500000, // Gold
+            2, 2500000, //Diamond
+            3, 1700000, // Lapis
+            4, 1700000, // Redstone
+            5, 2000000 // Emerald
     );
 
 

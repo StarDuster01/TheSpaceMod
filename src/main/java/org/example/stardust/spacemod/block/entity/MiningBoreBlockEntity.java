@@ -76,7 +76,7 @@ public class MiningBoreBlockEntity extends BlockEntity implements ExtendedScreen
         }
     }
 
-    public static final int ENERGY_PER_BLOCK = 200;
+    public static final int ENERGY_PER_BLOCK = 500;
     public static int getEnergyPerBlock() {
         return ENERGY_PER_BLOCK;
     }

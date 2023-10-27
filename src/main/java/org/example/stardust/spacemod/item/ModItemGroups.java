@@ -53,10 +53,13 @@ public class ModItemGroups {
                         entries.add(ModBlocks.MINING_BORE_BLOCK);
                         entries.add(ModBlocks.RANGE_SPAWNER_BLOCK);
                         entries.add(ModBlocks.IRON_GENERATOR_BLOCK);
-                        entries.add(ModBlocks.CABLE_BLOCK);
+                       // entries.add(ModBlocks.CABLE_BLOCK);
                         entries.add(ModItems.NEW_ARIA_MATH_MUSIC_DISC);
                         entries.add(ModBlocks.ALIEN_COCKPIT);
                         entries.add(ModBlocks.ALIEN_POWER_CORE);
+                        entries.add(ModBlocks.GRAVITY_BLOCK_BLOCK);
+                        entries.add(ModBlocks.MEDIUM_COAL_GENERATOR_BLOCK);
+                        entries.add(ModBlocks.CONDUCTOR_BLOCK);
                     }).build());
 
 

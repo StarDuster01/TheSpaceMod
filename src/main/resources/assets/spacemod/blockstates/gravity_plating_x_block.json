@@ -1,0 +1,66 @@
+{
+    "multipart": [
+        {
+          "when": {
+            "down": "true"
+          },
+          "apply": {
+            "model": "spacemod:block/gravity_plating_x_block",
+            "uvlock": true
+          }
+        },
+        {
+          "when": {
+            "up": "true"
+          },
+          "apply": {
+            "model": "spacemod:block/gravity_plating_x_block",
+            "x": 180,
+            "uvlock": true
+          }
+        },
+        {
+          "when": {
+            "south": "true"
+          },
+          "apply": {
+            "model": "spacemod:block/gravity_plating_x_block",
+            "x": 90,
+            "uvlock": true
+          }
+        },
+        {
+          "when": {
+            "west": "true"
+          },
+          "apply": {
+            "model": "spacemod:block/gravity_plating_x_block",
+            "x": 90,
+            "y": 90,
+            "uvlock": true
+          }
+        },
+        {
+          "when": {
+            "north": "true"
+          },
+          "apply": {
+            "model": "spacemod:block/gravity_plating_x_block",
+            "x": 90,
+            "y": 180,
+            "uvlock": true
+          }
+        },
+        {
+          "when": {
+            "east": "true"
+          },
+          "apply": {
+            "model": "spacemod:block/gravity_plating_x_block",
+            "x": 90,
+            "y": 270,
+            "uvlock": true
+          }
+        }
+    ]
+}

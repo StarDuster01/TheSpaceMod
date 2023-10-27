@@ -86,6 +86,7 @@ public class MiningExplosiveEntity extends ThrownItemEntity {
                         block == Blocks.INFESTED_STONE ||
                         block == Blocks.INFESTED_COBBLESTONE ||
                         block == Blocks.DEEPSLATE ||
+                        block == Blocks.GRAVEL ||
                         block == Blocks.COBBLED_DEEPSLATE ||
                         block == Blocks.POLISHED_DEEPSLATE;
             }

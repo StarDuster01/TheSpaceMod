@@ -6,7 +6,6 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolMaterial;
-import com.fusionflux.gravity_api.api.GravityChangerAPI;
 
 public class GlassSword extends SwordItem {
 
