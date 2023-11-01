@@ -2,12 +2,12 @@
 	"credit": "GreatCow",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "block/cyan_terracotta",
-		"6": "block/stripped_dark_oak_log",
-		"7": "pcbbench",
-		"8": "oscilloscope",
-		"9": "sine",
-		"particle": "block/cyan_terracotta"
+		"0": "minecraft:block/cyan_terracotta",
+		"6": "minecraft:block/stripped_dark_oak_log",
+		"7": "spacemod:block/pcbbench",
+		"8": "spacemod:block/oscilloscope",
+		"9": "spacemod:block/sine",
+		"particle": "minecraft:block/stripped_dark_oak_log"
 	},
 	"elements": [
 		{
