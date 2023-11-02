@@ -1,7 +1,7 @@
 # Blender 3.6.5 MTL File: 'efcoal.blend'
 # www.blender.org
 
-newmtl mapping
+newmtl efcoal
 Ns 250.000000
 Ka 1.000000 1.000000 1.000000
 Ks 0.500000 0.500000 0.500000
