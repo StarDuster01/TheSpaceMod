@@ -1,11 +1,13 @@
 package org.example.stardust.spacemod.client;
 
+import dev.felnull.specialmodelloader.api.event.SpecialModelLoaderEvents;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
+import org.example.stardust.spacemod.SpaceMod;
 import org.example.stardust.spacemod.block.ModBlocks;
 import org.example.stardust.spacemod.entity.ModEntities;
 import org.example.stardust.spacemod.entity.client.GiantSalamanderRenderer;
@@ -47,6 +49,7 @@ public class SpaceModClient implements ClientModInitializer {
 
         ModMessages.registerS2CPackets();
         KeyInputHandler.register();
+        SpecialModelLoaderEvents.LOAD_SCOPE.register(location -> SpaceMod.MOD_ID.equals(location.getNamespace()));
 
 
 

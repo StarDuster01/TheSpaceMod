@@ -20,7 +20,7 @@ import org.example.stardust.spacemod.block.entity.ModBlockEntities;
 import org.example.stardust.spacemod.block.entity.WallPlacerBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
-public class MediumCoalGeneratorBlock extends BlockWithEntity {
+public class MediumCoalGeneratorBlock extends BlockWithEntity{
     public MediumCoalGeneratorBlock(Settings settings) {
         super(settings);
     }

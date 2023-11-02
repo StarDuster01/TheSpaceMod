@@ -1,4 +1,5 @@
 package org.example.stardust.spacemod;
+import dev.felnull.specialmodelloader.api.event.SpecialModelLoaderEvents;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.impl.biome.modification.BuiltInRegistryKeys;
@@ -53,6 +54,7 @@ public class SpaceMod implements ModInitializer{
         ModRegistries.registerModStuffs();
         ModSounds.registerSounds();
         ModTrunkPlacers.init();
+
 
 
         FabricDefaultAttributeRegistry.register(ModEntities.UNICORN, UnicornEntity.setAttributes());

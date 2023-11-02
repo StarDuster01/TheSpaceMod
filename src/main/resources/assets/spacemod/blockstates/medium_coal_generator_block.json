@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "spacemod:block/medium_coal_generator_block"
+      "model": "spacemod:block/efcoal"
     }
   }
 }
