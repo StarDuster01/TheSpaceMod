@@ -73,7 +73,7 @@ public class ModBlocks {
     public static final Block WALLPLACER = registerBlock("wallplacer",
             new WallPlacerBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
     public static final Block FUSION_REACTOR_BLOCK = registerBlock("fusion_reactor_block",
-            new FusionReactorBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE)));
+            new FusionReactorBlock(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.STONE).nonOpaque()));
 
     public static final Block ALIEN_COCKPIT = registerBlock("alien_cockpit",
             new AlienCockpit(FabricBlockSettings.copyOf(Blocks.STONE).sounds(BlockSoundGroup.MOSS_BLOCK)));

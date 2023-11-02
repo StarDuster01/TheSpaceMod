@@ -46,11 +46,12 @@ public class FusionReactorScreen extends HandledScreen<FusionReactorScreenHandle
     @Override
     protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
 
-
         FusionReactorBlockEntity blockEntity = this.handler.getBlockEntity();
         Text text = Text.of("Insert Nether Star For Power");
 
-        long energyAmount = (int) blockEntity.energyStorage.getAmount(); // Update energyAmount every frame
+        long energyAmount = (int) blockEntity.getAmount();
+       // System.out.println("Current energy screen can detect is: " + energyAmount);
+
         Text powertext;
         int powercolor;
 
@@ -61,9 +62,8 @@ public class FusionReactorScreen extends HandledScreen<FusionReactorScreenHandle
             powertext = Text.of("Output: #Watts. Stored: " + energyAmount + "J");
             powercolor = 0x00FF00; // GREEN in RGB
         } else {
-            // Handle the case when there is fuel but energyAmount is 0.
-            powertext = Text.of("Fuel Present, No Power"); // Add your custom message here
-            powercolor = 0xFFFF00; // YELLOW in RGB (custom color for this case)
+            powertext = Text.of("Fuel Present, No Power");
+            powercolor = 0xFFFF00;
         }
 
         int powerTextWidth = textRenderer.getWidth(powertext);

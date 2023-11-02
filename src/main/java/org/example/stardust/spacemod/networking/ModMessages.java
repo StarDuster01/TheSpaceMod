@@ -24,6 +24,8 @@ import org.joml.Vector2i;
 
 public class ModMessages {
 
+
+
     public static final Identifier GRIFFIN_MOVEMENT_ID = new Identifier(SpaceMod.MOD_ID, "griffin_movement");
     public static final Identifier TOGGLE_MINING_ID = new Identifier(SpaceMod.MOD_ID, "toggle_mining");
     public static final Identifier POWER_CORE_UNLOCK_ID = new Identifier(SpaceMod.MOD_ID, "power_core_unlock_command");
@@ -48,6 +50,7 @@ public class ModMessages {
     public static final Identifier DELETE_RANGE_SPAWNER_ID = new Identifier(SpaceMod.MOD_ID, "delete_range_spawner");
     public static final Identifier SELF_DESTRUCT_ID = new Identifier(SpaceMod.MOD_ID, "self_destruct_command");
     public static final Identifier AIRSTRIKE_ID = new Identifier(SpaceMod.MOD_ID, "air_strike_command");
+    public static final Identifier FUSION_REACTOR_ID = new Identifier(SpaceMod.MOD_ID, "fusion_reactor_id");
 
 
 
@@ -60,6 +63,12 @@ public class ModMessages {
         buf.writeLong(energy);
         buf.writeBoolean(isMiningActive);
         ServerPlayNetworking.send(player, MINING_BORE_UPDATE_ID, buf);
+    }
+    public static void sendFusionReactorUpdate(ServerPlayerEntity player, BlockPos pos, long energy) {
+        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+        buf.writeBlockPos(pos);
+        buf.writeLong(energy);
+        ServerPlayNetworking.send(player, FUSION_REACTOR_ID, buf);
     }
     public static void sendPowerCoreUnlockCommand(ClientPlayerEntity player, BlockPos pos) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
@@ -144,6 +153,21 @@ public class ModMessages {
                         ((ExcavatorBlockEntity) blockEntity).energyStorage.setAmountDirectly(energy);
                         ((ExcavatorBlockEntity) blockEntity).setMiningActive(miningActive);
                     }
+                }
+            });
+        });
+        ClientPlayNetworking.registerGlobalReceiver(FUSION_REACTOR_ID, (client, player, buf, sender) -> {
+            BlockPos blockPos = buf.readBlockPos();
+            long energy = buf.readLong();
+
+            client.execute(() -> {
+                World clientWorld = MinecraftClient.getInstance().world;
+                if (clientWorld != null) {
+                    BlockEntity blockEntity = clientWorld.getBlockEntity(blockPos);
+                    if (blockEntity instanceof FusionReactorBlockEntity) {
+                        ((FusionReactorBlockEntity) blockEntity).setCurrentEnergy(energy);
+                    }
+
                 }
             });
         });

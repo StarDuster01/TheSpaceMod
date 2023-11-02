@@ -1,8 +1,7 @@
 {
   "variants": {
-    "facing=north": {"model": "spacemod:block/fusion_reactor_block"},
-    "facing=south": {"model": "spacemod:block/fusion_reactor_block", "y": 180},
-    "facing=east": {"model": "spacemod:block/fusion_reactor_block", "y": 90},
-    "facing=west": {"model": "spacemod:block/fusion_reactor_block", "y": 270}
+    "starred=true": { "model": "spacemod:block/fusion_reactor_block_starred" },
+    "starred=false": { "model": "spacemod:block/fusion_reactor_block" }
+
   }
 }

@@ -37,15 +37,18 @@ public class GravityBlockBlockEntity extends BlockEntity {
             if(isOutsideSphereOfInfluence(entity, pos)) {
                 if(GravityChangerAPI.getGravityDirection(entity) != Direction.DOWN) {
                     GravityChangerAPI.setBaseGravityDirection(entity, Direction.DOWN);
+                    System.out.println("Entity " + entity.getEntityName() + " at " + entity.getPos() + " has gravity set to DOWN.");
                 }
             } else {
                 Direction closestFace = getClosestFace(entity, pos);
                 if(GravityChangerAPI.getGravityDirection(entity) != closestFace) {
                     GravityChangerAPI.setBaseGravityDirection(entity, closestFace);
+                    System.out.println("Entity " + entity.getEntityName() + " at " + entity.getPos() + " has gravity set to " + closestFace + ".");
+                }
                 }
             }
         }
-    }
+
 
     private Direction getClosestFace(Entity entity, BlockPos blockPos) {
         double minDistance = Double.MAX_VALUE;

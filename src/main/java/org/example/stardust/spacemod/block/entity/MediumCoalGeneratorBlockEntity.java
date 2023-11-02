@@ -1,6 +1,5 @@
 package org.example.stardust.spacemod.block.entity;
 
-import gravity_changer.api.GravityChangerAPI;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
@@ -8,11 +7,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FluidBlock;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -26,11 +23,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import org.example.stardust.spacemod.screen.CoalGeneratorScreenHandler;
-import org.example.stardust.spacemod.screen.FusionReactorScreenHandler;
 import org.example.stardust.spacemod.screen.MediumCoalGeneratorScreenHandler;
 import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.EnergyStorage;
@@ -160,7 +154,7 @@ public class MediumCoalGeneratorBlockEntity extends BlockEntity implements Exten
                 targets.addAll(findEnergyTargets(nextPos, direction));
             } else if (nextEntity != null) {
                 EnergyStorage target = EnergyStorage.SIDED.find(world, nextPos, direction.getOpposite());
-                if (target != null && !(nextEntity instanceof MediumCoalGeneratorBlockEntity)) {
+                if (target != null && !(nextEntity instanceof MediumCoalGeneratorBlockEntity) && !(nextEntity instanceof FusionReactorBlockEntity)) {
                     targets.add(target);
                 }
             }

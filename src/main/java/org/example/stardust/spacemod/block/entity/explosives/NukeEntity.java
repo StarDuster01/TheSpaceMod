@@ -57,7 +57,8 @@ public class NukeEntity extends TntEntity {
                 for (int z = -currentRadius; z <= currentRadius; z++) {
                     BlockPos currentPos = explosionCenter.add(x, y, z);
                     double distanceSquared = explosionCenter.getSquaredDistance(currentPos);
-                    if (distanceSquared <= currentRadius * currentRadius && distanceSquared > (currentRadius-1) * (currentRadius-1)) {
+
+                    if (distanceSquared <= currentRadius * currentRadius) {
                         world.setBlockState(currentPos, Blocks.AIR.getDefaultState(), 2 | 16);
                         blocksRemoved++;
                     }

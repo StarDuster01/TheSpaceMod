@@ -172,11 +172,6 @@ public class AlienPowerCoreBlockEntity extends BlockEntity implements ExtendedSc
         buf.writeBlockPos(this.pos);
     }
 
-    public boolean isFuel() {
-        ItemStack stack = inventory.get(INPUT_SLOT);
-        return !stack.isEmpty() && stack.isOf(Items.NETHER_STAR);
-    }
-
     @Override
     public Text getDisplayName() {
         return Text.literal("Fusion Reactor");
