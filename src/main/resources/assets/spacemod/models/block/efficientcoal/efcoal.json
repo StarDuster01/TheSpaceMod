@@ -1,0 +1,4 @@
+{
+  "parent": "special-model-loader:builtin/obj",
+  "model": "spacemod:models/block/efficientcoal/efcoal.obj"
+}
